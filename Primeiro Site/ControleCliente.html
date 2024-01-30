@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <?php
+    require_once 'Cliente.html';
+    require_once 'DaoCliente.html';
+
+    class ControleCliente
+    {
+        private $servername = "localhost";
+        private $username = "root";
+        private $password = "123";
+        private $dbname = "profissional";
+
+        public function salvarCliente($cliente)
+        {
+            $conn = new mysqli($this->servername, $this->username, $this->password, $this->dbname);
+
+            // Verifica a conexão
+            if ($conn->connect_error) {
+                die("Conexão falhou: " . $conn->connect_error);
+            }
+
+            // Recupere os dados do objeto Cliente
+            $nome = $cliente->getNome();
+            $senha = $cliente->getSenha();
+            $numTelefone = $cliente->getNumTelefone();
+            $email = $cliente->getEmail();
+            $cpf = $cliente->getCpf();
+
+            // Prepara a query para inserção na tabela "usuarios" usando Prepared Statements
+            $query = "INSERT INTO usuarios (nome, senha, telefone, email, cpf) VALUES (?, ?, ?, ?, ?)";
+            $stmt = $conn->prepare($query);
+            $stmt->bind_param("sssss", $nome, $senha, $numTelefone, $email, $cpf);
+
+            // Verifica se o CPF já está cadastrado
+            $cpfExistQuery = "SELECT cpf FROM usuarios WHERE cpf = ?";
+            $stmtCpf = $conn->prepare($cpfExistQuery);
+            $stmtCpf->bind_param("s", $cpf);
+            $stmtCpf->execute();
+            $stmtCpf->store_result();
+
+            if ($stmtCpf->num_rows > 0) {
+                // CPF já cadastrado, exibe mensagem de erro
+                $mensagem = "Erro ao cadastrar: CPF já cadastrado.";
+            } else {
+                // CPF não cadastrado, proceda com a inserção
+                $query = "INSERT INTO usuarios (nome, senha, telefone, email, cpf) VALUES (?, ?, ?, ?, ?)";
+                $stmt = $conn->prepare($query);
+                $stmt->bind_param("sssss", $nome, $senha, $numTelefone, $email, $cpf);
+
+                if ($stmt->execute()) {
+                    $mensagem = "Cadastro realizado com sucesso!";
+                } else {
+                    $mensagem = "Erro ao cadastrar: " . $stmt->error;
+                }
+            }
+            $stmt->close();
+            $conn->close();
+
+            echo "<script>alert('$mensagem'); window.location = 'TelaCliente.php';</script>";
+            exit(); // Certifique-se de encerrar o script após o redirecionamento
+        }
+
+        public function fazerLogin($email, $senha)
+        {
+            $conn = new mysqli($this->servername, $this->username, $this->password, $this->dbname);
+
+            // Verifica a conexão
+            if ($conn->connect_error) {
+                die("Conexão falhou: " . $conn->connect_error);
+            }
+
+            // Prepara a query para consultar o usuário com o email e senha fornecidos
+            $query = "SELECT cpf FROM usuarios WHERE email = ? AND senha = ?";
+            $stmt = $conn->prepare($query);
+            $stmt->bind_param("ss", $email, $senha);
+            $stmt->execute();
+            $stmt->store_result();
+
+            if ($stmt->num_rows > 0) {
+                // Autorização bem-sucedida, redireciona para TelaCliente.html
+                $stmt->close();
+                $conn->close();
+                header("Location: TelaCliente.html");
+                exit(); // Certifique-se de encerrar o script após o redirecionamento
+            } else {
+                // Autorização falhou
+                $stmt->close();
+                $conn->close();
+                return false;
+            }
+        }
+    }
+
+    ?>
+</body>
+
+</html>

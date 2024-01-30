@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <?php
+    require_once 'Projeto.html';
+    require_once 'DaoProjeto.html';
+
+
+    class ControleProjeto
+    {
+
+        private $host = "localhost";
+        private $usuario = "root";
+        private $senha = "123";
+        private $banco = "profissional";
+
+        public function salvarProjeto($consulta)
+        {
+            try {
+                $conexao = new PDO("mysql:host=$this->host;dbname=$this->banco", $this->usuario, $this->senha);
+                $conexao->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
+                $sql = "INSERT INTO projetos(titulo, descricao, status) VALUES (:titulo, :descricao, :status)";
+                $stmt = $conexao->prepare($sql);
+
+                // Armazenar os valores em variáveis
+                $titulo = $consulta->getTitulo();
+                $descricao = $consulta->getDescricao();
+                $status = $consulta->getStatus();
+
+                // Passar as variáveis por referência usando bindParam
+                $stmt->bindParam(':titulo', $titulo);
+                $stmt->bindParam(':descricao', $descricao);
+                $stmt->bindParam(':status', $status);
+
+                $stmt->execute();
+
+                $conexao = null;
+                return true;
+            } catch (PDOException $e) {
+                echo "Erro ao salvar dados: " . $e->getMessage();
+                return false;
+            }
+        }
+
+        public function exibeProjetos($projetos)
+        {
+            echo "<div class='projeto-container'>";
+            if (!empty($projetos)) {
+                foreach ($projetos as $projeto) {
+                    echo "<div class='projeto'>";
+                    echo "<h3>" . $projeto->getTitulo() . "</h3>";
+                    echo "<p>" . $projeto->getDescricao() . "</p>";
+                    echo "<p>Status: " . $projeto->getStatus() . "</p>";
+                    echo "</div>";
+                }
+            } else {
+                echo "<p>Nenhum projeto cadastrado ainda.</p>";
+            }
+            echo "</div>";
+        }
+    }
+    ?>
+
+</body>
+
+</html>

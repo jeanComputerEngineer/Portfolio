@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cadastro de Projeto</title>
+
+
+</head>
+
+<body>
+
+    <?php
+    require_once 'Projeto.php';
+    require_once 'ControleProjeto.php';
+    
+    if ($_SERVER["REQUEST_METHOD"] == "POST") {
+        $titulo = $_POST["titulo"];
+        $descricao = $_POST["descricao"];
+        $status = 1;
+    
+        $consulta = new Projeto($titulo, $descricao, $status);
+        $daoProjeto = new ControleProjeto();
+        $daoProjeto->salvarProjeto($consulta);
+    
+        $mensagem = "Projeto Requisitado com Sucesso!";
+        echo "<script>alert('$mensagem'); window.location = 'TelaCliente';</script>";
+        exit(); // Certifique-se de encerrar o script após o redirecionamento
+    }
+    ?>
+
+
+</body>
+
+</html>
+
+
+
+
+
+
+
+
+require_once 'Projeto.php';
+require_once 'ControleProjeto.php';
+
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+
+
+$titulo = $_POST["titulo"];
+$descricao = $_POST["descricao"];
+$status = 1;
+
+$consulta = new Projeto($titulo, $descricao, $status);
+$daoProjeto = new ControleProjeto();
+$daoProjeto->salvarProjeto($consulta);
+
+
+
+
+
+$mensagem = "Projeto Requisitado com Sucesso!";
+echo "
+<script>alert('$mensagem'); window.location = 'TelaCliente';</script>";
+exit(); // Certifique-se de encerrar o script após o redirecionamento
+
+}
+
+?php>
