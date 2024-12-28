@@ -1,5 +1,6 @@
 ('C:\\Users\\jsche\\OneDrive\\Área de Trabalho\\Meus Documentos\\Meus Projetos '
- '- GitHub\\Conversor e Baixador de áudios\\build\\Baixador\\PYZ-00.pyz',
+ '- GitHub\\Projetos No Geral\\Conversor e Baixador de '
+ 'áudios\\build\\Baixador\\PYZ-00.pyz',
  [('__future__',
    'C:\\Users\\jsche\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\__future__.py',
    'PYMODULE'),
