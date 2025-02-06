@@ -1,0 +1,398 @@
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+
+.container {
+    max-width: 100%;
+    margin: 0 auto;
+    background: rgb(12, 12, 14);
+    padding-bottom: 5%;
+    padding-top: 80px;
+
+    @media screen and (max-width: 1050px) {
+        padding-top: 30px;
+    }
+
+}
+
+.container h1 {
+    font-size: 50px;
+    color: rgb(184, 184, 184);
+    text-align: center;
+    opacity: 0;
+    animation: fadeInUp 0.9s ease-in-out 0.1s forwards;
+
+
+
+
+    @media screen and (max-width: 650px) {
+        font-size: 6.5vw;
+        margin-top: 30px;
+
+
+    }
+
+}
+
+
+.container h2 {
+    margin-bottom: 1%;
+    color: rgb(255, 0, 0);
+    font-size: 20px;
+    margin-left: 10%;
+    opacity: 0;
+    animation: fadeInUp 0.9s ease-in-out 0.2s forwards;
+
+    @media screen and (max-width: 950px) {
+        margin-left: 5%;
+
+    }
+
+    @media screen and (max-width: 650px) {
+        font-size: 4vw;
+        max-width: 90%;
+        margin-left: 5%;
+    }
+}
+
+.container h3 {
+    color: rgb(142, 142, 142);
+    font-size: 20px;
+    margin-left: 10%;
+    opacity: 0;
+    animation: fadeInUp 0.9s ease-in-out 0.3s forwards;
+
+    @media screen and (max-width: 950px) {
+        margin-left: 5%;
+
+    }
+
+    @media screen and (max-width: 650px) {
+        font-size: 4vw;
+        max-width: 90%;
+        margin-left: 5%;
+    }
+}
+
+
+.form {
+
+    display: flex;
+    flex-direction: column;
+    color: rgb(143, 143, 143);
+    opacity: 0;
+    animation: fadeInUp 0.9s ease-in-out 0.4s forwards;
+
+    @media screen and (max-width: 950px) {
+        max-width: 95%;
+        margin-left: 2.5%;
+    }
+
+}
+
+.form label {
+    font-size: 20px;
+    margin-left: 10%;
+    margin-top: 20px;
+    margin-bottom: 0.25%;
+    color: rgb(222, 222, 222);
+
+
+    @media screen and (max-width: 950px) {
+        font-size: 15px;
+        max-width: 90%;
+        margin-left: 5%;
+        margin-top: 20px;
+    }
+
+}
+
+.form input {
+    background-color: rgb(45, 45, 67);
+    margin-left: 10%;
+    width: 300px;
+    height: 30px;
+    color: white;
+    border-radius: 10px;
+    font-size: 15px;
+    vertical-align: top;
+    padding-left: 0.5%;
+
+    @media screen and (max-width: 950px) {
+        margin-left: 5%;
+    }
+
+
+    @media screen and (max-width: 350px) {
+        width: 90%;
+        max-width: 90%;
+
+        border: none;
+        padding-left: 2%;
+
+    }
+}
+
+
+
+
+
+.starContainer {
+    display: flex;
+
+    gap: 1%;
+    margin-left: 10%;
+    width: 60%;
+    max-width: 60%;
+    transition: background-color 0.3s ease-in-out, transform 0.3s ease-in-out;
+
+    @media screen and (max-width: 950px) {
+        width: 90%;
+        max-width: 90%;
+        margin-left: 5%;
+
+    }
+
+}
+
+.starContainer:hover {
+    transform: scale(1.01);
+
+
+}
+
+
+.star {
+    cursor: pointer;
+    font-size: 30px;
+    color: #f8d207;
+    border-radius: 50%;
+    transition: background-color 0.3s ease-in-out, transform 0.3s ease-in-out;
+
+
+}
+
+.star:hover {
+
+    background-color: #f8d207;
+    color: black;
+
+}
+
+
+.starSelected {
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 30px;
+    background-color: #f8d207;
+    color: black;
+
+
+
+}
+
+.container textarea {
+    background-color: rgb(45, 45, 67);
+    margin-left: 10%;
+    width: 400px;
+    height: 100px;
+    margin-top: 10px;
+    border-radius: 15px;
+    resize: none;
+    padding-left: 10px;
+    color: white;
+    padding-top: 5px;
+    /* Remove o redimensionador */
+
+
+    @media screen and (max-width: 950px) {
+        margin-left: 5%;
+
+    }
+
+    @media screen and (max-width: 480px) {
+        width: 85%;
+
+    }
+}
+
+.container textarea::placeholder {
+    color: transparent;
+    /* Define a cor do placeholder como transparente */
+}
+
+.container button {
+    margin-top: 2%;
+    width: 25%;
+    margin-left: 10%;
+    height: 50px;
+    font-size: 25px;
+    border-radius: 15px;
+    background: linear-gradient(to right, #0087a8, #00d6c4ac);
+    transition: background-color 0.3s ease-in-out, transform 0.3s ease-in-out;
+    cursor: pointer;
+    color: rgb(255, 255, 255);
+    font-family: Arial, Helvetica, sans-serif;
+    font-weight: bold;
+
+    @media screen and (max-width: 950px) {
+        margin-left: 5%;
+
+    }
+
+    @media screen and (max-width: 650px) {
+        width: 93%;
+        max-width: 93%;
+        margin-left: 5%;
+        margin-top: 3%;
+        margin-bottom: 10%;
+        height: 35px;
+
+    }
+}
+
+.container button:hover {
+    background: linear-gradient(to right, #009dc4, #00e7d4ac);
+    transform: scale(1.05);
+}
+
+
+.light {
+    .container {
+        background-image: url('../../repositorioImagens/FundoCadastro.png');
+        background-blend-mode: multiply;
+        background-color: rgb(255, 255, 255);
+        background-size: cover;
+    }
+
+    .container h1 {
+
+        color: rgb(0, 0, 0);
+        font-family: Arial, Helvetica, sans-serif;
+        font-weight: bold;
+
+
+    }
+
+
+    .container h2 {
+        color: rgb(255, 0, 0);
+        background-color: white;
+        border-radius: 10px;
+        width: 80%;
+        padding: 0.5%;
+        font-weight: bold;
+
+
+        @media screen and (max-width: 950px) {
+            width: 90%;
+
+        }
+
+
+
+    }
+
+    .container h3 {
+        color: rgb(47, 47, 47);
+
+
+    }
+
+
+    .form {
+
+        color: rgb(32, 32, 32);
+
+
+    }
+
+    .form label {
+
+        color: rgb(50, 50, 50);
+        font-weight: bold;
+
+
+    }
+
+
+    .form input {
+        background-color: rgb(255, 255, 255);
+
+        color: rgb(0, 0, 0);
+
+    }
+
+
+
+    .form .opiniao {
+
+        color: black;
+    }
+
+
+
+
+
+    .star {
+
+        color: #d4b400;
+        background-color: white;
+
+
+    }
+
+    .star:hover {
+        background-color: #ffd900;
+        color: rgb(0, 0, 0);
+
+    }
+
+
+    .starSelected {
+
+        background-color: #ffd900;
+        color: rgb(0, 0, 0);
+
+
+    }
+
+
+    .container textarea {
+        background-color: rgb(255, 255, 255);
+        color: rgb(0, 0, 0);
+        /* Remove o redimensionador */
+
+
+        @media screen and (max-width: 950px) {
+            margin-left: 5%;
+
+        }
+
+        @media screen and (max-width: 480px) {
+            width: 85%;
+
+        }
+    }
+
+    .container button {
+
+        background: rgb(19, 78, 174);
+        border: none;
+        border-radius: 10px;
+
+    }
+
+    .container button:hover {
+        background: rgb(61, 111, 192);
+    }
+}

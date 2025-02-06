@@ -1,0 +1,813 @@
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.container {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    /* Add a maximum width to your container */
+    margin: 0 auto;
+    /* Center the container horizontally */
+    padding-top: 90px;
+
+
+}
+
+.link {
+    text-decoration: none;
+    color: #007bff;
+    /* ou a cor desejada */
+    transition: color 0.3s, transform 0.3s;
+    /* Adiciona uma transição suave */
+}
+
+.hoverEffect:hover {
+    transform: scale(1.05);
+    /* Aumenta o tamanho em 20% ao passar o mouse */
+    display: inline-block;
+    /* Mantém o layout */
+}
+
+.ContainerCimaPai {
+    background-image: url('../../repositorioImagens/FundoSkills.png');
+    background-color: rgb(84, 84, 103);
+    background-size: cover;
+    background-position: center;
+    background-blend-mode: overlay;
+    padding: 0;
+    margin: 0;
+
+}
+
+.ContainerCimaPai h1 {
+    margin: 0;
+    padding: 0;
+    margin-top: 40px;
+    opacity: 0;
+    animation: fadeInUp 1s ease-in-out 0.05s forwards;
+    text-align: center;
+    font-size: 3.5vw;
+    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+    color: rgb(236, 237, 241);
+
+    @media screen and (max-width: 1050px) {
+        font-size: 5vw;
+        margin-top: 70px;
+
+
+    }
+}
+
+
+.container h2 {
+    text-align: center;
+    animation: fadeInUp 1s ease-in-out 0.05s forwards;
+    text-decoration: none;
+    color: black;
+    font-size: 22px;
+}
+
+.container h3 {
+    text-align: center;
+    font-size: 16px;
+
+
+}
+
+.container p {
+    font-size: 23px;
+}
+
+.ContainerCima {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    text-align: left;
+    height: 220px;
+    padding: 0;
+    margin: 0;
+    /* Ajuste conforme necessário */
+    box-sizing: border-box;
+    /* Adicione esta propriedade */
+
+
+    @media screen and (max-width: 1200px) {
+        height: 360px;
+    }
+
+}
+
+.profileImage {
+    margin: 0;
+    padding: 0;
+    margin-left: 2%;
+    width: 250px;
+    max-width: 50%;
+    /* Define um tamanho máximo para a imagem */
+    height: 250px;
+    border-radius: 100%;
+    opacity: 0;
+    animation: fadeInUp 1s ease-in-out 0.05s forwards;
+    padding-bottom: 100px;
+}
+
+.DadosPessoais {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    list-style-type: none;
+    /* Remove os marcadores padrão da lista */
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+    width: 100%;
+    max-width: 100%;
+    opacity: 0;
+    animation: fadeInUp 1s ease-in-out 0.5s forwards;
+
+}
+
+.DadosPessoais li {
+    background-color: rgb(255, 255, 255);
+    border-radius: 15px;
+    padding: 10px;
+    margin: 20px;
+    color: rrgb(7, 0, 36);
+    font-size: 16px;
+    transition: transform 0.3s ease-in-out;
+}
+
+.ContainerCima .DadosPessoais li svg {
+    margin-right: 5px;
+    /* Ajustar espaçamento entre ícones e texto */
+}
+
+.DadosPessoais li a {
+    text-decoration: none;
+    color: rgb(3, 0, 180);
+    /* Adiciona uma transição suave para a mudança de cor */
+
+    /* Herda a cor do texto pai */
+}
+
+.DadosPessoais li a:hover {
+    color: #7c7cff;
+    /* Ou qualquer cor desejada ao passar o mouse */
+    transition: color 0.3s;
+    /* Adiciona uma transição suave para a mudança de cor */
+
+}
+
+.DadosPessoais li:hover {
+    transform: scale(1.01);
+}
+
+
+
+
+
+.container p {
+    margin-top: 10px;
+    margin-left: 10%;
+    width: 80%;
+    text-align: justify;
+    opacity: 0;
+    animation: fadeInUp 1s ease-in-out 0.05s forwards;
+    font-size: 20px;
+}
+
+.containerApresentacao {
+    opacity: 0;
+    animation: fadeInUp 0.9s ease-in-out 0.6s forwards;
+    background-color: white;
+    padding-bottom: 3%;
+    padding-top: 1%;
+}
+
+.containerApresentacao h2 {
+    opacity: 0;
+    animation: fadeInUp 0.8s ease-in-out 0.6s forwards;
+
+}
+
+
+
+
+.containerAzul {
+
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    background-image: url('../../repositorioImagens/FundoSkills.png');
+    background-color: rgb(126, 127, 137);
+    background-size: cover;
+    background-position: center;
+    background-blend-mode: overlay;
+
+}
+
+.containerAzul h2 {
+
+    margin-top: 0;
+    color: white;
+    padding-top: 2%;
+}
+
+
+
+
+.Habilidades {
+    position: relative;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 3%;
+    padding: 5%;
+    padding-top: 1%;
+    max-width: 100%;
+    margin: 0;
+    padding-bottom: 200px;
+    opacity: 0;
+    animation: fadeInUp 0.9s ease-in-out 0.6s forwards;
+}
+
+.Habilidades li {
+    position: relative;
+    color: rgb(183, 183, 183);
+    border-radius: 20px;
+    background: linear-gradient(to right, #0087a8, #00d6c4ac);
+    text-align: center;
+    list-style-type: none;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
+    margin: 0;
+    transition: transform 0.3s ease-in-out;
+
+
+}
+
+.Habilidades li:hover {
+    transform: scale(1.1);
+
+}
+
+.Habilidades p {
+    position: absolute;
+    bottom: -2px;
+    left: -0.75px;
+    width: 100.5%;
+    max-width: 100.5%;
+    height: auto;
+    margin: 0;
+    background-color: rgb(255, 255, 255);
+    border-bottom-left-radius: 15px;
+    border-bottom-right-radius: 15px;
+    text-align: center;
+    font-size: 20px;
+    font-family: sans-serif;
+    padding-top: 3%;
+    padding-bottom: 3%;
+    color: rgb(53, 53, 53);
+
+}
+
+.imagemHabilidade {
+    width: 200px;
+    height: 200px;
+    display: block;
+    margin: 0 auto;
+    margin-top: 5%;
+    margin-bottom: 20%;
+    border-radius: 30px;
+}
+
+.containerProjetos {
+    background-color: white;
+}
+
+.Projetos {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 10px;
+    padding: 20px;
+    max-width: 100%;
+    opacity: 0;
+    animation: fadeInUp 0.9s ease-in-out 0.6s forwards;
+    margin-bottom: 35px;
+}
+
+.Projetos li {
+    font-size: 15px;
+    color: rgb(255, 255, 255);
+    padding: 10px;
+    border: 1px solid #838383;
+    border-radius: 30px;
+    background-color: rgb(40, 46, 66);
+    text-align: center;
+    list-style-type: none;
+    text-align: center;
+    transition: transform 0.3s ease-in-out;
+}
+
+.Projetos li a {
+    text-decoration: none;
+    font-style: none;
+    color: rgb(255, 255, 255);
+
+
+}
+
+.Projetos li:hover {
+    transform: scale(1.05);
+}
+
+
+
+.ContainerAzul2 {
+    background: linear-gradient(to right, #12101a, #232f38);
+    opacity: 0;
+    animation: fadeInUp 0.9s ease-in-out 0.6s forwards;
+    padding-bottom: 50%;
+
+}
+
+.container .ContainerAzul2 h2 {
+    text-align: center;
+    animation: fadeInUp 0.9s ease-in-out 0.2s forwards;
+    text-decoration: none;
+    color: rgb(227, 227, 227);
+    font-size: 25px;
+}
+
+
+
+
+
+
+
+.Certificados {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+    background: linear-gradient(to right, #12101a, #232f38);
+    padding: 20px;
+
+}
+
+.Certificados li {
+    text-align: center;
+    list-style-type: none;
+    box-sizing: border-box;
+    /* Adicione esta propriedade */
+    margin-bottom: 60px;
+    transition: transform 0.3s ease-in-out;
+
+}
+
+.Certificados li:hover {
+    transform: scale(1.02);
+}
+
+
+
+.Certificados p {
+
+    color: rgb(255, 255, 255);
+    text-align: center;
+    font-family: sans-serif;
+    font-size: 1.5vw;
+
+}
+
+.imagemCertificado {
+    width: 100%;
+    height: 90%;
+    display: block;
+    margin: 0 auto;
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+@media (max-width: 1050px) {
+
+    .container {
+        padding: 0;
+        margin: 0;
+
+    }
+
+    .ContainerCima {
+        width: 100%;
+        max-width: 100%;
+        height: auto;
+        flex-direction: column;
+        box-sizing: border-box;
+        font-size: auto;
+        padding-top: 10px;
+
+
+
+
+
+    }
+
+    .profileImage {
+        margin: 0;
+        width: 30%;
+        max-width: 30%;
+        height: 35%;
+        max-height: 35%;
+        border-radius: 100%;
+        padding: 0;
+
+    }
+
+    .DadosPessoais {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        list-style-type: none;
+        margin: 0;
+        width: 95%;
+        box-sizing: border-box;
+        max-width: 100%;
+        gap: 1%;
+        row-gap: 15%;
+        margin: 50px;
+        height: auto;
+        margin-bottom: 15%;
+        padding: 0;
+        margin-top: 20px;
+
+        @media screen and (max-width: 400px) {
+            width: 99%;
+
+        }
+
+    }
+
+    .DadosPessoais li {
+        padding: 1.5%;
+        margin: 0;
+        max-width: 100%;
+        font-size: 2.66vw;
+        text-align: left;
+        height: auto;
+
+
+        @media screen and (max-width: 400px) {
+            padding-left: 0;
+            border-radius: 5px;
+            font-size: 3.1vw;
+
+        }
+
+
+    }
+
+
+
+    .ContainerCima .DadosPessoais li svg {
+        margin-left: 10px;
+
+        @media screen and (max-width: 400px) {
+            margin-left: 2px;
+        }
+
+        /* Ajustar espaçamento entre ícones e texto */
+    }
+
+
+
+    .container p {
+        font-size: 15px;
+    }
+
+    .containerApresentacao p {
+        font-size: 3vw;
+    }
+
+    .Habilidades {
+        position: relative;
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 25px;
+        padding: 5%;
+        padding-bottom: 10%;
+        max-width: 100%;
+        width: auto;
+        height: auto;
+        margin: 0;
+        max-height: auto;
+
+    }
+
+
+    .Habilidades li {
+        padding: 0;
+        height: auto;
+        width: auto;
+        text-align: center;
+
+
+    }
+
+    .Habilidades p {
+        font-size: 2.5vw;
+
+        @media screen and (min-width: 700px) and (max-width: 1050px) {
+            padding-top: 5px;
+            padding-bottom: 5px;
+
+        }
+    }
+
+    .imagemHabilidade {
+        height: 55px;
+        width: 75px;
+        border-radius: 10px;
+
+    }
+
+    .Projetos {
+        gap: 5%;
+        padding-bottom: 10%;
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .Projetos li {
+        display: flex;
+        font-size: 3vw;
+        padding: 5%;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .Certificados {
+        grid-template-columns: repeat(1, 1fr);
+
+    }
+
+    .Certificados li {
+
+        text-align: center;
+        list-style-type: none;
+        box-sizing: border-box;
+        margin-bottom: 80px;
+
+    }
+
+    .imagemCertificado {
+        width: 100%;
+        height: 100%;
+        display: block;
+        margin: 0 auto;
+    }
+
+    .container h3 {
+        font-size: 2vw;
+    }
+}
+
+@media (min-width: 1050px) and (max-width: 1200px) {
+
+    .DadosPessoais {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        list-style-type: none;
+        /* Remove os marcadores padrão da lista */
+        padding: 0;
+        margin: 0;
+        box-sizing: border-box;
+        height: 80%;
+    }
+
+    .DadosPessoais li {
+        background-color: rgb(255, 255, 255);
+        border-radius: 15px;
+        padding: 10px;
+        margin: 20px;
+        color: rrgb(7, 0, 36);
+        font-size: 14px;
+    }
+
+    .Habilidades p {
+        font-size: 15px;
+    }
+
+
+}
+
+
+
+.dark {
+    .container {
+
+        background: rgb(12, 12, 14);
+
+
+    }
+
+    .link {
+
+        color: #007bff;
+
+    }
+
+
+    .ContainerCima {
+        background-color: rgb(0, 0, 0);
+    }
+
+    .ContainerCimaPai {
+        background-color: rgb(0, 0, 0);
+    }
+
+
+    .ContainerCimaPai h1 {
+        background-color: rgb(0, 0, 0);
+        color: white;
+
+
+    }
+
+
+
+
+    .container h2 {
+
+        color: rgb(202, 202, 202);
+    }
+
+    .container h3 {
+
+        color: white;
+
+    }
+
+    .container p {
+
+        color: rgb(168, 168, 168);
+    }
+
+    .ContainerCima {
+
+
+        color: white;
+
+
+
+    }
+
+
+
+
+    .DadosPessoais li {
+        background: rgb(39, 39, 39);
+
+
+    }
+
+
+    .DadosPessoais li a {
+        color: rgb(145, 144, 255);
+
+    }
+
+    .DadosPessoais li a:hover {
+        color: #4747ff;
+        /* Ou qualquer cor desejada ao passar o mouse */
+
+
+    }
+
+
+
+
+
+    .container h1 {
+
+
+        color: white;
+
+
+
+    }
+
+    .containerApresentacao {
+        background-color: rgb(0, 0, 0);
+    }
+
+
+
+
+
+    .containerAzul {
+
+        background-image: url('../../repositorioImagens/FundoSkills.png');
+        background-size: cover;
+        background-position: center;
+        background-color: rgb(56, 56, 62);
+        background-blend-mode: overlay;
+
+
+
+
+
+    }
+
+
+
+
+
+
+
+    .Habilidades li {
+
+        color: white;
+
+    }
+
+
+    .Habilidades p {
+        background-color: rgb(21, 21, 33);
+        color: rgb(232, 232, 232);
+        font-weight: 300;
+
+
+    }
+
+    .containerProjetos {
+        background-color: black;
+    }
+
+
+
+
+
+    .Projetos li {
+        color: rgb(255, 255, 255);
+
+    }
+
+    .Projetos li a {
+
+        color: rgb(255, 255, 255);
+
+
+    }
+
+
+
+    .ContainerAzul2 {
+
+        background: linear-gradient(to right, #12101a, #232f38);
+
+
+    }
+
+
+
+
+
+
+    .Certificados {
+
+        background: linear-gradient(to right, #12101a, #232f38);
+    }
+
+
+
+    ul.Certificados li p {
+
+        color: rgb(215, 215, 215);
+
+    }
+
+
+
+
+    @media (max-width: 1050px) {
+        .ContainerCima {
+
+
+            background: rgb(12, 12, 14);
+
+        }
+
+
+
+
+
+
+
+
+    }
+
+}

@@ -1,0 +1,50 @@
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+
+.container {
+
+    position: flex;
+    bottom: 0;
+    height: auto;
+    width: 100%;
+    max-width: 100%;
+    text-align: center;
+    font-weight: bold;
+    line-height: 1.5;
+    font-family: Arial,
+        Helvetica,
+        sans-serif;
+    font-size: 1vw;
+    color: rgb(56, 56, 56);
+    background-color: white;
+    padding-top: 0.5%;
+    opacity: 0;
+    animation: fadeInUp 1s ease-in-out 0.6s forwards;
+    margin-bottom: -24px;
+
+    @media screen and (max-width: 600px) {
+        font-size: 4vw;
+        padding-bottom: 5px;
+        padding-top: 10px;
+
+    }
+
+}
+
+
+.dark {
+    .container {
+        background-color: black;
+        color: white;
+    }
+}

@@ -1,0 +1,124 @@
+/* Animação de carregamento */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Container principal */
+.container {
+    padding: 20px;
+    min-height: 100vh;
+    margin: 0;
+    padding-top: 90px;
+    transition: background-color 0.3s, color 0.3s;
+    background-image: url('../../repositorioImagens/FundoSkills.png');
+    background-size: cover;
+    background-position: center;
+    background-blend-mode: overlay;
+}
+
+/* Header da página */
+.header {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.header h1 {
+    margin: 0;
+    margin-top: 15px;
+}
+
+/* Input de pesquisa */
+.searchInput {
+    padding: 10px;
+    width: 80%;
+    max-width: 400px;
+    margin-top: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 1rem;
+}
+
+
+.grid {
+    display: grid;
+    gap: 20px;
+    grid-template-columns: repeat(auto-fit, minmax(clamp(250px, 50vw, 500px), 1fr));
+}
+
+
+/* Estilo dos cartões */
+.card {
+    background-color: #f0f0f0;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    opacity: 0;
+    animation: fadeInUp 0.9s ease-in-out 0.2s forwards;
+    transition: transform 0.2s;
+    color: black;
+    font-size: 15px;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+}
+
+/* Imagem do cartão com tamanho mínimo para melhor visualização */
+.image {
+    width: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+/* Conteúdo do cartão */
+.cardContent {
+    padding: 15px;
+}
+
+.cardContent h2 {
+    margin-bottom: 10px;
+}
+
+/* Botão para expandir a imagem */
+.expandButton {
+    margin-top: 10px;
+    padding: 8px 16px;
+    font-size: 1rem;
+    font-weight: bold;
+    color: #ffffff;
+    background-color: #007bff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.expandButton:hover {
+    background-color: #0056b3;
+}
+
+/* Tema claro */
+.light {
+    background-color: rgb(126, 130, 135);
+    color: #ffffff;
+}
+
+/* Tema escuro */
+.dark {
+    background-color: #1f1f1f;
+    color: #f0f0f0;
+}
+
+.dark .card {
+    background-color: #2a2a2a;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+    color: white;
+}

@@ -1,0 +1,588 @@
+.tabsContainer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: linear-gradient(to right, #ffffff, #ffffff);
+    height: 100px;
+    box-sizing: border-box;
+    box-shadow: 0px 10px 10px rgba(0, 0, 0, 0.1), 0px 4px 8px rgba(0, 0, 0, 0.1);
+    border-bottom: 0.1px solid rgb(45, 45, 45);
+    position: fixed;
+    top: 0;
+    left: 0;
+    margin: 0;
+    width: 100%;
+    z-index: 1001;
+    padding: 0;
+}
+
+.MenuContainer {
+    padding-top: 40px;
+    padding-bottom: 40px;
+
+}
+
+.MenuContainer1 {
+    padding-top: 40px;
+    padding-bottom: 40px;
+    margin-left: 6vw;
+    display: flex;
+    flex-direction: row;
+    gap: 1vw;
+}
+
+.LogoContainer {
+    padding: 0;
+    margin: 0;
+    margin-right: 4vw;
+    height: 90%;
+
+
+}
+
+
+
+.tabIcon {
+    vertical-align: middle;
+    margin-right: 8px;
+    margin-bottom: 4px;
+
+}
+
+.Logo {
+    display: block;
+    width: 180px;
+    height: 80px;
+    margin: 0;
+    padding: 0;
+
+
+
+
+}
+
+
+.ClienteContainer {
+    margin-left: auto;
+    padding-top: 40px;
+    padding-bottom: 40px;
+    font-size: 10px;
+}
+
+.iconProfile {
+    vertical-align: top;
+    color: rgb(0, 0, 0);
+    padding-right: 5px;
+    /* Alinha verticalmente o ícone */
+}
+
+.themeButton {
+    margin: 0;
+    padding: 0;
+    margin-left: 4vw;
+
+}
+
+.iconEscuro {
+    color: rgb(0, 0, 0);
+    font-size: 30px;
+    /* ou qualquer valor desejado */
+
+}
+
+
+.tab {
+    font-family: Arial, sans-serif;
+    font-size: 1.2vw;
+    text-decoration: none;
+    font-weight: bold;
+    border-radius: 20px;
+    color: rgb(138, 138, 138);
+    padding: 0.1vw;
+    transition: background-color 0.3s, color 0.3s;
+
+    @media screen and (max-width: 1400px) {
+        font-size: 1.3vw;
+
+    }
+
+
+}
+
+
+
+
+.tab:not(:last-child),
+.tab1:not(:last-child) {
+    margin-right: 20px;
+}
+
+.tab:hover,
+.tab1:hover,
+.tabsContainer button:hover {
+    background-color: #2a292e;
+    color: #ffffff;
+
+}
+
+.tabsContainer button {
+    border: none;
+    border-radius: 10px;
+    color: rgb(138, 138, 138);
+    background-color: transparent;
+    transition: background-color 0.3s, color 0.3s;
+    font-size: 14px;
+    font-family: arial;
+}
+
+.topTab button {
+    display: none;
+}
+
+
+.tab:not(:last-child),
+.tab1:not(:last-child) {
+    margin-right: 20px;
+}
+
+.tab:hover,
+.tab1:hover,
+.tabsContainer button:hover {
+    background-color: #d6d6d6;
+    color: #0170c4;
+
+
+}
+
+.tabsContainer button {
+    border: none;
+    border-radius: 10px;
+    color: rgb(66, 66, 66);
+    background-color: transparent;
+    font-size: 15px;
+    font-family: arial;
+    cursor: pointer;
+}
+
+.topTab button {
+    border: none;
+    border-radius: 10px;
+    color: rgb(0, 0, 0);
+    background-color: transparent;
+
+}
+
+.closeButton {
+    display: none;
+}
+
+
+
+
+
+
+
+
+.dark {
+
+
+    .tabsContainer {
+        background: linear-gradient(to right, #040403, #161613);
+        border-bottom: 0.1px solid rgb(45, 45, 45);
+
+    }
+
+
+    .LogoContainer h2 {
+        color: white;
+    }
+
+
+    .iconClaro {
+        color: rgb(255, 255, 255);
+        font-size: 25px;
+
+    }
+
+
+    .tab,
+    .tab1 {
+        color: rgb(138, 138, 138);
+
+
+    }
+
+
+
+    .tab:hover,
+    .tab1:hover,
+    .tabsContainer button:hover {
+        background-color: #2a292e;
+        color: #ffffff;
+
+    }
+
+    .tabsContainer button {
+
+        color: rgb(138, 138, 138);
+        background-color: transparent;
+
+    }
+
+
+    .topTab button:hover {
+        color: #00a3c4;
+    }
+
+
+
+
+}
+
+@media screen and (max-width: 1050px) {
+
+
+
+    .topTab {
+        background: rgb(255, 255, 255);
+        border-top: 1px solid #001e53;
+        color: #5b5a63;
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+        padding: 10px;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        max-width: 100%;
+        z-index: 1002;
+        height: 30px;
+        text-align: center;
+        box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.3);
+    }
+
+
+
+    .topTab .botaoTema {
+        display: block;
+        border-radius: 10px;
+        margin-right: 10px;
+
+    }
+
+    .topTab .botaoTema:hover {
+        color: rgb(20, 13, 95);
+        background-color: rgb(227, 227, 227);
+
+    }
+
+    .iconClaro {
+        font-size: 20px;
+    }
+
+
+    .topTab .SoliciteSeuOrçamento {
+        display: block;
+        background-color: #004895;
+        border: none;
+        border-radius: 5px;
+        color: #fff;
+        cursor: pointer;
+        margin-left: 15px;
+        font-weight: 700;
+        padding: 8px;
+
+    }
+
+    .topTab .SoliciteSeuOrçamentoTxt {
+        color: white;
+        font-style: none;
+        text-decoration: none;
+        font-size: 11px;
+
+    }
+
+    .menuIcon {
+        cursor: pointer;
+    }
+
+    .menuIcon div {
+        width: 25px;
+        height: 5px;
+        background-color: #5c5c5c;
+        margin: 6px 0;
+        transition: background-color 0.3s;
+    }
+
+    .menuIcon:hover div {
+        background-color: #00a3c4;
+    }
+
+    .menuIcon.active div {
+        background-color: #00aed1;
+    }
+
+    .iconActive {
+        color: #00aed1;
+    }
+
+    .topTab button:hover {
+        color: #038ef8;
+    }
+
+    .tabsContainer {
+        display: grid;
+        grid-template-columns: 1fr;
+        background: rgb(240, 240, 240);
+        height: 100%;
+        box-shadow: 0px 10px 10px rgba(0, 0, 0, 0.1), 0px 4px 8px rgba(0, 0, 0, 0.1);
+        border-bottom: 0.1px solid rgb(45, 45, 45);
+        top: 0;
+        left: -1000px;
+        width: 300px;
+        z-index: 1002;
+        padding-bottom: 200px;
+
+
+    }
+
+    /* Ajustes para os itens dentro da lista */
+    .tabsContainer>* {
+        margin: 0;
+        padding: 0;
+        padding-top: 20px;
+        padding-bottom: 30px;
+
+    }
+
+    /* Estilizando os links dentro da lista */
+    .tabsContainer a {
+        color: rgb(97, 97, 97);
+        text-decoration: none;
+        font-size: 16px;
+        display: block;
+        margin-left: 20px;
+        padding: 0;
+        padding-bottom: 28px;
+
+    }
+
+    /* Adicionando estilo ao último item da lista */
+    .tabsContainer> :last-child {
+        border-bottom: none;
+
+    }
+
+
+
+    .MenuContainer1 {
+        padding: 0;
+        display: flex;
+        flex-direction: column;
+
+
+    }
+
+    .tab1 {
+        border: none;
+    }
+
+    .open {
+        left: 0;
+    }
+
+
+
+
+
+
+    /* Centralizar LogoContainer */
+    .LogoContainer {
+        padding: 0;
+        margin: 0;
+        padding-left: 25px;
+        margin-top: 0;
+    }
+
+    .TextContainer {
+        display: inline-block;
+        margin: 0;
+        padding: 0;
+    }
+
+
+
+    .Logo {
+        display: block;
+        margin: 0;
+
+    }
+
+
+
+
+
+    .ClienteContainer {
+        padding-bottom: 500px;
+    }
+
+    .AlinharBotao {
+        display: flex;
+        /* Use flexbox para alinhar os itens */
+        justify-content: flex-start;
+        /* Alinhe os itens à esquerda */
+        border: none;
+
+
+    }
+
+    .closeButton {
+        display: block;
+        width: 15%;
+        margin-left: 85%;
+
+
+
+    }
+
+
+    .closeButton p {
+        margin: 0;
+        padding: 0;
+        font-size: 25px;
+        color: rgb(255, 85, 85);
+    }
+
+    .closeButton p:hover {
+        color: rgb(0, 0, 0);
+    }
+
+    .overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+        /* Cor de fundo semi-transparente */
+        z-index: 999;
+        /* Garante que a camada esteja acima do conteúdo principal */
+    }
+
+
+
+
+
+    .dark {
+
+
+        .topTab {
+            background: rgb(0, 0, 0);
+            border-top: 1px solid #001e53;
+            color: #5b5a63;
+        }
+
+
+
+        .topTab button {
+            color: rgb(115, 115, 115);
+
+        }
+
+        .iconClaro {
+            color: rgb(255, 255, 255);
+
+        }
+
+
+
+        .menuIcon div {
+
+            background-color: #797979;
+
+        }
+
+        .menuIcon:hover div {
+            background-color: #00a3c4;
+        }
+
+        .menuIcon.active div {
+            background-color: #00aed1;
+        }
+
+        .iconActive {
+            color: #00aed1;
+        }
+
+
+        .tabsContainer {
+
+            background: linear-gradient(to right, #040403, #161613);
+            box-shadow: 0px 10px 10px rgba(0, 0, 0, 0.1), 0px 4px 8px rgba(0, 0, 0, 0.1);
+
+
+        }
+
+
+
+
+        /* Estilizando os links dentro da lista */
+        .tabsContainer a {
+            color: #fff;
+
+        }
+
+
+
+        .closeButton p {
+
+            color: rgb(255, 85, 85);
+        }
+
+        .overlay {
+
+            background-color: rgba(0, 0, 0, 0.5);
+
+        }
+
+
+    }
+}
+
+
+
+
+
+
+@media screen and (max-width: 300px) {
+
+    .light {
+        .tabsContainer {
+            width: 100%;
+        }
+
+        .tabsContainer a {
+            font-size: 6vw;
+        }
+
+        .LogoContainer {
+            padding-left: 0;
+        }
+
+    }
+
+    .dark {
+        .tabsContainer {
+            width: 100%;
+        }
+
+        .LogoContainer {
+            padding-left: 0;
+        }
+
+
+    }
+
+}

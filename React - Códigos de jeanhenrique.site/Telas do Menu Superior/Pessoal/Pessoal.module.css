@@ -1,0 +1,272 @@
+.pessoalContainer {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    padding: 1rem;
+    margin: 0 auto;
+    font-family: 'Arial', sans-serif;
+    background-image: url('../../repositorioImagens/FundoSkills.png');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    background-blend-mode: overlay;
+    background-color: rgb(84, 84, 103);
+    padding-top: 100px;
+
+    @media screen and (max-width: 1050px) {
+        padding-top: 50px;
+
+    }
+}
+
+.title {
+    text-align: center;
+    font-size: 2rem;
+    color: #ffffff;
+    margin-bottom: 0;
+    padding: 0;
+}
+
+.biografia,
+.fotos,
+.hobbies,
+.personalidade,
+.maisSobreMim {
+    background-color: #f9f9f9;
+    padding: 1rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    max-width: 70%;
+    margin-left: 15%;
+    margin-bottom: 1rem;
+
+    @media screen and (max-width: 1050px) {
+        max-width: 90%;
+        margin-left: 5%;
+    }
+}
+
+
+
+.biografia h2,
+.fotos h2,
+.hobbies h2,
+.personalidade h2,
+.maisSobreMim h2 {
+    font-size: 1.5rem;
+    margin-bottom: 0.5rem;
+    color: #222;
+}
+
+.biografia p,
+.hobbies p,
+.personalidade p,
+.maisSobreMim p,
+.hobbies ul {
+    font-size: 1rem;
+    color: #555;
+    line-height: 1.6;
+    margin: 0.5rem 0;
+}
+
+.hobbies ul {
+    list-style-type: square;
+    margin-left: 1.5rem;
+}
+
+/* ====== Seção de álbuns ====== */
+.fotos {
+    position: relative;
+    padding: 1rem;
+}
+
+.albumsGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 1rem;
+}
+
+.albumCard {
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    cursor: pointer;
+    overflow: hidden;
+    transition: transform 0.2s;
+}
+
+.albumCard:hover {
+    transform: scale(1.02);
+}
+
+.albumCover {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+    object-position: center;
+    /* A capa não precisa ser clicável para abrir em nova guia */
+    transition: transform 0.2s ease;
+}
+
+.albumCover:hover {
+    transform: scale(1.01);
+}
+
+.albumInfo {
+    padding: 0.5rem;
+}
+
+.albumInfo h3 {
+    margin: 0.5rem 0 0.25rem;
+    font-size: 1.2rem;
+    color: #333;
+}
+
+.albumInfo p {
+    font-size: 0.9rem;
+    color: #777;
+}
+
+/* ====== Ao abrir um álbum ====== */
+.albumPhotos {
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.backButton {
+    background-color: #ccc;
+    border: none;
+    border-radius: 4px;
+    padding: 0.5rem 1rem;
+    cursor: pointer;
+    margin-bottom: 1rem;
+    font-weight: bold;
+    color: #333;
+}
+
+.backButton:hover {
+    background-color: #bbb;
+}
+
+.albumPhotos h3 {
+    margin: 0;
+    font-size: 1.5rem;
+    color: #222;
+}
+
+.albumPhotos p {
+    font-size: 1rem;
+    color: #555;
+}
+
+/* Grid de fotos dentro do álbum */
+.photosGrid {
+    column-count: 3;
+    /* Número de colunas; ajuste conforme desejado */
+    column-gap: 1rem;
+    /* Espaço entre as colunas */
+    /* Você pode usar media queries para tornar as colunas responsivas */
+}
+
+/* Cada card de foto com tamanho fixo */
+.photoCard {
+    break-inside: avoid;
+}
+
+/* As imagens preencherão 100% do container (deformando se necessário) e serão centralizadas */
+.photoCard img,
+.photoCard .lazy-load-image-background {
+    width: 100%;
+    height: auto;
+    /* Permite que a altura seja definida proporcionalmente */
+    display: block;
+    cursor: pointer;
+    transition: transform 0.2s ease;
+}
+
+.photoCard img:hover,
+.photoCard .lazy-load-image-background:hover {
+    transform: scale(1.01);
+}
+
+.photoDescription {
+    font-size: 0.9rem;
+    padding: 0.5rem;
+    color: #555;
+}
+
+/* ========== Tema ESCURO ========== */
+.dark {
+    background-image: none;
+    background-color: #121212;
+    color: #e0e0e0;
+}
+
+.dark .title {
+    color: #e0e0e0;
+}
+
+.dark .biografia,
+.dark .fotos,
+.dark .hobbies,
+.dark .personalidade,
+.dark .maisSobreMim {
+    background-color: #1e1e1e;
+    box-shadow: 0 2px 5px rgba(255, 255, 255, 0.1);
+    color: #e0e0e0;
+}
+
+.dark .biografia h2,
+.dark .fotos h2,
+.dark .hobbies h2,
+.dark .personalidade h2,
+.dark .maisSobreMim h2 {
+    color: #e0e0e0;
+}
+
+.dark .biografia p,
+.dark .hobbies p,
+.dark .personalidade p,
+.dark .maisSobreMim p,
+.dark .hobbies ul {
+    color: #ccc;
+}
+
+.dark .albumCard,
+.dark .photoCard {
+    background-color: #2a2a2a;
+    box-shadow: 0 2px 5px rgba(255, 255, 255, 0.1);
+}
+
+.dark .albumInfo h3 {
+    color: #ddd;
+}
+
+.dark .albumInfo p,
+.dark .photoDescription {
+    color: #ccc;
+}
+
+.dark .backButton {
+    background-color: #444;
+    color: #e0e0e0;
+}
+
+.dark .backButton:hover {
+    background-color: #555;
+}
+
+@media (max-width: 768px) {
+    .photosGrid {
+        column-count: 2;
+    }
+}
+
+@media (max-width: 480px) {
+    .photosGrid {
+        column-count: 1;
+    }
+}

@@ -1,0 +1,185 @@
+/* IC.module.css */
+.light {
+    background-color: #ffffff;
+    color: #000000;
+}
+
+.dark {
+    background-color: #171717;
+    color: #f9f9f9;
+}
+
+.containerFora {
+    background-image: url('../../repositorioImagens/IC.jpg');
+    background-blend-mode: overlay;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    padding-top: 110px;
+    padding-bottom: 50px;
+}
+
+.dark .containerFora {
+    background-color: rgb(43, 43, 43);
+}
+
+.light .containerFora {
+    background-color: rgb(117, 117, 117);
+}
+
+.container {
+    width: 80%;
+    max-width: 80%;
+    margin: 0 auto;
+    padding: 0 20px;
+    padding-top: 1px;
+    padding-bottom: 1px;
+    text-align: justify;
+    background-color: #ffffff;
+    color: #000000;
+    border-radius: 10px;
+}
+
+.dark .container {
+    background-color: #141414;
+    color: #d8d8d8;
+}
+
+.alunosContainer {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 20px;
+}
+
+.alunos {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 20px;
+    width: 100%;
+}
+
+.aluno {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    flex: 1 1 20%;
+    /* Permite que os itens se ajustem responsivamente */
+    text-align: center;
+    transition: transform 0.3s;
+    box-sizing: border-box;
+    padding: 10px;
+    max-width: 200px;
+    /* Limita a largura máxima */
+}
+
+.aluno:hover {
+    transform: scale(1.05);
+}
+
+.aluno p {
+    margin: 10px 0 0 0;
+    font-size: 1.2rem;
+    font-weight: bold;
+}
+
+.profileImage {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    margin-bottom: 10px;
+}
+
+.section {
+    margin-bottom: 20px;
+}
+
+.container h1 {
+    font-family: fantasy;
+    font-size: 40px;
+    text-align: center;
+    font-weight: 100;
+}
+
+.light .container h1 {
+    color: #313131;
+}
+
+.dark .container h1 {
+    color: #cdcdcd;
+}
+
+.container h2 {
+    font-weight: bold;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 35px;
+    margin-bottom: 15px;
+}
+
+.light .container h2 {
+    color: #2a2a2a;
+}
+
+.dark .container h2 {
+    color: #dadada;
+}
+
+.container h3 {
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 25px;
+}
+
+.light .container h3 {
+    color: #3e4044;
+}
+
+.dark .container h3 {
+    color: #d0d0d0;
+}
+
+/* sumário */
+.summary {
+    padding: 0;
+    margin: 0;
+    list-style: none;
+}
+
+.summary a {
+    text-decoration: none;
+}
+
+.summary a:hover {
+    text-decoration: underline;
+}
+
+.light .summary a {
+    color: rgb(15, 49, 94);
+}
+
+.dark .summary a {
+    color: #8395bd;
+}
+
+.dark .container .section h2 {
+    color: white;
+    margin-bottom: 15px;
+}
+
+.light .container .section h2 {
+    color: #2a2a2a;
+    margin-bottom: 15px;
+}
+
+.codeBlock {
+    background-color: #e6e6e6;
+    border-radius: 5px;
+    white-space: pre-wrap;
+    font-family: 'Courier New', Courier, monospace;
+    color: #333333;
+}
+
+.dark .codeBlock {
+    background-color: #333333;
+    color: #e6e6e6;
+}

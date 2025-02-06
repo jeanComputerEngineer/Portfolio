@@ -1,0 +1,210 @@
+.container {
+    background: rgb(12, 12, 14);
+    width: 100%;
+    text-align: center;
+    white-space: nowrap;
+
+
+
+    @media screen and (max-width: 950px) {
+
+
+        padding-bottom: 50%;
+    }
+}
+
+/* Evita que as listas quebrem para a próxima linha */
+
+
+.container h1 {
+    font-size: 30px;
+    color: white;
+    margin-top: 0;
+    padding-top: 120px;
+
+    @media screen and (max-width: 1050px) {
+        padding-top: 70px;
+        font-size: 7vw;
+    }
+}
+
+.container h2 {
+    text-align: center;
+    font-size: 25px;
+    margin-top: 5%;
+    color: rgb(138, 138, 138);
+
+    @media screen and (max-width: 950px) {
+        margin-bottom: 2%;
+        font-size: 5vw;
+    }
+}
+
+
+
+.relogio {
+    background-color: #343d49;
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    animation: fadeInUp 0.9s ease-in-out 0.4s forwards;
+    width: 50%;
+    max-width: 50%;
+    margin-left: 25%;
+    border: 1px solid white;
+    border-radius: 30px;
+
+
+    @media screen and (max-width: 950px) {
+        margin-left: 10%;
+        width: 80%;
+        max-width: 80%;
+    }
+
+}
+
+
+.relogio li {
+    margin: 0;
+    padding: 2%;
+    border-radius: 30px;
+    position: relative;
+    color: rgb(255, 0, 0);
+    font-family: 'DS-Digital';
+    font-size: 7vw;
+
+    @media screen and (max-width: 950px) {
+        font-size: 10vw;
+    }
+}
+
+.relogio li::before {
+    content: ":";
+    font-style: bold;
+    position: absolute;
+    left: -5%;
+    top: 50%;
+    transform: translateY(-50%);
+    margin: 0;
+}
+
+.relogio li:first-child::before {
+    content: none;
+    /* Remove os dois pontos antes do primeiro item */
+}
+
+.legenda {
+    color: rgb(135, 135, 135);
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    animation: fadeInUp 0.9s ease-in-out 0.4s forwards;
+    width: 50%;
+    max-width: 50%;
+    margin-left: 25%;
+    margin-top: 0.5%;
+
+    @media screen and (max-width: 950px) {
+        margin-left: 10%;
+        width: 80%;
+        max-width: 80%;
+    }
+
+
+
+
+
+}
+
+.legenda li {
+    font-family: arial;
+    font-size: 2vw;
+    text-align: center;
+
+    @media screen and (max-width: 950px) {
+        font-size: 15px;
+        margin-bottom: 4%;
+        font-size: 3vw;
+    }
+
+}
+
+
+
+.imagem {
+    width: 50%;
+    height: auto;
+    padding-bottom: 5%;
+
+    @media screen and (max-width: 950px) {
+        width: 80%;
+    }
+}
+
+
+
+.light {
+
+    .container {
+
+        background-image: url('../../repositorioImagens/FundoSkills.png');
+        background-blend-mode: multiply;
+        background-color: rgb(255, 255, 255);
+        background-size: cover;
+        border: none;
+
+
+    }
+
+    .container h1 {
+        color: rgb(255, 255, 255);
+        font-family: Arial, Helvetica, sans-serif;
+        font-weight: bold;
+    }
+
+    .container h2 {
+        color: rgb(205, 205, 205);
+    }
+
+
+
+
+
+
+
+    .relogio {
+
+        border: 3px solid rgb(52, 52, 52);
+        background-color: rgb(222, 222, 222);
+
+
+    }
+
+
+    .relogio li {
+
+        color: rgb(255, 0, 0);
+
+    }
+
+
+
+    .legenda {
+        color: rgb(175, 175, 175);
+
+
+
+
+
+
+
+    }
+
+
+
+
+}
