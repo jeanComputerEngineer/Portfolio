@@ -1,0 +1,78 @@
+.light {
+    background: rgb(255, 255, 255) url('../../repositorioImagens/FundoSkills.png') no-repeat center/cover;
+    background-blend-mode: multiply;
+    color: #000000;
+    font-family: 'Roboto', sans-serif;
+
+}
+
+.dark {
+    background: rgb(93, 93, 93) url('../../repositorioImagens/FundoSkills.png') no-repeat center/cover;
+    background-blend-mode: multiply;
+    color: #f9f9f9;
+    font-family: 'Roboto', sans-serif;
+}
+
+
+.GastosResidenciais {
+    max-width: 90%;
+    margin: 0 5%;
+    margin-top: 100px;
+    border-radius: 8px;
+    margin-top: 90px;
+    padding-top: 1px;
+    padding-bottom: 1px;
+}
+
+.GastosResidenciais h1 {
+    text-align: center;
+    font-size: 2.5rem;
+    color: #ffffff;
+    margin-bottom: 20px;
+    font-family: 'Arial', sans-serif;
+}
+
+.dark .GastosResidenciais h1 {
+    color: #ffffff;
+}
+
+section {
+    margin-bottom: 30px;
+    padding: 1.5rem;
+    background: rgba(21, 21, 21, 0.03);
+    border-radius: 8px;
+    transition: background 0.3s;
+    background-color: rgb(229, 229, 229);
+}
+
+.dark section {
+    background: rgba(255, 255, 255, 0.05);
+}
+
+section h2 {
+    margin-bottom: 1.2rem;
+    font-size: 1.8rem;
+    color: #007bff;
+    border-bottom: 2px solid #007bff;
+    padding-bottom: 0.5rem;
+}
+
+@media (max-width: 1050px) {
+    .GastosResidenciais {
+        padding: 1rem;
+        margin-top: 60px;
+    }
+
+    .GastosResidenciais h1 {
+        font-size: 2rem;
+    }
+
+    section h2 {
+        font-size: 1.5rem;
+    }
+
+    button {
+        font-size: 0.9rem;
+        padding: 0.5rem 1rem;
+    }
+}

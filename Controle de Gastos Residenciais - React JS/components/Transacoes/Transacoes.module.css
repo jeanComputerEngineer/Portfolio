@@ -1,0 +1,364 @@
+.light .transacoesContainer {
+    font-family: Arial, sans-serif;
+    background-color: #f0f0f0;
+}
+
+.light .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.light .header h2 {
+    margin: 0;
+    font-size: 1.5rem;
+    color: #333333;
+}
+
+.light .btnAdicionar {
+    background-color: #28a745;
+    color: #ffffff;
+    border: none;
+    padding: 10px 16px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background-color 0.3s ease;
+}
+
+.light .btnAdicionar:hover {
+    background-color: #218838;
+}
+
+.light .cadastroTransacao {
+    padding: 10px;
+    background-color: #ffffff;
+
+
+}
+
+.light .listaTransacoes {
+    border: 1px solid #dddddd;
+    padding: 1rem;
+    margin-bottom: 2rem;
+    background-color: #ffffff;
+}
+
+
+.light .formGroup label,
+.light .formGroupTipo label {
+    display: block;
+    font-weight: bold;
+    margin-top: 15px;
+    margin-bottom: 5px;
+    color: #555555;
+    box-sizing: border-box;
+}
+
+.light input,
+.light select {
+    width: 100%;
+    padding: 0.4rem;
+    border: 1px solid #989898;
+    border-radius: 4px;
+    background-color: #ffffff;
+    color: #333333;
+    box-sizing: border-box;
+
+}
+
+.sameRow {
+    display: flex;
+    flex-direction: row;
+}
+
+.sameRow .formGroup,
+.sameRow .formGroupTipo {
+    width: 48%;
+}
+
+.sameRow .formGroupTipo {
+    margin-left: 8%;
+
+}
+
+
+
+.light .table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+}
+
+.light .table th,
+.light .table td {
+    border: 1px solid #bababa;
+    padding: 0.5rem;
+    text-align: center;
+}
+
+.light .table th {
+    background-color: #f5f5f5;
+    color: #333333;
+}
+
+.light .table .descricao,
+.dark .table .descricao {
+    width: 70%;
+    text-align: left;
+}
+
+.light .table .valor,
+.dark .table .valor {
+    width: 12%;
+    text-align: right;
+}
+
+.light .table .valorTitulo,
+.dark .table .valorTitulo {
+    width: 12%;
+    text-align: center;
+}
+
+.light .table .tipo,
+.dark .table .tipo {
+    width: 12%;
+    text-align: left;
+}
+
+.light .table .pessoa,
+.dark .table .pessoa {
+    width: 6%;
+    text-align: center;
+}
+
+
+
+.light .btnSalvar {
+    background-color: #28a745;
+    color: #ffffff;
+    border: none;
+    padding: 10px 16px;
+    border-radius: 5px;
+    cursor: pointer;
+    width: 100%;
+    font-weight: bold;
+    transition: background-color 0.3s ease;
+    margin-top: 20px;
+}
+
+.light .btnSalvar:hover {
+    background-color: #218838;
+}
+
+.light .modalOverlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.65);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    padding: 10px;
+}
+
+.light .modalContent {
+    background-color: #ffffff;
+    border-radius: 8px;
+    width: 90%;
+    max-width: 500px;
+    padding: 20px;
+    position: relative;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+}
+
+.light .closeButton {
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    font-size: 28px;
+    color: #333333;
+    cursor: pointer;
+}
+
+.dark .transacoesContainer {
+    font-family: Arial, sans-serif;
+    background-color: #1a1a1a;
+}
+
+.dark .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    margin-bottom: 20px;
+}
+
+.dark .header h2 {
+    margin: 0;
+    font-size: 1.5rem;
+    color: #ffffff;
+}
+
+.dark .btnAdicionar {
+    background-color: #009688;
+    color: #ffffff;
+    border: none;
+    padding: 10px 16px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background-color 0.3s ease;
+}
+
+.dark .btnAdicionar:hover {
+    background-color: #00796b;
+}
+
+.dark .cadastroTransacao {
+    padding: 10px;
+    background-color: #2a2a2a;
+    margin: 0;
+}
+
+
+.cadastroTransacao h3 {
+    text-align: center;
+    margin: 0;
+
+}
+
+.dark .listaTransacoes {
+    border: 1px solid #444444;
+    padding: 1rem;
+    margin-bottom: 2rem;
+    background-color: #2a2a2a;
+}
+
+
+
+.dark .formGroup label,
+.dark .formGroupTipo label {
+    display: block;
+    font-weight: bold;
+    margin-top: 15px;
+    margin-bottom: 5px;
+    color: #dddddd;
+    box-sizing: border-box;
+
+}
+
+.dark input,
+.dark select {
+    width: 100%;
+    padding: 0.4rem;
+    border: 1px solid #555555;
+    border-radius: 4px;
+    background-color: #444444;
+    color: #ffffff;
+    box-sizing: border-box;
+
+}
+
+.dark .table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+}
+
+.dark .table th,
+.dark .table td {
+    border: 1px solid #444444;
+    padding: 0.5rem;
+    text-align: center;
+}
+
+.dark .table th {
+    background-color: #444444;
+    color: #ffffff;
+}
+
+.dark .btnSalvar {
+    background-color: #009688;
+    color: #ffffff;
+    border: none;
+    padding: 10px 16px;
+    border-radius: 5px;
+    cursor: pointer;
+    width: 100%;
+    font-weight: bold;
+    transition: background-color 0.3s ease;
+    margin-top: 20px;
+}
+
+.dark .btnSalvar:hover {
+    background-color: #00796b;
+}
+
+
+.dark .modalOverlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.65);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    padding: 10px;
+}
+
+.dark .modalContent {
+    background-color: #2a2a2a;
+    border-radius: 8px;
+    width: 90%;
+    max-width: 500px;
+    padding: 20px;
+    position: relative;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+}
+
+.dark .closeButton {
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    font-size: 28px;
+    color: #ffffff;
+    cursor: pointer;
+}
+
+
+
+
+@media (max-width: 768px) {
+    .header h2 {
+        font-size: 1.3rem;
+    }
+
+    .btnAdicionar {
+        padding: 8px 12px;
+        font-size: 0.9rem;
+    }
+
+    .table th,
+    .table td {
+        padding: 8px;
+        font-size: 0.9rem;
+    }
+
+    .modalContent {
+        padding: 15px;
+    }
+
+    .closeButton {
+        top: 5px;
+        right: 10px;
+        font-size: 20px;
+    }
+}

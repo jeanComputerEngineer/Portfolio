@@ -1,0 +1,317 @@
+.white .pessoasContainer {
+    padding: 20px;
+    background-color: #f0f0f0;
+    font-family: Arial, sans-serif;
+}
+
+
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.header h2 {
+    margin: 0;
+    font-size: 1.5rem;
+    color: #000000;
+}
+
+.btnAdicionar {
+    background-color: #28a745;
+    color: #fff;
+    border: none;
+    padding: 10px 16px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background-color 0.3s ease;
+}
+
+.btnAdicionar:hover {
+    background-color: #218838;
+}
+
+.listaPessoas {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.listaPessoas h3 {
+    margin-top: 0;
+    color: #000000;
+}
+
+.table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+}
+
+.table th,
+.table td {
+    border: 1px solid #bababa;
+    padding: 10px;
+    text-align: left;
+}
+
+.table th {
+    background-color: #ffffff;
+    color: #000000;
+}
+
+.table .id {
+    text-align: center;
+    width: 5%;
+}
+
+.table .id1 {
+    text-align: center;
+}
+
+.table .nome {
+    text-align: left;
+    width: 70%;
+}
+
+.table .idade {
+    text-align: left;
+    width: 5%;
+}
+
+.table .acao {
+    text-align: center;
+    width: 20%;
+}
+
+.table tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+.btnEditar,
+.btnExcluir {
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-right: 5px;
+    transition: background-color 0.3s ease;
+}
+
+.btnExcluir {
+    background-color: #dc3545;
+}
+
+.btnEditar:hover {
+    background-color: #0069d9;
+}
+
+.btnExcluir:hover {
+    background-color: #c82333;
+}
+
+.modalOverlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.modalContent {
+    background-color: #fff;
+    border-radius: 8px;
+    width: 90%;
+    max-width: 500px;
+    padding: 10px;
+    position: relative;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.closeButton {
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    font-size: 24px;
+    color: #ff0000;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.cadastroPessoa {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+}
+
+.cadastroPessoa h3 {
+    margin-top: 0;
+    text-align: center;
+    color: #333;
+}
+
+.formGroup {
+    margin-bottom: 15px;
+}
+
+.formGroup label {
+    display: block;
+    margin-bottom: 5px;
+    color: #2e2e2e;
+}
+
+.formGroup input {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #999999;
+    border-radius: 4px;
+    background-color: #fff;
+    color: #333;
+    box-sizing: border-box;
+}
+
+.btnSalvar {
+    background-color: #28a745;
+    color: #fff;
+    border: none;
+    padding: 10px 16px;
+    border-radius: 5px;
+    cursor: pointer;
+    width: 100%;
+    font-weight: bold;
+    transition: background-color 0.3s ease;
+    box-sizing: border-box;
+
+}
+
+.btnSalvar:hover {
+    background-color: #218838;
+}
+
+
+.dark .pessoasContainer {
+    background-color: #1a1a1a !important;
+}
+
+.dark .header h2 {
+    color: #ffffff;
+}
+
+.dark .btnAdicionar {
+    background-color: #009688;
+}
+
+.dark .btnAdicionar:hover {
+    background-color: #00796b;
+}
+
+.dark .listaPessoas {
+    background-color: #2a2a2a;
+    box-shadow: 0 2px 5px rgba(255, 255, 255, 0.1);
+}
+
+.dark .listaPessoas h3 {
+    color: #ccc;
+}
+
+.dark .table th {
+    background-color: #444;
+    color: #fff;
+}
+
+.dark .table tr:nth-child(even) {
+    background-color: #333;
+}
+
+.dark .btnEditar,
+.dark .btnExcluir {
+    background-color: #007bff;
+    color: #fff;
+}
+
+.dark .btnEditar:hover {
+    background-color: #0056b3;
+}
+
+.dark .btnExcluir {
+    background-color: #e53935;
+}
+
+.dark .btnExcluir:hover {
+    background-color: #c62828;
+}
+
+.dark .modalContent {
+    background-color: #2a2a2a;
+}
+
+.dark .closeButton {
+    color: #ff0000;
+}
+
+.dark .cadastroPessoa {
+    background-color: #2a2a2a;
+}
+
+.dark .cadastroPessoa h3 {
+    color: #fff;
+}
+
+.dark .formGroup label {
+    color: #ddd;
+}
+
+.dark .formGroup input {
+    border: 1px solid #555;
+    background-color: #444;
+    color: #fff;
+}
+
+.dark .btnSalvar {
+    background-color: #009688;
+}
+
+.dark .btnSalvar:hover {
+    background-color: #00796b;
+}
+
+
+
+
+@media (max-width: 768px) {
+    .header h2 {
+        font-size: 1.3rem;
+    }
+
+    .btnAdicionar {
+        padding: 8px 12px;
+        font-size: 0.9rem;
+    }
+
+    .table th,
+    .table td {
+        padding: 8px;
+        font-size: 0.9rem;
+    }
+
+    .modalContent {
+        padding: 15px;
+    }
+
+    .closeButton {
+        top: 5px;
+        right: 10px;
+        font-size: 20px;
+    }
+}
