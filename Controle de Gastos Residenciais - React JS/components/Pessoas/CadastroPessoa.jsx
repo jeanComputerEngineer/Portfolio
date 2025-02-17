@@ -1,3 +1,11 @@
+/* 
+- Permite cadastrar ou editar uma pessoa.
+- Usa estados locais para guardar o nome e a idade; se for edição, pré-preenche os campos com os dados existentes.
+- Faz validações como verificar se o nome não está vazio, tem tamanho adequado e se a idade é um número válido.
+- Dependendo da situação, chama a função para cadastrar (addPessoa) ou para atualizar (updatePessoa) no contexto.
+*/
+
+
 import React, { useState, useContext, useEffect } from 'react';
 import { DataContext } from '../../DataContext';
 import { useTheme } from '../../../../ThemeContext';

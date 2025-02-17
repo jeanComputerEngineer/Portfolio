@@ -1,3 +1,10 @@
+/*
+- Armazenam e gerenciam os dados de pessoas, transações e IDs, usando o localStorage.
+- Quando a aplicação inicia, eles carregam os dados salvos e definem os estados iniciais.
+- Fornecem funções para adicionar, editar e excluir pessoas e transações, salvando tudo no localStorage.
+- Envolvendo a aplicação com o DataProvider, os outros componentes conseguem acessar esses dados e funções via DataContext.
+*/
+
 import React, { createContext, useState, useEffect } from 'react';
 
 export const DataContext = createContext();
@@ -48,6 +55,20 @@ export const DataProvider = ({ children }) => {
         localStorage.setItem('transacoes', JSON.stringify(updatedTransacoes));
     };
 
+    const updateTransacao = (transacaoAtualizada) => {
+        const updatedTransacoes = transacoes.map(t =>
+            t.id === transacaoAtualizada.id ? transacaoAtualizada : t
+        );
+        setTransacoes(updatedTransacoes);
+        localStorage.setItem('transacoes', JSON.stringify(updatedTransacoes));
+    };
+
+    const deleteTransacao = (id) => {
+        const updatedTransacoes = transacoes.filter(t => t.id !== id);
+        setTransacoes(updatedTransacoes);
+        localStorage.setItem('transacoes', JSON.stringify(updatedTransacoes));
+    };
+
     return (
         <DataContext.Provider value={{
             pessoas,
@@ -55,7 +76,9 @@ export const DataProvider = ({ children }) => {
             addPessoa,
             updatePessoa,
             deletePessoa,
-            addTransacao
+            addTransacao,
+            updateTransacao,
+            deleteTransacao
         }}>
             {children}
         </DataContext.Provider>

@@ -1,3 +1,10 @@
+/* 
+- Calcula e exibe os totais por pessoa e o total geral com receitas, despesas e saldo
+- Para cada pessoa, filtra as transações e soma os valores conforme o tipo
+- Mostra os números formatados com vírgula
+- Valores alinhados á direita, com a moeda usada (R$)
+*/
+
 import React, { useContext } from 'react';
 import { DataContext } from '../../DataContext';
 import { useTheme } from '../../../../ThemeContext';
@@ -30,13 +37,11 @@ function ConsultaTotais() {
 
     return (
         <div className={theme}>
-
             <div className={styles.Container}>
                 <div className={styles.header}>
                     <h2>Consulta de Totais</h2>
                 </div>
                 <div className={styles.ConsultaTotais}>
-
                     <h3>Totais por Pessoa</h3>
                     {pessoas.length === 0 ? (
                         <p>Nenhuma pessoa cadastrada.</p>
@@ -45,9 +50,9 @@ function ConsultaTotais() {
                             <thead>
                                 <tr>
                                     <th className={styles.pessoa}>Nome</th>
-                                    <th className={styles.valor}>Total Receitas</th>
-                                    <th className={styles.valor}>Total Despesas</th>
-                                    <th className={styles.valor}>Saldo</th>
+                                    <th className={styles.valor}>Total Receitas(R$)</th>
+                                    <th className={styles.valor}>Total Despesas(R$)</th>
+                                    <th className={styles.valor}>Saldo(R$)</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -56,9 +61,15 @@ function ConsultaTotais() {
                                     return (
                                         <tr key={p.id}>
                                             <td className={styles.pessoa}>{p.nome}</td>
-                                            <td className={styles.valor}>{totalReceitas.toFixed(2)}</td>
-                                            <td className={styles.valor}>{totalDespesas.toFixed(2)}</td>
-                                            <td className={styles.valor}>{saldo.toFixed(2)}</td>
+                                            <td className={styles.valor}>
+                                                {totalReceitas.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                                            </td>
+                                            <td className={styles.valor}>
+                                                {totalDespesas.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                                            </td>
+                                            <td className={styles.valor}>
+                                                {saldo.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                                            </td>
                                         </tr>
                                     );
                                 })}
@@ -70,16 +81,22 @@ function ConsultaTotais() {
                     <table className={styles.table}>
                         <thead>
                             <tr>
-                                <th className={styles.valor}>Total Receitas</th>
-                                <th className={styles.valor}> Total Despesas</th>
-                                <th className={styles.valor}> Saldo Geral</th>
+                                <th className={styles.valor}>Total Receitas(R$)</th>
+                                <th className={styles.valor}>Total Despesas(R$)</th>
+                                <th className={styles.valor}>Saldo Geral(R$)</th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr>
-                                <td className={styles.valor}>{totaisGerais.totalReceitas.toFixed(2)}</td>
-                                <td className={styles.valor}>{totaisGerais.totalDespesas.toFixed(2)}</td>
-                                <td className={styles.valor}>{totaisGerais.saldo.toFixed(2)}</td>
+                                <td className={styles.valor}>
+                                    {totaisGerais.totalReceitas.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                                </td>
+                                <td className={styles.valor}>
+                                    {totaisGerais.totalDespesas.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                                </td>
+                                <td className={styles.valor}>
+                                    {totaisGerais.saldo.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                                </td>
                             </tr>
                         </tbody>
                     </table>

@@ -1,3 +1,10 @@
+/*
+- Junta os componentes de cadastro(CadastroPessoa) e listagem(ListaPessoas) de pessoas
+- Controla quando mostrar o modal para cadastrar ou editar uma pessoa
+- Tem um botão para adicionar nova pessoa e, ao editar, passa os dados para o formulário
+- O modal é aberto ou fechado conforme o estado, permitindo o cadastro ou a edição
+*/
+
 import React, { useState, useContext } from 'react';
 import CadastroPessoa from './CadastroPessoa';
 import ListaPessoas from './ListaPessoas';

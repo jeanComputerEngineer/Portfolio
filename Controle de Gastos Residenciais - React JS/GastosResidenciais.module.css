@@ -3,6 +3,9 @@
     background-blend-mode: multiply;
     color: #000000;
     font-family: 'Roboto', sans-serif;
+    width: 100%;
+    min-width: 100%;
+
 
 }
 
@@ -11,17 +14,19 @@
     background-blend-mode: multiply;
     color: #f9f9f9;
     font-family: 'Roboto', sans-serif;
+    width: 100%;
+    min-width: 100%;
 }
 
 
 .GastosResidenciais {
-    max-width: 90%;
-    margin: 0 5%;
+    margin: 0;
     margin-top: 100px;
     border-radius: 8px;
     margin-top: 90px;
     padding-top: 1px;
     padding-bottom: 1px;
+
 }
 
 .GastosResidenciais h1 {
@@ -38,11 +43,15 @@
 
 section {
     margin-bottom: 30px;
+    max-width: 90%;
+    margin-left: 2.5%;
     padding: 1.5rem;
     background: rgba(21, 21, 21, 0.03);
     border-radius: 8px;
     transition: background 0.3s;
     background-color: rgb(229, 229, 229);
+
+
 }
 
 .dark section {
@@ -57,22 +66,44 @@ section h2 {
     padding-bottom: 0.5rem;
 }
 
+
+
 @media (max-width: 1050px) {
+
+    .light {
+        width: 100vw;
+        min-width: 100vw;
+    }
+
+    .dark {
+        width: 100vw;
+        min-width: 100vw;
+    }
+
     .GastosResidenciais {
-        padding: 1rem;
-        margin-top: 60px;
+
+        margin-top: 50px;
     }
 
     .GastosResidenciais h1 {
         font-size: 2rem;
     }
 
-    section h2 {
-        font-size: 1.5rem;
+    section {
+        margin-bottom: 30px;
+        min-width: 75%;
+        max-width: 90%;
+        margin-left: 2.5%;
+        margin-right: 2.5%;
+        padding: 1.5rem;
+        background: rgba(21, 21, 21, 0.03);
+        border-radius: 8px;
+        transition: background 0.3s;
+        background-color: rgb(229, 229, 229);
+        display: block;
+        overflow-x: auto;
+
     }
 
-    button {
-        font-size: 0.9rem;
-        padding: 0.5rem 1rem;
-    }
+
 }

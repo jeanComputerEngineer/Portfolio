@@ -1,3 +1,12 @@
+/* 
+- Usado para cadastrar uma nova transação
+- Possui campos para descrição, valor, tipo (receita ou despesa) e pessoa
+- Faz validações simples: verifica se todos os campos foram preenchidos, se a descrição tem no máximo 100 caracteres, se o valor é numérico e positivo, se a pessoa existe e se menores de 18 só podem registrar despesas
+- Após validar, cria uma transação e chama addTransacao (do DataContext) para salvar
+- Reseta os campos e chama onTransacaoCadastrada (se houver) para fechar o modal
+*/
+
+
 import React, { useState, useContext, useEffect } from 'react';
 import { DataContext } from '../../DataContext';
 import { useTheme } from '../../../../ThemeContext';

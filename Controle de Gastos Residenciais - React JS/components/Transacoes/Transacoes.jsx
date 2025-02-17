@@ -1,3 +1,11 @@
+/* 
+- Junta os componentes de cadastro (CadastroTransacao) e listagem (ListaTransacoes) de transações
+- Tem um botão para abrir o modal de cadastro de transação
+- Controla a abertura e fechamento do modal
+- Exibe a lista de transações cadastradas, carregando o componente ListaTransacoes
+*/
+
+
 import React, { useState } from 'react';
 import CadastroTransacao from './CadastroTransacao';
 import ListaTransacoes from './ListaTransacoes';
