@@ -91,4 +91,3 @@ Como funciona:
 Interface:  
 - Mostra os totais em tabelas bem organizadas, com um layout que se adapta ao tema atual (claro ou escuro).
 
-Espero que essa explicação ajude a entender melhor como o projeto foi estruturado e como cada componente contribui para a aplicação como um todo.
