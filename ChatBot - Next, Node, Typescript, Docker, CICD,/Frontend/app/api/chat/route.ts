@@ -18,7 +18,7 @@ export async function POST(request: NextRequest) {
         const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
             method: "POST",
             headers: {
-                "Authorization": "Bearer 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",
+                "Authorization": "Bearer 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",
                 "Content-Type": "application/json"
             },
             body: JSON.stringify(requestBody)

@@ -1,9 +1,11 @@
 import { Router, Request, Response, NextFunction } from "express";
 import { Conversation } from "../models/conversation.model";
 
+
 const router = Router();
 
-router.post("/", async (req: Request, res: Response) => {
+// Rota para chamada do chat (já existente)
+router.post("/", async (req: Request, res: Response): Promise<void> => {
     const { messages, model } = req.body;
     const requestBody = {
         model: model || "deepseek/deepseek-r1:free",
@@ -20,7 +22,7 @@ router.post("/", async (req: Request, res: Response) => {
         const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
             method: "POST",
             headers: {
-                "Authorization": "Bearer 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",
+                "Authorization": "Bearer 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",
                 "Content-Type": "application/json",
             },
             body: JSON.stringify(requestBody),
@@ -52,6 +54,7 @@ router.post("/", async (req: Request, res: Response) => {
     }
 });
 
+// Rota de criação e atualização via POST (já existente)
 router.post("/conversations", async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     if (!req.user) {
         res.status(401).json({ message: "Não autorizado" });
@@ -85,7 +88,8 @@ router.post("/conversations", async (req: Request, res: Response, next: NextFunc
     }
 });
 
-router.get("/conversations", async (req: Request, res: Response) => {
+// Rota GET para listar conversas (já existente)
+router.get("/conversations", async (req: Request, res: Response): Promise<void> => {
     if (!req.user) {
         return;
     }
@@ -102,6 +106,54 @@ router.get("/conversations", async (req: Request, res: Response) => {
     } catch (error) {
         console.error("Erro ao buscar conversas:", error);
         res.status(500).json({ message: "Erro ao buscar conversas" });
+    }
+});
+
+// ===== Rota PUT para edição da conversa =====
+router.put("/conversations/:conversationId", async (req: Request, res: Response): Promise<void> => {
+    if (!req.user) {
+        res.status(401).json({ message: "Não autorizado" });
+        return;
+    }
+    const { conversationId } = req.params;
+    const { title, messages } = req.body;
+    try {
+        const updated = await Conversation.findOneAndUpdate(
+            { _id: conversationId, accountId: (req.user as any)._id },
+            { title, messages },
+            { new: true }
+        );
+        if (!updated) {
+            res.status(404).json({ message: "Conversa não encontrada" });
+            return;
+        }
+        res.json(updated);
+    } catch (error) {
+        console.error("Erro ao atualizar conversa:", error);
+        res.status(500).json({ message: "Erro ao atualizar conversa" });
+    }
+});
+
+// ===== Rota DELETE para exclusão da conversa =====
+router.delete("/conversations/:conversationId", async (req: Request, res: Response): Promise<void> => {
+    if (!req.user) {
+        res.status(401).json({ message: "Não autorizado" });
+        return;
+    }
+    const { conversationId } = req.params;
+    try {
+        const deleted = await Conversation.findOneAndDelete({
+            _id: conversationId,
+            accountId: (req.user as any)._id,
+        });
+        if (!deleted) {
+            res.status(404).json({ message: "Conversa não encontrada" });
+            return;
+        }
+        res.json({ message: "Conversa excluída com sucesso" });
+    } catch (error) {
+        console.error("Erro ao excluir conversa:", error);
+        res.status(500).json({ message: "Erro ao excluir conversa" });
     }
 });
 
