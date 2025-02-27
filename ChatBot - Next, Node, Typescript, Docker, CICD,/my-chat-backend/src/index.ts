@@ -1,39 +1,47 @@
 import express from "express";
-import http from "http";
-import { connectDB } from "./config/db";
-import { securityMiddleware } from "./config/security";
+import session from "express-session";
+import passport from "passport";
+import cors from "cors";
+import helmet from "helmet";
 import authRoutes from "./routes/auth.routes";
 import chatRoutes from "./routes/chat.routes";
-import passport from "./config/passport";
-import session from "express-session";
-import { initSocket } from "./sockets/chat.socket";
+import { connectDB } from "./config/db";
+import "./config/passport";
 
 const app = express();
-const server = http.createServer(app);
 
-// Conectar ao MongoDB
-connectDB();
+// Primeiramente, aplique middlewares globais:
+app.use(helmet());
+app.use(express.json());
+app.use(
+    cors({
+        origin: "http://localhost:3000", // Frontend
+        credentials: true,              // Permite envio de cookies
+    })
+);
 
-// Configurar sessões (necessário para Passport e 2FA)
+// Configure a sessão e o Passport depois:
 app.use(
     session({
         secret: process.env.SESSION_SECRET || "segredo",
         resave: false,
-        saveUninitialized: false
+        saveUninitialized: false,
+        cookie: {
+            sameSite: "lax", // Tente "lax" ou, se necessário, "none" (mas lembre que "none" exige secure: true em produção)
+            secure: false,   // Em desenvolvimento, secure deve ser false
+        },
     })
 );
+
 app.use(passport.initialize());
 app.use(passport.session());
-
-// Middleware de segurança
-securityMiddleware(app);
 
 // Rotas
 app.use("/api/auth", authRoutes);
 app.use("/api/chat", chatRoutes);
 
-// Inicializar Socket.IO
-initSocket(server);
-
 const PORT = process.env.PORT || 5000;
-server.listen(PORT, () => console.log(`Servidor rodando na porta ${PORT}`));
+(async () => {
+    await connectDB();
+    app.listen(PORT, () => console.log(`Servidor rodando na porta ${PORT}`));
+})();

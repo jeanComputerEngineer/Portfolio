@@ -5,32 +5,25 @@ import { Account, IAccount } from "../models/account.model";
 const router = Router();
 
 router.post("/register", (req: Request, res: Response, next: NextFunction) => {
-    // Em vez de async, faça manualmente o try/catch
     (async () => {
         try {
             const { email, password, name, preferredLanguage } = req.body;
-
             const existing = await Account.findOne({ email });
             if (existing) {
-                return res.status(400).json({ message: "E-mail já cadastrado." });
+                res.status(400).json({ message: "E-mail já cadastrado." });
+                return;
             }
-
             const newUser = new Account({ email, password, name, preferredLanguage });
             await newUser.save();
-
             console.log("Usuário criado:", newUser);
-            return res.json({ message: "Usuário registrado com sucesso." });
+            res.json({ message: "Usuário registrado com sucesso." });
         } catch (error) {
             console.error("Erro no registro:", error);
-            return res.status(500).json({ message: "Erro no registro." });
+            res.status(500).json({ message: "Erro no registro." });
         }
     })().catch(next);
 });
 
-
-/**
- * Login manual com callback do passport
- */
 router.post("/login", (req: Request, res: Response, next: NextFunction) => {
     passport.authenticate("local", (err: unknown, user: IAccount, info: unknown) => {
         if (err) {
@@ -39,8 +32,6 @@ router.post("/login", (req: Request, res: Response, next: NextFunction) => {
         if (!user) {
             return res.status(401).json({ message: "Credenciais inválidas" });
         }
-
-        // Se quiser usar sessão, loga o user:
         req.logIn(user, (errLogin) => {
             if (errLogin) {
                 return next(errLogin);
@@ -51,11 +42,30 @@ router.post("/login", (req: Request, res: Response, next: NextFunction) => {
                     id: user._id,
                     name: user.name,
                     email: user.email,
-                    preferredLanguage: user.preferredLanguage
-                }
+                    preferredLanguage: user.preferredLanguage,
+                },
             });
         });
     })(req, res, next);
+});
+
+router.put("/account", (req: Request, res: Response, next: NextFunction) => {
+    if (!req.user) {
+        return;
+    }
+    const { name, preferredLanguage } = req.body;
+    Account.findByIdAndUpdate((req.user as IAccount)._id, { name, preferredLanguage }, { new: true })
+        .then((user) => res.json({ message: "Conta atualizada", user }))
+        .catch((err) => res.status(500).json({ message: "Erro ao atualizar conta" }));
+});
+
+router.delete("/account", (req: Request, res: Response, next: NextFunction) => {
+    if (!req.user) {
+        return;
+    }
+    Account.findByIdAndDelete((req.user as IAccount)._id)
+        .then(() => res.json({ message: "Conta excluída" }))
+        .catch((err) => res.status(500).json({ message: "Erro ao excluir conta" }));
 });
 
 export default router;
