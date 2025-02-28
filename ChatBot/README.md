@@ -1,15 +1,9 @@
-Aqui está o arquivo atualizado em **Markdown** com os requisitos implementados e não implementados organizados de forma clara e estruturada.  
 
-Caso precise de mais ajustes, é só avisar! 🚀  
-
----
-
-```md
 # ChatBot Application
 
 Este projeto é uma aplicação de ChatBot com autenticação e suporte multilíngue, desenvolvida com Next.js/React no frontend e Express/Node.js no backend. O sistema utiliza MongoDB para persistência, Redis e Bull para filas de processamento, Socket.IO para comunicação em tempo real e integra-se com uma API externa (OpenRouter) para gerar respostas de chat.
 
-## 📌 Sumário
+## Sumário
 
 - [Arquitetura](#arquitetura)
 - [Pré-requisitos](#pré-requisitos)
@@ -57,50 +51,39 @@ A aplicação é dividida em duas camadas principais:
 ### **Frontend**
 
 1. Navegue até a pasta do frontend:
-   ```bash
    cd frontend
-   ```
 2. Instale as dependências:
-   ```bash
    npm install
-   ```
 3. Inicie o servidor de desenvolvimento:
-   ```bash
    npm run dev
-   ```
 4. Acesse a aplicação em [http://localhost:3000](http://localhost:3000).
 
----
+
 
 ### **Backend**
 
 1. Navegue até a pasta do backend:
-   ```bash
-   cd backend
-   ```
+   cd my-chat-backend
 2. Instale as dependências:
-   ```bash
    npm install
-   ```
 3. Crie um arquivo **.env** na raiz do backend e configure as variáveis:
-   ```env
+   env
    PORT=5000
    MONGO_URI=mongodb://localhost:27017/mychat
    SESSION_SECRET=seuSegredoAqui
    ENCRYPTION_KEY=0123456789abcdef0123456789abcdef
    # (Opcional) YOUR_API_KEY para o OpenRouter, se necessário
-   ```
+   
 4. Inicie o servidor:
-   ```bash
    npm start
-   ```
+   
 5. O servidor estará disponível em [http://localhost:5000](http://localhost:5000).
 
----
+
 
 ## 📂 Estrutura de Diretórios
 
-```
+
 / (raiz do projeto)
 │
 ├── frontend/              # Código da aplicação Next.js/React
@@ -123,9 +106,7 @@ A aplicação é dividida em duas camadas principais:
 │   └── README.md          # Documentação do backend (opcional)
 │
 └── swagger.yaml           # Especificação da API (Swagger/OpenAPI)
-```
 
----
 
 ## 📜 Documentação da API (Swagger/OpenAPI)
 
@@ -145,9 +126,9 @@ A aplicação é dividida em duas camadas principais:
 ### **Endpoint para CSRF Token**
 - `GET /csrf-token` – Retorna o token CSRF para requisições seguras.
 
-⚡ **A documentação interativa pode ser visualizada no Swagger UI ou outro visualizador de arquivos OpenAPI.**
+**A documentação interativa pode ser visualizada no Swagger UI ou outro visualizador de arquivos OpenAPI.**
 
----
+
 
 ## ✅ Requisitos Implementados
 
@@ -179,7 +160,7 @@ A aplicação é dividida em duas camadas principais:
 ### **Bônus**
 - ✅ **Integração com LLM para respostas automáticas**.
 
----
+
 
 ## ❌ Requisitos Não Implementados
 
@@ -193,7 +174,4 @@ A aplicação é dividida em duas camadas principais:
 - ❌ Implementação em React Native.
 - ❌ Testes de performance com k6.
 
----
 
-🚀 **Se precisar de mais ajustes, só avisar!** 🚀
-```
