@@ -1,5 +1,6 @@
 "use client";
-import React, { useState, useEffect } from "react";
+
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 
 export default function Profile() {
@@ -7,6 +8,15 @@ export default function Profile() {
     const [user, setUser] = useState<any>(null);
     const [name, setName] = useState("");
     const [preferredLanguage, setPreferredLanguage] = useState("");
+    const [csrfToken, setCsrfToken] = useState("");
+
+    useEffect(() => {
+        // Buscar o token CSRF
+        fetch("http://localhost:5000/csrf-token", { credentials: "include" })
+            .then((res) => res.json())
+            .then((data) => setCsrfToken(data.csrfToken))
+            .catch((err) => console.error("Erro ao buscar CSRF token:", err));
+    }, []);
 
     useEffect(() => {
         const stored = localStorage.getItem("user");
@@ -23,7 +33,10 @@ export default function Profile() {
         try {
             const res = await fetch("http://localhost:5000/api/auth/account", {
                 method: "PUT",
-                headers: { "Content-Type": "application/json" },
+                headers: {
+                    "Content-Type": "application/json",
+                    "X-CSRF-Token": csrfToken // Enviando o token CSRF
+                },
                 credentials: "include",
                 body: JSON.stringify({ name, preferredLanguage }),
             });
@@ -44,6 +57,9 @@ export default function Profile() {
             try {
                 const res = await fetch("http://localhost:5000/api/auth/account", {
                     method: "DELETE",
+                    headers: {
+                        "X-CSRF-Token": csrfToken // Enviando o token CSRF para DELETE
+                    },
                     credentials: "include",
                 });
                 if (res.ok) {
@@ -94,7 +110,6 @@ export default function Profile() {
                     Excluir Conta
                 </button>
             </form>
-
         </div>
     );
 }

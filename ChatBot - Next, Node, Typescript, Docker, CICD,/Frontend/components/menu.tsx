@@ -15,6 +15,7 @@ import { useTheme } from "@/context/ThemeContext";
 import { useTranslation } from "react-i18next";
 import i18n, { languageNames } from "@/components/i18n/i18n";
 import Select from "react-select";
+import { useCsrfToken } from "@/hooks/useCsrfToken"; // Certifique-se do path correto
 
 export interface TopMenuProps {
     toggleConversationsAction: () => void;
@@ -31,6 +32,8 @@ export function TopMenu({ toggleConversationsAction }: TopMenuProps) {
     // Estados para edição do perfil
     const [profileName, setProfileName] = useState("");
     const [profilePreferredLanguage, setProfilePreferredLanguage] = useState("");
+    // Estado para o token CSRF
+    const csrfToken = useCsrfToken();
 
     // Estado já existente para configurações (usado no mobile, se necessário)
     const [settingsOpen, setSettingsOpen] = useState(false);
@@ -77,7 +80,10 @@ export function TopMenu({ toggleConversationsAction }: TopMenuProps) {
         try {
             const res = await fetch("http://localhost:5000/api/auth/account", {
                 method: "PUT",
-                headers: { "Content-Type": "application/json" },
+                headers: {
+                    "Content-Type": "application/json",
+                    "X-CSRF-Token": csrfToken // Enviando o token CSRF
+                },
                 credentials: "include",
                 body: JSON.stringify({ name: profileName, preferredLanguage: profilePreferredLanguage }),
             });
@@ -101,6 +107,9 @@ export function TopMenu({ toggleConversationsAction }: TopMenuProps) {
             try {
                 const res = await fetch("http://localhost:5000/api/auth/account", {
                     method: "DELETE",
+                    headers: {
+                        "X-CSRF-Token": csrfToken // Enviando o token CSRF
+                    },
                     credentials: "include",
                 });
                 if (res.ok) {
@@ -153,7 +162,7 @@ export function TopMenu({ toggleConversationsAction }: TopMenuProps) {
                                         options={options}
                                         value={options.find((o) => o.value === selectedLang)}
                                         onChange={handleLanguageChange}
-                                        instanceId="language-select"  // ID fixo para garantir a consistência
+                                        instanceId="language-select"
                                         className="react-select-container"
                                         classNamePrefix="react-select"
                                         placeholder="IDIOMA"
@@ -171,7 +180,6 @@ export function TopMenu({ toggleConversationsAction }: TopMenuProps) {
                                             }),
                                         }}
                                     />
-
                                 </div>
                             </div>
                             <button

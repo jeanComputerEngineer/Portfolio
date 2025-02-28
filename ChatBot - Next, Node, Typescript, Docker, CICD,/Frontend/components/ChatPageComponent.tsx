@@ -7,6 +7,7 @@ import i18n from "@/components/i18n/i18n";
 import { useTheme } from "@/context/ThemeContext";
 import { FiSend, FiEdit, FiTrash, FiPlus, FiSearch } from "react-icons/fi";
 import ReactMarkdown from "react-markdown";
+import { io, Socket } from "socket.io-client";
 
 interface Message {
     role: "user" | "assistant";
@@ -38,25 +39,47 @@ export default function ChatPageComponent({
     const [input, setInput] = useState("");
     const [isLoading, setIsLoading] = useState(false);
     const [errorMessage, setErrorMessage] = useState("");
-    // Todas as conversas carregadas do backend
     const [conversations, setConversations] = useState<Conversation[]>([]);
     const [currentConversationId, setCurrentConversationId] = useState<string | null>(null);
 
-    // Paginação e responsividade
+    // Estados para paginação, edição e busca
     const [page, setPage] = useState(1);
     const [itemsPerPage, setItemsPerPage] = useState(7);
-
-    // Estados para edição de conversa
     const [editingConversationId, setEditingConversationId] = useState<string | null>(null);
     const [editingTitle, setEditingTitle] = useState("");
-
-    // Estados para busca
     const [searchActive, setSearchActive] = useState(false);
     const [searchQuery, setSearchQuery] = useState("");
 
     const messagesEndRef = useRef<HTMLDivElement>(null);
+    const [socket, setSocket] = useState<Socket | null>(null);
 
-    // Ao montar, busca o usuário e todas as conversas (limit aumentado para paginar no cliente)
+    // Token CSRF
+    const [csrfToken, setCsrfToken] = useState("");
+
+    useEffect(() => {
+        fetch("http://localhost:5000/csrf-token", { credentials: "include" })
+            .then((res) => res.json())
+            .then((data) => {
+                setCsrfToken(data.csrfToken);
+            })
+            .catch((err) => console.error("Erro ao buscar CSRF token:", err));
+    }, []);
+
+    // Conecta ao Socket.IO na montagem
+    useEffect(() => {
+        const socketClient = io("http://localhost:5000");
+        setSocket(socketClient);
+
+        // Escuta novas mensagens
+        socketClient.on("chat message", (msg: Message) => {
+            setMessages((prev) => [...prev, msg]);
+        });
+
+        return () => {
+            socketClient.disconnect();
+        };
+    }, []);
+
     useEffect(() => {
         const storedUser = localStorage.getItem("user");
         if (storedUser) {
@@ -67,12 +90,10 @@ export default function ChatPageComponent({
         }
     }, []);
 
-    // Atualiza a rolagem do chat
     useEffect(() => {
         messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
     }, [messages, isLoading]);
 
-    // Atualiza itens por página conforme a altura da tela (supondo item ~70px)
     useEffect(() => {
         const updateItemsPerPage = () => {
             const newItems = Math.floor(window.innerHeight / 70);
@@ -83,12 +104,10 @@ export default function ChatPageComponent({
         return () => window.removeEventListener("resize", updateItemsPerPage);
     }, []);
 
-    // Sempre que a busca mudar, reinicia a página para 1
     useEffect(() => {
         setPage(1);
     }, [searchQuery]);
 
-    // Filtra as conversas pela busca (título ou conteúdo de mensagens)
     const filteredConversations = searchQuery
         ? conversations.filter((conv) =>
             conv.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -106,11 +125,9 @@ export default function ChatPageComponent({
 
     const fetchConversations = async () => {
         try {
-            // Buscando todas as conversas (limit alto para paginar no cliente)
-            const res = await fetch(
-                "http://localhost:5000/api/chat/conversations?limit=1000",
-                { credentials: "include" }
-            );
+            const res = await fetch("http://localhost:5000/api/chat/conversations?limit=1000", {
+                credentials: "include",
+            });
             const data = await res.json();
             if (data.conversations) {
                 setConversations(data.conversations);
@@ -129,7 +146,10 @@ export default function ChatPageComponent({
         try {
             const res = await fetch("http://localhost:5000/api/chat/conversations", {
                 method: "POST",
-                headers: { "Content-Type": "application/json" },
+                headers: {
+                    "Content-Type": "application/json",
+                    "X-CSRF-Token": csrfToken // Enviando o token CSRF
+                },
                 credentials: "include",
                 body: JSON.stringify({
                     title: newConv.title,
@@ -137,16 +157,13 @@ export default function ChatPageComponent({
                 }),
             });
             const data = await res.json();
-            // Atualiza a lista completa e seleciona a nova conversa
             setConversations((prev) => [data as Conversation, ...prev]);
             setCurrentConversationId((data as Conversation)._id);
             setMessages([]);
-            toggleConversationsAction(); // Fecha a sidebar em mobile
+            toggleConversationsAction();
         } catch (error) {
             console.error("Erro ao criar nova conversa:", error);
-            alert(
-                "Erro ao criar nova conversa. Verifique se o servidor está em execução e se não há problemas de CORS."
-            );
+            alert("Erro ao criar nova conversa. Verifique se o servidor está em execução e se não há problemas de CORS.");
         }
     };
 
@@ -159,21 +176,16 @@ export default function ChatPageComponent({
         toggleConversationsAction();
     };
 
-    const updateConversationInBackend = async (
-        conversationId: string,
-        title: string,
-        messages: Message[]
-    ) => {
+    const updateConversationInBackend = async (conversationId: string, title: string, messages: Message[]) => {
         try {
             await fetch("http://localhost:5000/api/chat/conversations", {
                 method: "POST",
-                headers: { "Content-Type": "application/json" },
+                headers: {
+                    "Content-Type": "application/json",
+                    "X-CSRF-Token": csrfToken // Enviando o token CSRF
+                },
                 credentials: "include",
-                body: JSON.stringify({
-                    conversationId,
-                    title,
-                    messages,
-                }),
+                body: JSON.stringify({ conversationId, title, messages }),
             });
         } catch (error) {
             console.error("Erro ao atualizar conversa:", error);
@@ -182,9 +194,7 @@ export default function ChatPageComponent({
 
     const handleUpdateConversationTitle = async (convId: string) => {
         setConversations((prev) =>
-            prev.map((conv) =>
-                conv._id === convId ? { ...conv, title: editingTitle } : conv
-            )
+            prev.map((conv) => (conv._id === convId ? { ...conv, title: editingTitle } : conv))
         );
         if (convId === currentConversationId) {
             const currentConv = conversations.find((conv) => conv._id === convId);
@@ -212,6 +222,9 @@ export default function ChatPageComponent({
         try {
             const res = await fetch(`http://localhost:5000/api/chat/conversations/${convId}`, {
                 method: "DELETE",
+                headers: {
+                    "X-CSRF-Token": csrfToken // Enviando o token CSRF também para DELETE
+                },
                 credentials: "include",
             });
             if (res.ok) {
@@ -228,6 +241,7 @@ export default function ChatPageComponent({
         }
     };
 
+    // Ao enviar uma mensagem, além de fazer a requisição REST, também emite via WebSocket
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         if (!input.trim()) return;
@@ -237,18 +251,22 @@ export default function ChatPageComponent({
         setIsLoading(true);
         setInput("");
 
+        if (socket) {
+            socket.emit("chat message", userMessage);
+        }
+
         try {
             const res = await fetch("http://localhost:5000/api/chat", {
                 method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                    messages: updatedMessages,
-                    model,
-                }),
+                headers: {
+                    "Content-Type": "application/json",
+                    "X-CSRF-Token": csrfToken // Enviando o token CSRF
+                },
+                credentials: "include",
+                body: JSON.stringify({ messages: updatedMessages, model }),
             });
             const data = await res.json();
-            const assistantContent =
-                data.choices[0]?.message?.content?.trim() || t("apiFalhou");
+            const assistantContent = data.choices[0]?.message?.content?.trim() || t("apiFalhou");
             const assistantMessage: Message = { role: "assistant", content: assistantContent };
             const newMessages = [...updatedMessages, assistantMessage];
             setMessages(newMessages);
@@ -275,68 +293,38 @@ export default function ChatPageComponent({
 
     return (
         <ProtectedRoute>
-            {/* Container principal */}
             <div className={`flex ${darkMode ? "bg-[#0d0d0d]" : "bg-gray-50"} overflow-hidden`}>
-                {/* Sidebar de conversas */}
-                <aside
-                    className={`
-            flex-shrink-0
-            fixed md:static
-            inset-y-0 left-0 z-60 w-3/4 max-w-xs
-            ${darkMode ? "bg-[#0d0d0d]" : "bg-white"}
-            p-4 shadow-lg
-            transform transition-transform duration-300 ease-in-out
-            ${showConversations ? "translate-x-0" : "-translate-x-full"}
-            md:w-1/4 md:translate-x-0
-            mt-16 sm:mt-0
-          `}
-                >
-                    {/* Header com ícone de busca e novo */}
+                <aside className={`
+                    flex-shrink-0 fixed md:static inset-y-0 left-0 z-60 w-3/4 max-w-xs ${darkMode ? "bg-[#0d0d0d]" : "bg-white"}
+                    p-4 shadow-lg transform transition-transform duration-300 ease-in-out ${showConversations ? "translate-x-0" : "-translate-x-full"}
+                    md:w-1/4 md:translate-x-0 mt-16 sm:mt-0
+                `}>
                     <div className="flex items-center justify-between mb-4">
-                        <button
-                            onClick={() => setSearchActive(true)}
-                            title="Buscar conversas e mensagens"
-                            className="p-1"
-                        >
+                        <button onClick={() => setSearchActive(true)} title="Buscar conversas e mensagens" className="p-1">
                             <FiSearch size={20} className="text-gray-500" />
                         </button>
                         <h2 className={`text-lg font-semibold ${darkMode ? "text-gray-100" : "text-gray-800"}`}>
                             Conversas
                         </h2>
-                        <button
-                            onClick={handleNewConversation}
-                            title="Nova conversa"
-                            className="p-1"
-                        >
+                        <button onClick={handleNewConversation} title="Nova conversa" className="p-1">
                             <FiPlus size={20} className="text-green-500" />
                         </button>
                     </div>
-                    {/* Input de busca (exibido quando ativo) */}
                     {searchActive && (
                         <input
                             type="text"
                             value={searchQuery}
                             onChange={(e) => setSearchQuery(e.target.value)}
-                            onKeyDown={(e) => {
-                                if (e.key === "Enter") setSearchActive(false);
-                            }}
+                            onKeyDown={(e) => { if (e.key === "Enter") setSearchActive(false); }}
                             placeholder="Buscar conversas e mensagens..."
-                            className={`w-full p-2 mb-4 rounded border focus:outline-none ${darkMode ? "bg-gray-700 text-gray-100 border-gray-600" : "bg-gray-100 text-gray-800 border-gray-300"
-                                }`}
+                            className={`w-full p-2 mb-4 rounded border focus:outline-none ${darkMode ? "bg-gray-700 text-gray-100 border-gray-600" : "bg-gray-100 text-gray-800 border-gray-300"}`}
                         />
                     )}
-
-                    {/* Lista de conversas – exibe somente os itens da página */}
                     <div className="space-y-2 pb-4 mb-6 max-h-[60vh] overflow-hidden">
                         {displayedConversations.map((conv) => (
                             <div
                                 key={conv._id}
-                                className={`flex items-center justify-between p-2 rounded cursor-pointer ${conv._id === currentConversationId
-                                    ? "bg-blue-600 text-white hover:bg-blue-500"
-                                    : darkMode
-                                        ? "bg-gray-900 text-gray-100 hover:bg-gray-800"
-                                        : "bg-gray-100 text-gray-800 hover:bg-gray-200"
-                                    }`}
+                                className={`flex items-center justify-between p-2 rounded cursor-pointer ${conv._id === currentConversationId ? "bg-blue-600 text-white hover:bg-blue-500" : darkMode ? "bg-gray-900 text-gray-100 hover:bg-gray-800" : "bg-gray-100 text-gray-800 hover:bg-gray-200"}`}
                                 onClick={() => handleSelectConversation(conv._id)}
                             >
                                 <div className="flex-grow">
@@ -358,120 +346,72 @@ export default function ChatPageComponent({
                                     <FiEdit
                                         size={16}
                                         className="cursor-pointer hover:text-blue-400"
-                                        onClick={(e) => {
-                                            e.stopPropagation();
-                                            setEditingConversationId(conv._id);
-                                            setEditingTitle(conv.title);
-                                        }}
+                                        onClick={(e) => { e.stopPropagation(); setEditingConversationId(conv._id); setEditingTitle(conv.title); }}
                                     />
                                     <FiTrash
                                         size={16}
                                         className="cursor-pointer hover:text-red-400"
-                                        onClick={(e) => {
-                                            e.stopPropagation();
-                                            handleDeleteConversation(conv._id);
-                                        }}
+                                        onClick={(e) => { e.stopPropagation(); handleDeleteConversation(conv._id); }}
                                     />
                                 </div>
                             </div>
                         ))}
                     </div>
-
-                    {/* Controles de paginação (só se houver mais de uma página) */}
                     {totalPages > 1 && (
                         <div className="flex items-center justify-between px-2 mb-2">
                             {page > 1 ? (
-                                <button
-                                    onClick={() => setPage((p) => p - 1)}
-                                    className="px-3 py-2 bg-gray-300 dark:bg-gray-700 rounded text-sm"
-                                >
+                                <button onClick={() => setPage((p) => p - 1)} className="px-3 py-2 bg-gray-300 dark:bg-gray-700 rounded text-sm">
                                     Anterior
                                 </button>
                             ) : (
-                                /* Espaço vazio para manter alinhamento */
                                 <div className="w-[80px]" />
                             )}
-
                             <span className={`text-sm whitespace-nowrap ${darkMode ? "text-gray-100" : "text-gray-800"}`}>
                                 Página {page} de {totalPages}
                             </span>
-
-                            <button
-                                onClick={() => setPage((p) => (p < totalPages ? p + 1 : p))}
-                                className="px-3 py-2 bg-gray-300 dark:bg-gray-700 rounded text-sm"
-                            >
+                            <button onClick={() => setPage((p) => (p < totalPages ? p + 1 : p))} className="px-3 py-2 bg-gray-300 dark:bg-gray-700 rounded text-sm">
                                 Próxima
                             </button>
                         </div>
                     )}
                 </aside>
 
-                {/* Área de chat */}
                 <section className="flex flex-col w-full h-full md:ml-0 md:static max-h-[83vh]">
-                    {/* Topo do chat: escolha de modelo */}
                     <div className="p-4">
                         <select
                             value={model}
                             onChange={(e) => setModel(e.target.value)}
-                            className={`p-2 rounded-md border text-sm ${darkMode
-                                ? "border-gray-700 bg-gray-700 text-gray-100"
-                                : "border-gray-300 bg-gray-100 text-gray-900"
-                                }`}
+                            className={`p-2 rounded-md border text-sm ${darkMode ? "border-gray-700 bg-gray-700 text-gray-100" : "border-gray-300 bg-gray-100 text-gray-900"}`}
                         >
                             <option value="deepseek/deepseek-chat:free">DeepSeek Chat</option>
                         </select>
                     </div>
 
-                    {/* Conteúdo do chat */}
                     <div
-                        className={`flex-grow overflow-y-auto border rounded-md p-2 mx-4 h-[70vh] ${darkMode
-                            ? "bg-[#0d0d0d] text-gray-100 border-gray-700"
-                            : "bg-gray-50 text-gray-800 border-gray-300"
-                            }`}
+                        className={`flex-grow overflow-y-auto border rounded-md p-2 mx-4 h-[70vh] ${darkMode ? "bg-[#0d0d0d] text-gray-100 border-gray-700" : "bg-gray-50 text-gray-800 border-gray-300"}`}
+                        role="log"
+                        aria-live="polite"
                     >
                         {messages.length === 0 ? (
                             <div className="mb-3 w-full">
                                 <p className="text-sm">{t("sugestoes") || "Recomendações de prompt:"}</p>
                                 <div className="w-full flex flex-wrap gap-2 mt-2">
-                                    <button
-                                        className="cursor-pointer transition-colors duration-300 bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 px-3 py-1 rounded text-sm"
-                                        onClick={() => setInput("Olá, tudo bem?")}
-                                    >
+                                    <button className="cursor-pointer transition-colors duration-300 bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 px-3 py-1 rounded text-sm" onClick={() => setInput("Olá, tudo bem?")}>
                                         Olá, tudo bem?
                                     </button>
-                                    <button
-                                        className="cursor-pointer transition-colors duration-300 bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 px-3 py-1 rounded text-sm"
-                                        onClick={() => setInput("Conte uma piada")}
-                                    >
+                                    <button className="cursor-pointer transition-colors duration-300 bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 px-3 py-1 rounded text-sm" onClick={() => setInput("Conte uma piada")}>
                                         Conte uma piada
                                     </button>
-                                    <button
-                                        className="cursor-pointer transition-colors duration-300 bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 px-3 py-1 rounded text-sm"
-                                        onClick={() => setInput("Qual é a previsão do tempo?")}
-                                    >
+                                    <button className="cursor-pointer transition-colors duration-300 bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 px-3 py-1 rounded text-sm" onClick={() => setInput("Qual é a previsão do tempo?")}>
                                         Qual é a previsão do tempo?
                                     </button>
                                 </div>
                             </div>
                         ) : (
                             messages.map((msg, index) => (
-                                <div
-                                    key={index}
-                                    className={`mb-3 flex ${msg.role === "user" ? "justify-end" : "justify-start"}`}
-                                >
-                                    <div
-                                        className={`max-w-[70%] p-3 rounded-lg shadow-md text-sm ${msg.role === "user"
-                                            ? darkMode
-                                                ? "bg-blue-600 text-white"
-                                                : "bg-blue-100 text-blue-900"
-                                            : darkMode
-                                                ? "bg-gray-700 text-white"
-                                                : "bg-gray-200 text-gray-900"
-                                            }`}
-                                    >
-                                        <ReactMarkdown className="whitespace-pre-line">
-                                            {msg.content}
-                                        </ReactMarkdown>
+                                <div key={index} className={`mb-3 flex ${msg.role === "user" ? "justify-end" : "justify-start"}`}>
+                                    <div className={`max-w-[70%] p-3 rounded-lg shadow-md text-sm ${msg.role === "user" ? darkMode ? "bg-blue-600 text-white" : "bg-blue-100 text-blue-900" : darkMode ? "bg-gray-700 text-white" : "bg-gray-200 text-gray-900"}`}>
+                                        <ReactMarkdown className="whitespace-pre-line">{msg.content}</ReactMarkdown>
                                     </div>
                                 </div>
                             ))
@@ -489,29 +429,27 @@ export default function ChatPageComponent({
                         <div ref={messagesEndRef} />
                     </div>
 
-                    {/* Campo de envio */}
-                    <form onSubmit={handleSubmit} className="m-4 flex">
+                    <form onSubmit={handleSubmit} className="m-4 flex" aria-label="Formulário de Envio de Mensagem">
                         <textarea
                             value={input}
                             onChange={(e) => setInput(e.target.value)}
-                            className={`flex-grow p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-500 resize-none text-sm ${darkMode
-                                ? "border-gray-700 bg-[#0d0d0d] text-white"
-                                : "border-gray-300 bg-white text-gray-900"
-                                }`}
+                            className={`flex-grow p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-500 resize-none text-sm ${darkMode ? "border-gray-700 bg-[#0d0d0d] text-white" : "border-gray-300 bg-white text-gray-900"}`}
                             placeholder={t("placeholderInput")}
                             rows={2}
+                            aria-label="Digite sua mensagem"
                         />
                         <button
                             type="submit"
                             className="ml-2 p-2 bg-green-600 hover:bg-green-500 rounded text-white transition-colors"
                             title={t("enviar")}
+                            aria-label="Enviar mensagem"
                         >
                             <FiSend size={20} />
                         </button>
                     </form>
 
                     {errorMessage && (
-                        <div className="mx-4 mb-4 p-2 bg-red-100 text-red-600 rounded-md text-sm">
+                        <div className="mx-4 mb-4 p-2 bg-red-100 text-red-600 rounded-md text-sm" role="alert">
                             {errorMessage}
                         </div>
                     )}

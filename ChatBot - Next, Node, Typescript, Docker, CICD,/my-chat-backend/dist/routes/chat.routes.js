@@ -1,16 +1,15 @@
-import { Router, Request, Response, NextFunction } from "express";
-import { Conversation } from "../models/conversation.model";
-import { redisClient } from "../config/redis";
-
-
-const router = Router();
-
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const express_1 = require("express");
+const conversation_model_1 = require("../models/conversation.model");
+const router = (0, express_1.Router)();
 // Rota para chamada do chat (já existente)
-router.post("/", async (req: Request, res: Response): Promise<void> => {
+router.post("/", async (req, res) => {
+    var _a, _b;
     const { messages, model } = req.body;
     const requestBody = {
         model: model || "deepseek/deepseek-r1:free",
-        messages: messages.map((msg: { role: string; content: string }) => ({
+        messages: messages.map((msg) => ({
             role: msg.role,
             content: msg.content,
         })),
@@ -18,7 +17,6 @@ router.post("/", async (req: Request, res: Response): Promise<void> => {
         temperature: 0.85,
         repetition_penalty: 1,
     };
-
     try {
         const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
             method: "POST",
@@ -28,11 +26,9 @@ router.post("/", async (req: Request, res: Response): Promise<void> => {
             },
             body: JSON.stringify(requestBody),
         });
-
         const data = await response.json();
         console.log("Resposta do OpenRouter:", data);
-
-        if (!data.choices || !data.choices[0]?.message || !data.choices[0].message.content?.trim()) {
+        if (!data.choices || !((_a = data.choices[0]) === null || _a === void 0 ? void 0 : _a.message) || !((_b = data.choices[0].message.content) === null || _b === void 0 ? void 0 : _b.trim())) {
             res.json({
                 choices: [
                     {
@@ -47,16 +43,15 @@ router.post("/", async (req: Request, res: Response): Promise<void> => {
             });
             return;
         }
-
         res.json(data);
-    } catch (error) {
+    }
+    catch (error) {
         console.error("Erro na API:", error);
         res.status(500).json({ error: "Erro na API" });
     }
 });
-
 // Rota de criação e atualização via POST (já existente)
-router.post("/conversations", async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+router.post("/conversations", async (req, res, next) => {
     if (!req.user) {
         res.status(401).json({ message: "Não autorizado" });
         return;
@@ -64,54 +59,51 @@ router.post("/conversations", async (req: Request, res: Response, next: NextFunc
     const { conversationId, title, messages } = req.body;
     try {
         if (conversationId) {
-            const updated = await Conversation.findOneAndUpdate(
-                { _id: conversationId, accountId: (req.user as any)._id },
-                { title, messages },
-                { new: true }
-            );
+            const updated = await conversation_model_1.Conversation.findOneAndUpdate({ _id: conversationId, accountId: req.user._id }, { title, messages }, { new: true });
             if (!updated) {
                 res.status(404).json({ message: "Conversa não encontrada" });
                 return;
             }
             res.json(updated);
-        } else {
-            const newConv = new Conversation({
-                accountId: (req.user as any)._id,
+        }
+        else {
+            const newConv = new conversation_model_1.Conversation({
+                accountId: req.user._id,
                 title,
                 messages,
             });
             await newConv.save();
             res.json(newConv);
         }
-    } catch (error) {
+    }
+    catch (error) {
         console.error("Erro na criação/atualização da conversa:", error);
         res.status(500).json({ message: "Erro ao salvar a conversa" });
     }
 });
-
 // Rota GET para listar conversas (já existente)
-router.get("/conversations", async (req: Request, res: Response): Promise<void> => {
+router.get("/conversations", async (req, res) => {
     if (!req.user) {
         return;
     }
-    const page = parseInt(req.query.page as string) || 1;
-    const limit = parseInt(req.query.limit as string) || 10;
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
     const skip = (page - 1) * limit;
     try {
-        const conversations = await Conversation.find({ accountId: (req.user as any)._id })
+        const conversations = await conversation_model_1.Conversation.find({ accountId: req.user._id })
             .sort({ createdAt: -1 })
             .skip(skip)
             .limit(limit);
-        const total = await Conversation.countDocuments({ accountId: (req.user as any)._id });
+        const total = await conversation_model_1.Conversation.countDocuments({ accountId: req.user._id });
         res.json({ conversations, total, page, limit });
-    } catch (error) {
+    }
+    catch (error) {
         console.error("Erro ao buscar conversas:", error);
         res.status(500).json({ message: "Erro ao buscar conversas" });
     }
 });
-
 // ===== Rota PUT para edição da conversa =====
-router.put("/conversations/:conversationId", async (req: Request, res: Response): Promise<void> => {
+router.put("/conversations/:conversationId", async (req, res) => {
     if (!req.user) {
         res.status(401).json({ message: "Não autorizado" });
         return;
@@ -119,43 +111,39 @@ router.put("/conversations/:conversationId", async (req: Request, res: Response)
     const { conversationId } = req.params;
     const { title, messages } = req.body;
     try {
-        const updated = await Conversation.findOneAndUpdate(
-            { _id: conversationId, accountId: (req.user as any)._id },
-            { title, messages },
-            { new: true }
-        );
+        const updated = await conversation_model_1.Conversation.findOneAndUpdate({ _id: conversationId, accountId: req.user._id }, { title, messages }, { new: true });
         if (!updated) {
             res.status(404).json({ message: "Conversa não encontrada" });
             return;
         }
         res.json(updated);
-    } catch (error) {
+    }
+    catch (error) {
         console.error("Erro ao atualizar conversa:", error);
         res.status(500).json({ message: "Erro ao atualizar conversa" });
     }
 });
-
 // ===== Rota DELETE para exclusão da conversa =====
-router.delete("/conversations/:conversationId", async (req: Request, res: Response): Promise<void> => {
+router.delete("/conversations/:conversationId", async (req, res) => {
     if (!req.user) {
         res.status(401).json({ message: "Não autorizado" });
         return;
     }
     const { conversationId } = req.params;
     try {
-        const deleted = await Conversation.findOneAndDelete({
+        const deleted = await conversation_model_1.Conversation.findOneAndDelete({
             _id: conversationId,
-            accountId: (req.user as any)._id,
+            accountId: req.user._id,
         });
         if (!deleted) {
             res.status(404).json({ message: "Conversa não encontrada" });
             return;
         }
         res.json({ message: "Conversa excluída com sucesso" });
-    } catch (error) {
+    }
+    catch (error) {
         console.error("Erro ao excluir conversa:", error);
         res.status(500).json({ message: "Erro ao excluir conversa" });
     }
 });
-
-export default router;
+exports.default = router;

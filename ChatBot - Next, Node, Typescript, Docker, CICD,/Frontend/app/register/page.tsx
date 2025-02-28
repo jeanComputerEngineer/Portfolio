@@ -1,8 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { languageNames } from "@/components/i18n/i18n";
+import { useCsrfToken } from "@/hooks/useCsrfToken"; // ajuste o path conforme necessário
 
 export default function Register() {
     const router = useRouter();
@@ -11,13 +12,17 @@ export default function Register() {
     const [preferredLanguage, setPreferredLanguage] = useState("pt");
     const [password, setPassword] = useState("");
     const [error, setError] = useState("");
+    const csrfToken = useCsrfToken(); // Recupera o token CSRF
 
     const handleRegister = async (e: React.FormEvent) => {
         e.preventDefault();
         try {
             const res = await fetch("http://localhost:5000/api/auth/register", {
                 method: "POST",
-                headers: { "Content-Type": "application/json" },
+                headers: {
+                    "Content-Type": "application/json",
+                    "X-CSRF-Token": csrfToken // Enviando o token
+                },
                 body: JSON.stringify({ name, email, password, preferredLanguage }),
             });
             const data = await res.json();
@@ -52,8 +57,6 @@ export default function Register() {
                     className="w-full p-2 mb-3 border rounded"
                     required
                 />
-
-                {/* Lista completa de idiomas */}
                 <select
                     value={preferredLanguage}
                     onChange={(e) => setPreferredLanguage(e.target.value)}
@@ -65,7 +68,6 @@ export default function Register() {
                         </option>
                     ))}
                 </select>
-
                 <input
                     type="password"
                     placeholder="Senha"
@@ -78,10 +80,7 @@ export default function Register() {
                     Cadastrar
                 </button>
                 <p className="mt-3 text-center">
-                    Já tem conta?{" "}
-                    <a href="/login" className="text-blue-500">
-                        Entrar
-                    </a>
+                    Já tem conta? <a href="/login" className="text-blue-500">Entrar</a>
                 </p>
             </form>
         </div>
