@@ -1,13 +1,19 @@
 import express from "express";
 import session from "express-session";
 import passport from "passport";
-import { securityMiddleware } from "./config/security";
+import cookieParser from "cookie-parser";
+import csurf from "csurf";
+import cors from "cors";
+import helmet from "helmet";
+
 import authRoutes from "./routes/auth.routes";
 import chatRoutes from "./routes/chat.routes";
-import { connectDB } from "./config/db"; // ajuste o caminho conforme necessário
+import csrfRoutes from "./routes/csrf.routes";
+import { securityMiddleware } from "./config/security";
+import { connectDB } from "./config/db";
 
-// Certifique-se de configurar o Passport (ex.: estratégias, serialize/deserialize)
 import "./config/passport";
+
 
 const app = express();
 
@@ -17,8 +23,8 @@ app.use(
         resave: false,
         saveUninitialized: false,
         cookie: {
-            sameSite: "lax", // Em alguns casos, pode ser necessário "none" (lembre que "none" exige secure: true em produção)
-            secure: false,   // Certifique-se de que, em desenvolvimento, secure está false
+            sameSite: "lax",
+            secure: false,
         },
     })
 );
@@ -26,8 +32,16 @@ app.use(
 app.use(passport.initialize());
 app.use(passport.session());
 
-// Middleware de segurança (incluindo CORS configurado para http://localhost:3000 e credentials true)
-securityMiddleware(app);
+// Middlewares de segurança
+app.use(helmet());
+app.use(cookieParser());
+app.use(cors({ origin: "http://localhost:3000", credentials: true }));
+app.use(express.json());
+// Configura o csurf; observe que ele precisa vir após cookieParser e express.json()
+app.use(csurf({ cookie: true }));
+
+// Rotas que dependem do CSRF devem ser declaradas após o csurf
+app.use(csrfRoutes); // Isso disponibiliza o endpoint "/csrf-token"
 
 app.use("/api/auth", authRoutes);
 app.use("/api/chat", chatRoutes);

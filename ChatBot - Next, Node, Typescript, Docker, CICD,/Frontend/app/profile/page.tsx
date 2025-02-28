@@ -60,33 +60,41 @@ export default function Profile() {
 
     return (
         <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900">
-            <form onSubmit={handleUpdate} className="bg-white dark:bg-gray-800 p-6 rounded shadow-md w-80">
+            <form onSubmit={handleUpdate} className="bg-white dark:bg-gray-800 p-6 rounded shadow-md w-80" aria-label="Formulário de Edição de Perfil">
                 <h1 className="text-xl font-bold mb-4 text-gray-900 dark:text-white">Editar Perfil</h1>
+                <label htmlFor="profile-name" className="block text-sm font-medium text-gray-700 dark:text-gray-300">Nome</label>
                 <input
+                    id="profile-name"
                     type="text"
                     value={name}
                     onChange={(e) => setName(e.target.value)}
                     className="w-full p-2 mb-3 border rounded"
                     placeholder="Nome"
+                    required
                 />
+                <label htmlFor="profile-language" className="block text-sm font-medium text-gray-700 dark:text-gray-300">Idioma Preferido</label>
                 <input
+                    id="profile-language"
                     type="text"
                     value={preferredLanguage}
                     onChange={(e) => setPreferredLanguage(e.target.value)}
                     className="w-full p-2 mb-3 border rounded"
                     placeholder="Idioma Preferido"
+                    required
                 />
-                <button type="submit" className="w-full p-2 bg-blue-500 text-white rounded hover:bg-blue-600">
+                <button type="submit" className="w-full p-2 bg-blue-500 text-white rounded hover:bg-blue-600" aria-label="Atualizar Perfil">
                     Atualizar
                 </button>
                 <button
                     type="button"
                     onClick={handleDelete}
                     className="w-full p-2 bg-red-500 text-white rounded hover:bg-red-600 mt-3"
+                    aria-label="Excluir Conta"
                 >
                     Excluir Conta
                 </button>
             </form>
+
         </div>
     );
 }

@@ -1,6 +1,5 @@
 "use client";
-
-import { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 
 export default function Login() {
@@ -9,18 +8,27 @@ export default function Login() {
     const [password, setPassword] = useState("");
     const [error, setError] = useState("");
 
+    useEffect(() => {
+        fetch("http://localhost:5000/csrf-token", { credentials: "include" })
+            .then(res => res.json())
+            .then(data => {
+                localStorage.setItem("csrfToken", data.csrfToken);
+            })
+            .catch(console.error);
+    }, []);
+
+
     const handleLogin = async (e: React.FormEvent) => {
         e.preventDefault();
         try {
             const res = await fetch("http://localhost:5000/api/auth/login", {
                 method: "POST",
-                headers: { "Content-Type": "application/json" },
+                headers: { "Content-Type": "application/json", "CSRF-Token": localStorage.getItem("csrfToken") || "" },
                 body: JSON.stringify({ email, password }),
-                credentials: "include", // Envia os cookies
+                credentials: "include",
             });
             const data = await res.json();
             if (res.ok) {
-                // Armazene os dados do usuário (ex: em localStorage)
                 localStorage.setItem("user", JSON.stringify(data.user));
                 router.push("/chat");
             } else {
@@ -33,10 +41,12 @@ export default function Login() {
 
     return (
         <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900">
-            <form onSubmit={handleLogin} className="bg-white dark:bg-gray-800 p-6 rounded shadow-md w-80">
+            <form onSubmit={handleLogin} className="bg-white dark:bg-gray-800 p-6 rounded shadow-md w-80" aria-label="Formulário de Login">
                 <h1 className="text-xl font-bold mb-4 text-gray-900 dark:text-white">Login</h1>
-                {error && <p className="text-red-500 mb-2">{error}</p>}
+                {error && <p className="text-red-500 mb-2" role="alert">{error}</p>}
+                <label htmlFor="email" className="block text-sm font-medium text-gray-700 dark:text-gray-300">E-mail</label>
                 <input
+                    id="email"
                     type="email"
                     placeholder="E-mail"
                     value={email}
@@ -44,7 +54,9 @@ export default function Login() {
                     className="w-full p-2 mb-3 border rounded"
                     required
                 />
+                <label htmlFor="password" className="block text-sm font-medium text-gray-700 dark:text-gray-300">Senha</label>
                 <input
+                    id="password"
                     type="password"
                     placeholder="Senha"
                     value={password}
@@ -52,9 +64,17 @@ export default function Login() {
                     className="w-full p-2 mb-3 border rounded"
                     required
                 />
-                <button type="submit" className="w-full p-2 bg-green-500 text-white rounded hover:bg-green-600">
+                <button type="submit" className="w-full p-2 bg-green-500 text-white rounded hover:bg-green-600" aria-label="Entrar">
                     Entrar
                 </button>
+                <button
+                    onClick={() => window.location.href = "http://localhost:5000/api/auth/google"}
+                    className="w-full p-2 bg-blue-600 text-white rounded hover:bg-blue-500 mt-4"
+                    aria-label="Entrar com Google"
+                >
+                    Entrar com Google
+                </button>
+
                 <p className="mt-3 text-center">
                     Não tem conta? <a href="/register" className="text-blue-500">Cadastre-se</a>
                 </p>
