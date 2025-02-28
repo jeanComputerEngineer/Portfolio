@@ -245,41 +245,68 @@ export default function ChatPageComponent({
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         if (!input.trim()) return;
+
         const userMessage: Message = { role: "user", content: input };
         const updatedMessages = [...messages, userMessage];
         setMessages(updatedMessages);
         setIsLoading(true);
         setInput("");
 
+        // Emite a mensagem via socket, se necessário
         if (socket) {
             socket.emit("chat message", userMessage);
         }
 
         try {
-            const res = await fetch("http://localhost:5000/api/chat", {
+            // Enfileira o job chamando a rota /async
+            const asyncRes = await fetch("http://localhost:5000/api/chat/async", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
-                    "X-CSRF-Token": csrfToken // Enviando o token CSRF
+                    "X-CSRF-Token": csrfToken
                 },
                 credentials: "include",
                 body: JSON.stringify({ messages: updatedMessages, model }),
             });
-            const data = await res.json();
-            const assistantContent = data.choices[0]?.message?.content?.trim() || t("apiFalhou");
+            const asyncData = await asyncRes.json();
+            const jobId = asyncData.jobId;
+
+            // Função para fazer polling do resultado
+            const pollJobResult = async (jobId: string): Promise<any> => {
+                const resultRes = await fetch(`http://localhost:5000/api/chat/result?jobId=${jobId}`, {
+                    credentials: "include",
+                });
+                const resultData = await resultRes.json();
+                // Se ainda estiver processando, aguarda 2 segundos e tenta novamente
+                if (resultData.status === "processing") {
+                    await new Promise(resolve => setTimeout(resolve, 2000));
+                    return pollJobResult(jobId);
+                } else {
+                    return resultData.data;
+                }
+            };
+
+            // Aguarda o job finalizar e obtem a resposta
+            const data = await pollJobResult(jobId);
+
+            // Verifica se a resposta é válida
+            const assistantContent = data.choices && data.choices[0]?.message?.content?.trim()
+                ? data.choices[0].message.content.trim()
+                : "A API falhou, por favor, escreva sua mensagem novamente";
             const assistantMessage: Message = { role: "assistant", content: assistantContent };
             const newMessages = [...updatedMessages, assistantMessage];
             setMessages(newMessages);
 
+            // Atualiza a conversa no backend, se aplicável
             if (currentConversationId) {
-                setConversations((prev) =>
-                    prev.map((c) =>
+                setConversations(prev =>
+                    prev.map(c =>
                         c._id === currentConversationId ? { ...c, messages: newMessages } : c
                     )
                 );
                 updateConversationInBackend(
                     currentConversationId,
-                    conversations.find((c) => c._id === currentConversationId)?.title || "",
+                    conversations.find(c => c._id === currentConversationId)?.title || "",
                     newMessages
                 );
             }
@@ -290,6 +317,7 @@ export default function ChatPageComponent({
             setIsLoading(false);
         }
     };
+
 
     return (
         <ProtectedRoute>

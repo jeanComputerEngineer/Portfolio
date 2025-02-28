@@ -5,6 +5,90 @@ import { redisClient } from "../config/redis";
 
 const router = Router();
 
+
+
+
+// Definições para fila (pode ficar no mesmo arquivo do router de chat)
+interface ChatJob {
+    jobId: string;
+    messages: { role: string; content: string }[];
+    model: string;
+}
+const chatJobQueue: ChatJob[] = [];
+const chatJobResults: { [jobId: string]: any } = {};
+
+// Endpoint para enfileirar o job
+router.post("/async", async (req: Request, res: Response): Promise<void> => {
+    if (!req.user) {
+        res.status(401).json({ message: "Não autorizado" });
+        return;
+    }
+    const { messages, model } = req.body;
+    const jobId = Date.now().toString() + Math.random().toString(36).substring(2);
+    chatJobQueue.push({ jobId, messages, model });
+    res.json({ jobId, message: "Job enfileirado" });
+});
+
+// Endpoint para consultar o resultado do job
+router.get("/result", async (req: Request, res: Response): Promise<void> => {
+    const { jobId } = req.query;
+    if (!jobId || typeof jobId !== "string") {
+        return;
+    }
+    if (chatJobResults[jobId]) {
+        res.json({ status: "completed", data: chatJobResults[jobId] });
+        // (Opcional) Remove o resultado após o fetch
+        delete chatJobResults[jobId];
+    } else {
+        res.json({ status: "processing" });
+    }
+});
+
+// Processador de jobs (executa periodicamente)
+setInterval(async () => {
+    if (chatJobQueue.length > 0) {
+        const job = chatJobQueue.shift();
+        if (job) {
+            const requestBody = {
+                model: job.model || "deepseek/deepseek-r1:free",
+                messages: job.messages.map((msg) => ({
+                    role: msg.role,
+                    content: msg.content,
+                })),
+                top_p: 1,
+                temperature: 0.85,
+                repetition_penalty: 1,
+            };
+            try {
+                const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
+                    method: "POST",
+                    headers: {
+                        "Authorization": "Bearer SEU_TOKEN_AQUI", // mantenha o token já utilizado
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify(requestBody),
+                });
+                const data = await response.json();
+                chatJobResults[job.jobId] = data;
+            } catch (error) {
+                chatJobResults[job.jobId] = { error: "Erro na API" };
+            }
+        }
+    }
+}, 3000); // Processa um job a cada 3 segundos
+
+
+
+router.get("/metrics", (req: Request, res: Response) => {
+    const metrics = {
+        uptime: process.uptime(),
+        memoryUsage: process.memoryUsage(),
+    };
+    res.json(metrics);
+});
+
+
+
 // Rota para chamada do chat (já existente)
 router.post("/", async (req: Request, res: Response): Promise<void> => {
     const { messages, model } = req.body;

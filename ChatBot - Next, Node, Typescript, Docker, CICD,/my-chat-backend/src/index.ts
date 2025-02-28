@@ -11,6 +11,10 @@ import authRoutes from "./routes/auth.routes";
 import chatRoutes from "./routes/chat.routes";
 import csrfRoutes from "./routes/csrf.routes";
 import { connectDB } from "./config/db";
+import morgan from "morgan";
+import logger from "./logger";
+
+
 
 import "./config/passport"; // Carrega a configuração do Passport
 
@@ -29,10 +33,19 @@ app.use(
         secret: process.env.SESSION_SECRET || "segredo",
         resave: false,
         saveUninitialized: false,
+
         cookie: {
             // Em produção, utilize secure: true com HTTPS
             sameSite: "lax",
             secure: false,
+        },
+    })
+);
+
+app.use(
+    morgan("combined", {
+        stream: {
+            write: (message) => logger.info(message.trim()),
         },
     })
 );
