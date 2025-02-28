@@ -1,0 +1,212 @@
+
+
+openapi: 3.0.0
+info:
+  title: ChatBot API
+  version: "1.0.0"
+  description: API para gerenciamento de usuários, autenticação e chat.
+servers:
+  - url: http://localhost:5000
+paths:
+  /csrf-token:
+    get:
+      summary: Retorna o token CSRF
+      responses:
+        '200':
+          description: Token gerado com sucesso
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  csrfToken:
+                    type: string
+  /api/auth/register:
+    post:
+      summary: Registra um novo usuário
+      requestBody:
+        description: Dados para registro de usuário
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - email
+                - password
+                - name
+              properties:
+                email:
+                  type: string
+                  format: email
+                password:
+                  type: string
+                name:
+                  type: string
+                preferredLanguage:
+                  type: string
+      responses:
+        '200':
+          description: Usuário registrado com sucesso
+        '400':
+          description: Erro no registro (e-mail já cadastrado)
+  /api/auth/login:
+    post:
+      summary: Realiza o login do usuário
+      requestBody:
+        description: Credenciais de login
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - email
+                - password
+              properties:
+                email:
+                  type: string
+                  format: email
+                password:
+                  type: string
+      responses:
+        '200':
+          description: Login bem-sucedido
+        '401':
+          description: Credenciais inválidas
+  /api/auth/account:
+    put:
+      summary: Atualiza a conta do usuário
+      requestBody:
+        description: Dados para atualização da conta
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                preferredLanguage:
+                  type: string
+      responses:
+        '200':
+          description: Conta atualizada com sucesso
+    delete:
+      summary: Exclui a conta do usuário
+      responses:
+        '200':
+          description: Conta excluída com sucesso
+  /api/chat/async:
+    post:
+      summary: Requisição sincrona para chat
+      requestBody:
+        description: Dados para processamento do chat
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                model:
+                  type: string
+                messages:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      role:
+                        type: string
+                        enum: [user, assistant]
+                      content:
+                        type: string
+      responses:
+        '200':
+          description: Resposta do chat
+  /api/chat/conversations:
+    post:
+      summary: Cria ou atualiza uma conversa
+      requestBody:
+        description: Dados da conversa
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                conversationId:
+                  type: string
+                title:
+                  type: string
+                messages:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      role:
+                        type: string
+                        enum: [user, assistant]
+                      content:
+                        type: string
+      responses:
+        '200':
+          description: Conversa criada/atualizada com sucesso
+    get:
+      summary: Lista as conversas do usuário
+      parameters:
+        - in: query
+          name: page
+          schema:
+            type: integer
+          description: Número da página
+        - in: query
+          name: limit
+          schema:
+            type: integer
+          description: Limite de conversas por página
+      responses:
+        '200':
+          description: Lista de conversas
+  /api/chat/conversations/{conversationId}:
+    put:
+      summary: Atualiza uma conversa específica
+      parameters:
+        - in: path
+          name: conversationId
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: Dados atualizados da conversa
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                title:
+                  type: string
+                messages:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      role:
+                        type: string
+                        enum: [user, assistant]
+                      content:
+                        type: string
+      responses:
+        '200':
+          description: Conversa atualizada com sucesso
+    delete:
+      summary: Exclui uma conversa específica
+      parameters:
+        - in: path
+          name: conversationId
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Conversa excluída com sucesso

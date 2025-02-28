@@ -1,0 +1,48 @@
+Requisitos implementados:
+
+Backend:
+
+    Node.js com TypeScript (ver arquivos em /src/).
+    Arquitetura monolítica (único projeto com múltiplos módulos).
+    Persistência usando MongoDB (veja connectDB em /src/config/db.ts).
+    CRUD de usuários (rotas de registro, login, atualização e exclusão em /src/routes/auth.routes.ts).
+    Chat em tempo real com WebSockets (Socket.IO configurado em /src/server.ts).
+    Histórico de conversas com paginação (rotas GET em /src/routes/chat.routes.ts).
+    Processamento assíncrono com filas usando Bull (em /src/queues/ ou similar).
+    Segurança com CSRF, helmet, bcrypt (em /src/config/security.ts, /src/config/passport.ts e nos modelos).
+    Pipeline de CI/CD com GitHub Actions (arquivo de workflow CI no repositório).
+    Logging estruturado (usando morgan e logger).
+
+
+Frontend:
+    Next.js com TypeScript (estrutura do projeto em /app, /components, etc.).
+    Tailwind CSS para estilização (arquivo globals.css).
+    Design responsivo, mobile-first (classes responsivas aplicadas em vários componentes).
+    Suporte a múltiplos idiomas (configuração i18n em /src/components/i18n/i18n.ts).
+    Testes de componentes (Jest e Testing Library, ver teste de Login) e testes E2E com Cypress.
+    Otimização de assets com code splitting (dynamic import do ChatPageComponent).
+    Modo escuro (ThemeContext implementado em /src/context/ThemeContext.tsx).
+    Indicador de "IA pensando" exibido durante o carregamento.
+
+Outros: 
+    Documentação completa de setup/arquitetura e README detalhado.
+
+
+Bônus:
+    Integração com LLM para respostas automáticas (chamada à API do DeepSeek R1 no chat).
+
+
+Requisitos não implementados:
+
+    Redis/Memcache para caching.
+    Elasticsearch para busca avançada.
+    Autenticação segura com OAuth2 e 2FA.
+    Caching em múltiplas camadas (backend e frontend).
+    Animações suaves (vanilla JS, Rive ou Lottie).
+    Cobertura mínima de 80% de testes (foi menos).
+    Containerização com Docker.
+    Documentação da API com Swagger/OpenAPI.
+    Coleção Postman/Swagger para testes da API.
+    Link para versão deployada.
+    Implementação básica em React Native.
+    Testes de performance com k6 ou similar.

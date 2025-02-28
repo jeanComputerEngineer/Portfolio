@@ -22,8 +22,10 @@ export default function Register() {
                     "Content-Type": "application/json",
                     "X-CSRF-Token": csrfToken,
                 },
+                credentials: "include", // <-- Adicione esta linha
                 body: JSON.stringify({ name, email, password, preferredLanguage }),
             });
+
             const data = await res.json();
             if (res.ok) {
                 router.push("/login");
@@ -34,6 +36,7 @@ export default function Register() {
             setError("Erro no cadastro");
         }
     };
+
 
     return (
         <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900">

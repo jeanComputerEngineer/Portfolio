@@ -2,95 +2,14 @@ import { Router, Request, Response, NextFunction } from "express";
 import { Conversation } from "../models/conversation.model";
 import { redisClient } from "../config/redis";
 
-
 const router = Router();
 
-
-
-
-// Definições para fila (pode ficar no mesmo arquivo do router de chat)
-interface ChatJob {
-    jobId: string;
-    messages: { role: string; content: string }[];
-    model: string;
-}
-const chatJobQueue: ChatJob[] = [];
-const chatJobResults: { [jobId: string]: any } = {};
-
-// Endpoint para enfileirar o job
+// Rota para chamada do chat (sincrona)
 router.post("/async", async (req: Request, res: Response): Promise<void> => {
     if (!req.user) {
         res.status(401).json({ message: "Não autorizado" });
         return;
     }
-    const { messages, model } = req.body;
-    const jobId = Date.now().toString() + Math.random().toString(36).substring(2);
-    chatJobQueue.push({ jobId, messages, model });
-    res.json({ jobId, message: "Job enfileirado" });
-});
-
-// Endpoint para consultar o resultado do job
-router.get("/result", async (req: Request, res: Response): Promise<void> => {
-    const { jobId } = req.query;
-    if (!jobId || typeof jobId !== "string") {
-        return;
-    }
-    if (chatJobResults[jobId]) {
-        res.json({ status: "completed", data: chatJobResults[jobId] });
-        // (Opcional) Remove o resultado após o fetch
-        delete chatJobResults[jobId];
-    } else {
-        res.json({ status: "processing" });
-    }
-});
-
-// Processador de jobs (executa periodicamente)
-setInterval(async () => {
-    if (chatJobQueue.length > 0) {
-        const job = chatJobQueue.shift();
-        if (job) {
-            const requestBody = {
-                model: job.model || "deepseek/deepseek-r1:free",
-                messages: job.messages.map((msg) => ({
-                    role: msg.role,
-                    content: msg.content,
-                })),
-                top_p: 1,
-                temperature: 0.85,
-                repetition_penalty: 1,
-            };
-            try {
-                const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
-                    method: "POST",
-                    headers: {
-                        "Authorization": "Bearer SEU_TOKEN_AQUI", // mantenha o token já utilizado
-                        "Content-Type": "application/json",
-                    },
-                    body: JSON.stringify(requestBody),
-                });
-                const data = await response.json();
-                chatJobResults[job.jobId] = data;
-            } catch (error) {
-                chatJobResults[job.jobId] = { error: "Erro na API" };
-            }
-        }
-    }
-}, 3000); // Processa um job a cada 3 segundos
-
-
-
-router.get("/metrics", (req: Request, res: Response) => {
-    const metrics = {
-        uptime: process.uptime(),
-        memoryUsage: process.memoryUsage(),
-    };
-    res.json(metrics);
-});
-
-
-
-// Rota para chamada do chat (já existente)
-router.post("/", async (req: Request, res: Response): Promise<void> => {
     const { messages, model } = req.body;
     const requestBody = {
         model: model || "deepseek/deepseek-r1:free",
@@ -107,12 +26,13 @@ router.post("/", async (req: Request, res: Response): Promise<void> => {
         const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
             method: "POST",
             headers: {
-                "Authorization": "Bearer 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",
+                // Utilize sua chave de API a partir de uma variável de ambiente, por exemplo:
+                "Authorization": `Bearer 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`,
                 "Content-Type": "application/json",
             },
             body: JSON.stringify(requestBody),
-        });
 
+        });
         const data = await response.json();
         console.log("Resposta do OpenRouter:", data);
 
@@ -139,7 +59,7 @@ router.post("/", async (req: Request, res: Response): Promise<void> => {
     }
 });
 
-// Rota de criação e atualização via POST (já existente)
+// Outras rotas (conversations, etc) permanecem inalteradas
 router.post("/conversations", async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     if (!req.user) {
         res.status(401).json({ message: "Não autorizado" });
@@ -173,7 +93,7 @@ router.post("/conversations", async (req: Request, res: Response, next: NextFunc
     }
 });
 
-// Rota GET para listar conversas (já existente)
+// Rota GET para listar conversas
 router.get("/conversations", async (req: Request, res: Response): Promise<void> => {
     if (!req.user) {
         return;
@@ -194,7 +114,7 @@ router.get("/conversations", async (req: Request, res: Response): Promise<void> 
     }
 });
 
-// ===== Rota PUT para edição da conversa =====
+// Rota PUT para edição da conversa
 router.put("/conversations/:conversationId", async (req: Request, res: Response): Promise<void> => {
     if (!req.user) {
         res.status(401).json({ message: "Não autorizado" });
@@ -219,7 +139,7 @@ router.put("/conversations/:conversationId", async (req: Request, res: Response)
     }
 });
 
-// ===== Rota DELETE para exclusão da conversa =====
+// Rota DELETE para exclusão da conversa
 router.delete("/conversations/:conversationId", async (req: Request, res: Response): Promise<void> => {
     if (!req.user) {
         res.status(401).json({ message: "Não autorizado" });

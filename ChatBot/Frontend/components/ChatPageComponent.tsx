@@ -66,7 +66,7 @@ export default function ChatPageComponent({
     const messagesEndRef = useRef<HTMLDivElement>(null);
     const [socket, setSocket] = useState<Socket | null>(null);
 
-    // Token CSRF
+    // Token CSRF (permanece inalterado, mesmo que não seja usado na requisição direta)
     const [csrfToken, setCsrfToken] = useState("");
 
     useEffect(() => {
@@ -263,6 +263,7 @@ export default function ChatPageComponent({
         }
     };
 
+    // Alteração: Realiza a requisição diretamente para a API do OpenRouter
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         if (!input.trim()) return;
@@ -273,58 +274,30 @@ export default function ChatPageComponent({
         setIsLoading(true);
         setInput("");
 
-        if (socket) {
-            socket.emit("chat message", userMessage);
-        }
-
         try {
-            const asyncRes = await fetch("http://localhost:5000/api/chat/async", {
+            const res = await fetch("https://openrouter.ai/api/v1/chat/completions", {
                 method: "POST",
                 headers: {
+                    // Insira sua chave de API no lugar de <YOUR_API_KEY>
+                    "Authorization": "Bearer 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",
                     "Content-Type": "application/json",
-                    "X-CSRF-Token": csrfToken,
                 },
-                credentials: "include",
-                body: JSON.stringify({ messages: updatedMessages, model }),
+                body: JSON.stringify({
+                    model,
+                    messages: updatedMessages,
+                    top_p: 1,
+                    temperature: 0.85,
+                    repetition_penalty: 1,
+                }),
             });
-            const asyncData = await asyncRes.json();
-            const jobId = asyncData.jobId;
-
-            const pollJobResult = async (jobId: string): Promise<PollJobData> => {
-                const resultRes = await fetch(`http://localhost:5000/api/chat/result?jobId=${jobId}`, {
-                    credentials: "include",
-                });
-                const resultData: PollJobResponse = await resultRes.json();
-                if (resultData.status === "processing") {
-                    await new Promise((resolve) => setTimeout(resolve, 2000));
-                    return pollJobResult(jobId);
-                } else {
-                    return resultData.data;
-                }
-            };
-
-            const data = await pollJobResult(jobId);
-
+            const data = await res.json();
+            console.log("Resposta da API:", data);
             const assistantContent =
                 data.choices && data.choices[0]?.message?.content?.trim()
                     ? data.choices[0].message.content.trim()
                     : "A API falhou, por favor, escreva sua mensagem novamente";
             const assistantMessage: Message = { role: "assistant", content: assistantContent };
-            const newMessages = [...updatedMessages, assistantMessage];
-            setMessages(newMessages);
-
-            if (currentConversationId) {
-                setConversations((prev) =>
-                    prev.map((c) =>
-                        c._id === currentConversationId ? { ...c, messages: newMessages } : c
-                    )
-                );
-                updateConversationInBackend(
-                    currentConversationId,
-                    conversations.find((c) => c._id === currentConversationId)?.title || "",
-                    newMessages
-                );
-            }
+            setMessages([...updatedMessages, assistantMessage]);
         } catch (error) {
             console.error("Erro ao buscar resposta:", error);
             setErrorMessage("Erro ao buscar resposta.");
@@ -376,10 +349,10 @@ export default function ChatPageComponent({
                             <div
                                 key={conv._id}
                                 className={`flex items-center justify-between p-2 rounded cursor-pointer ${conv._id === currentConversationId
-                                        ? "bg-blue-600 text-white hover:bg-blue-500"
-                                        : darkMode
-                                            ? "bg-gray-900 text-gray-100 hover:bg-gray-800"
-                                            : "bg-gray-100 text-gray-800 hover:bg-gray-200"
+                                    ? "bg-blue-600 text-white hover:bg-blue-500"
+                                    : darkMode
+                                        ? "bg-gray-900 text-gray-100 hover:bg-gray-800"
+                                        : "bg-gray-100 text-gray-800 hover:bg-gray-200"
                                     }`}
                                 onClick={() => handleSelectConversation(conv._id)}
                             >
@@ -455,7 +428,7 @@ export default function ChatPageComponent({
                             className={`p-2 rounded-md border text-sm ${darkMode ? "border-gray-700 bg-gray-700 text-gray-100" : "border-gray-300 bg-gray-100 text-gray-900"
                                 }`}
                         >
-                            <option value="deepseek/deepseek-chat:free">DeepSeek Chat</option>
+                            <option value="deepseek/deepseek-r1:free">DeepSeek Chat</option>
                         </select>
                     </div>
 
@@ -500,12 +473,12 @@ export default function ChatPageComponent({
                                 >
                                     <div
                                         className={`max-w-[70%] p-3 rounded-lg shadow-md text-sm ${msg.role === "user"
-                                                ? darkMode
-                                                    ? "bg-blue-600 text-white"
-                                                    : "bg-blue-100 text-blue-900"
-                                                : darkMode
-                                                    ? "bg-gray-700 text-white"
-                                                    : "bg-gray-200 text-gray-900"
+                                            ? darkMode
+                                                ? "bg-blue-600 text-white"
+                                                : "bg-blue-100 text-blue-900"
+                                            : darkMode
+                                                ? "bg-gray-700 text-white"
+                                                : "bg-gray-200 text-gray-900"
                                             }`}
                                     >
                                         <ReactMarkdown className="whitespace-pre-line">
@@ -537,8 +510,8 @@ export default function ChatPageComponent({
                             value={input}
                             onChange={(e) => setInput(e.target.value)}
                             className={`flex-grow p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-500 resize-none text-sm ${darkMode
-                                    ? "border-gray-700 bg-[#0d0d0d] text-white"
-                                    : "border-gray-300 bg-white text-gray-900"
+                                ? "border-gray-700 bg-[#0d0d0d] text-white"
+                                : "border-gray-300 bg-white text-gray-900"
                                 }`}
                             placeholder={t("placeholderInput")}
                             rows={2}
