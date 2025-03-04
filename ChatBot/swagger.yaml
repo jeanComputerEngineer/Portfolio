@@ -6,7 +6,7 @@ info:
   version: "1.0.0"
   description: API para gerenciamento de usuários, autenticação e chat.
 servers:
-  - url: http://localhost:5000
+  - url: https://backchat.jeanhenrique.site/
 paths:
   /csrf-token:
     get:

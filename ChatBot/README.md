@@ -56,7 +56,7 @@ A aplicação é dividida em duas camadas principais:
    npm install
 3. Inicie o servidor de desenvolvimento:
    npm run dev
-4. Acesse a aplicação em [http://localhost:3000](http://localhost:3000).
+4. Acesse a aplicação em [http://chatbot.jeanhenrique.site](http://chatbot.jeanhenrique.site).
 
 
 
@@ -77,7 +77,7 @@ A aplicação é dividida em duas camadas principais:
 4. Inicie o servidor:
    npm start
    
-5. O servidor estará disponível em [http://localhost:5000](http://localhost:5000).
+5. O servidor estará disponível em [https://backchat.jeanhenrique.site/](https://backchat.jeanhenrique.site/).
 
 
 
