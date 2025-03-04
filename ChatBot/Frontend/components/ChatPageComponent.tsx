@@ -7,6 +7,8 @@ import { useTheme } from "@/context/ThemeContext";
 import { FiSend, FiEdit, FiTrash, FiPlus, FiSearch } from "react-icons/fi";
 import ReactMarkdown from "react-markdown";
 import { io } from "socket.io-client";
+import LottieAnimation from "@/components/LottieAnimation"; // Importa o LottieAnimation
+
 
 interface Message {
     sender: "user" | "assistant";
@@ -219,31 +221,50 @@ export default function ChatPageComponent({
                 );
             }
         }
+        // Dentro da função handleSubmit, substitua o trecho que chama a API por:
+
         setIsLoading(true);
         try {
             const apiKey = process.env.NEXT_PUBLIC_DEEPSEEK;
             if (!apiKey) {
                 throw new Error("A chave da API não foi encontrada. Verifique seu arquivo .env.");
             }
-            const apiResponse = await fetch("https://openrouter.ai/api/v1/chat/completions", {
-                method: "POST",
-                headers: {
-                    Authorization: `Bearer ${apiKey}`,
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify({
-                    model,
-                    messages: updatedMessages.map((m) => ({ role: m.sender, content: m.content })),
-                    top_p: 1,
-                    temperature: 0.9,
-                    repetition_penalty: 1,
-                }),
-            });
-            const data = await apiResponse.json();
-            const assistantContent =
-                data.choices && data.choices[0]?.message?.content?.trim()
-                    ? data.choices[0].message.content.trim()
-                    : t("Api Falhou. Digite novamente a pergunta") || "API failed, please try again";
+            const errorResponse = t("Api Falhou. Digite novamente a pergunta") || "API failed, please try again";
+            let assistantContent = "";
+            let attempts = 0;
+            // Loop de retry até obter uma resposta válida ou atingir 5 tentativas
+            while (attempts < 5) {
+                attempts++;
+                const apiResponse = await fetch("https://openrouter.ai/api/v1/chat/completions", {
+                    method: "POST",
+                    headers: {
+                        Authorization: `Bearer ${apiKey}`,
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({
+                        model,
+                        messages: updatedMessages.map((m) => ({ role: m.sender, content: m.content })),
+                        top_p: 1,
+                        temperature: 0.9,
+                        repetition_penalty: 1,
+                    }),
+                });
+                const data = await apiResponse.json();
+                assistantContent =
+                    data.choices && data.choices[0]?.message?.content?.trim()
+                        ? data.choices[0].message.content.trim()
+                        : errorResponse;
+                // Se a resposta for válida, sai do loop
+                if (assistantContent !== errorResponse) {
+                    break;
+                }
+            }
+
+            // Caso todas as tentativas retornem erro, lança um erro para ser tratado
+            if (assistantContent === errorResponse) {
+                throw new Error(errorResponse);
+            }
+
             const assistantMessage: Message = { sender: "assistant", content: assistantContent };
             const finalMessages = [...updatedMessages, assistantMessage];
             setMessages(finalMessages);
@@ -251,7 +272,6 @@ export default function ChatPageComponent({
                 await fetch("https://backchat.jeanhenrique.site/api/chat/conversations", {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
-
                     body: JSON.stringify({ conversationId: convId, messages: finalMessages }),
                 });
                 setConversations((prev) =>
@@ -264,7 +284,8 @@ export default function ChatPageComponent({
         } finally {
             setIsLoading(false);
         }
-    };
+    }
+
 
     return (
         <ProtectedRoute>
@@ -459,11 +480,11 @@ export default function ChatPageComponent({
                 </section>
             </div>
             {isLoading && (
-                <div className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-black bg-opacity-30" onClick={(e) => e.stopPropagation()}>
-                    <div className="p-6 rounded shadow bg-white dark:bg-gray-800 dark:text-white flex flex-col items-center">
-                        <div className="w-10 h-10 border-4 border-gray-300 dark:border-gray-500 border-t-transparent rounded-full animate-spin mb-3"></div>
-                        <p>{t("aiProcessing")}</p>
-                    </div>
+                <div
+                    className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-black bg-opacity-30"
+                    onClick={(e) => e.stopPropagation()}
+                >
+                    <LottieAnimation />
                 </div>
             )}
         </ProtectedRoute>
