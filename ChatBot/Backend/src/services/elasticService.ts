@@ -3,12 +3,22 @@ import elasticClient from "./elasticClient";
 const INDEX_NAME = "conversations";
 
 async function ensureIndexExists(): Promise<void> {
-    // Verifica se o índice existe; caso não, cria-o.
-    const existsResponse = (await elasticClient.indices.exists({ index: INDEX_NAME })) as any;
-    if (!existsResponse.body) {
-        await elasticClient.indices.create({ index: INDEX_NAME });
+    try {
+        const existsResponse = await elasticClient.indices.exists({ index: INDEX_NAME });
+        if (!existsResponse) {
+            await elasticClient.indices.create({ index: INDEX_NAME });
+        }
+    } catch (err: any) {
+        // Se o erro indicar que o índice já existe, apenas ignore
+        if (err.meta && err.meta.body && err.meta.body.error && err.meta.body.error.type === 'resource_already_exists_exception') {
+            console.warn("Índice já existe, prosseguindo.");
+        } else {
+            throw err;
+        }
     }
 }
+
+
 
 /**
  * Indexa uma nova conversa.

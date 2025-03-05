@@ -55,7 +55,7 @@ export default function Register() {
                     overflow: "hidden",
                 }}
             >
-                <div className="flex flex-col md:flex-row gap-6 mt-16">
+                <div className="flex flex-col md:flex-row gap-6 mt-80 md:mt-16">
                     <form
                         onSubmit={handleRegister}
                         className="bg-white dark:bg-gray-800 p-6 rounded shadow-md w-80 md:w-[400px]"

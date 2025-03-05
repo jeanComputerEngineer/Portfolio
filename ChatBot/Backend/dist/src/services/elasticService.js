@@ -20,10 +20,20 @@ const elasticClient_1 = __importDefault(require("./elasticClient"));
 const INDEX_NAME = "conversations";
 function ensureIndexExists() {
     return __awaiter(this, void 0, void 0, function* () {
-        // Verifica se o índice existe; caso não, cria-o.
-        const existsResponse = (yield elasticClient_1.default.indices.exists({ index: INDEX_NAME }));
-        if (!existsResponse.body) {
-            yield elasticClient_1.default.indices.create({ index: INDEX_NAME });
+        try {
+            const existsResponse = yield elasticClient_1.default.indices.exists({ index: INDEX_NAME });
+            if (!existsResponse) {
+                yield elasticClient_1.default.indices.create({ index: INDEX_NAME });
+            }
+        }
+        catch (err) {
+            // Se o erro indicar que o índice já existe, apenas ignore
+            if (err.meta && err.meta.body && err.meta.body.error && err.meta.body.error.type === 'resource_already_exists_exception') {
+                console.warn("Índice já existe, prosseguindo.");
+            }
+            else {
+                throw err;
+            }
         }
     });
 }

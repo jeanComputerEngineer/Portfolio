@@ -106,7 +106,7 @@ export function TopMenu({ toggleConversationsAction }: TopMenuProps) {
     const router = useRouter();
     const { darkMode, toggleDarkMode } = useTheme();
     const { t } = useTranslation();
-    const [user, setUser] = useState<{ name: string; preferredLanguage: string } | null>(null);
+    const [user, setUser] = useState<{ name: string; email: string; preferredLanguage: string } | null>(null);
     const [selectedLang, setSelectedLang] = useState("English");
 
     // Modal para edição de perfil e troca de senha
@@ -152,8 +152,7 @@ export function TopMenu({ toggleConversationsAction }: TopMenuProps) {
                     const res = await fetch("https://backchat.jeanhenrique.site/api/auth/account", {
                         method: "PUT",
                         headers: { "Content-Type": "application/json" },
-
-                        body: JSON.stringify({ name: user.name, preferredLanguage: option.value }),
+                        body: JSON.stringify({ email: user.email, name: profileName })
                     });
                     if (res.ok) {
                         const data = await res.json();
@@ -176,12 +175,12 @@ export function TopMenu({ toggleConversationsAction }: TopMenuProps) {
 
     const handleProfileUpdate = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
+        if (!user) return; // ou mostre uma mensagem de erro
         try {
             const res = await fetch("https://backchat.jeanhenrique.site/api/auth/account", {
                 method: "PUT",
                 headers: { "Content-Type": "application/json" },
-
-                body: JSON.stringify({ name: profileName }),
+                body: JSON.stringify({ email: user.email, name: profileName })
             });
             if (res.ok) {
                 const data = await res.json();
@@ -197,6 +196,7 @@ export function TopMenu({ toggleConversationsAction }: TopMenuProps) {
             alert(t("profileUpdateError"));
         }
     };
+
 
     const handleOpenPasswordModal = () => setPasswordModalOpen(true);
 
@@ -291,7 +291,7 @@ export function TopMenu({ toggleConversationsAction }: TopMenuProps) {
                 </div>
             </header>
             {profileModalOpen && (
-                <div className="fixed inset-0 z-[70] flex items-center justify-center bg-black bg-opacity-50">
+                <div className="fixed inset-0 z-[90] flex items-center justify-center bg-black bg-opacity-50">
                     <div className="bg-white dark:bg-gray-900 rounded-lg p-6 w-11/12 max-w-md">
                         <div className="flex justify-end">
                             <button onClick={() => setProfileModalOpen(false)} className="text-red-500 focus:outline-none hover:opacity-80" title={t("close")}>
@@ -325,6 +325,7 @@ export function TopMenu({ toggleConversationsAction }: TopMenuProps) {
                     </div>
                 </div>
             )}
+
             {passwordModalOpen && <ChangePasswordModal onClose={() => setPasswordModalOpen(false)} />}
             {settingsOpen && (
                 <div className="fixed inset-0 z-[70] flex items-center justify-center bg-black bg-opacity-50">

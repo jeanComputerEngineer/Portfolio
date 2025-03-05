@@ -2,7 +2,6 @@ REQUISITOS FALTANTES
 
 3. **Funcionalidades Essenciais**
     - Autenticação segura com OAuth2 e 2FA
-    - Chat em tempo real com WebSockets
 4. **Segurança e Conformidade**
     - Prevenção contra injeções SQL, XSS e CSRF
     - Criptografia de dados sensíveis
@@ -42,7 +41,7 @@ REQUISITOS - TOTAIS
 3. **Funcionalidades Essenciais**
     - Autenticação segura com OAuth2 e 2FA
     - CRUD completo de usuários
-    - Chat em tempo real com WebSockets
+    - Chat em tempo real com WebSockets --- Final
     - Histórico de conversas com paginação
     - Busca de mensagens e usuários
 4. **Segurança e Conformidade**
