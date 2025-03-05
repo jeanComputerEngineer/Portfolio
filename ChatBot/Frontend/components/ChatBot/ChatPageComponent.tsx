@@ -7,8 +7,7 @@ import { useTheme } from "@/context/ThemeContext";
 import { FiSend, FiEdit, FiTrash, FiPlus, FiSearch } from "react-icons/fi";
 import ReactMarkdown from "react-markdown";
 import { io } from "socket.io-client";
-import LottieAnimation from "@/components/Animação/LottieAnimation"; // Importa o LottieAnimation
-
+import LottieAnimation from "@/components/Animação/LottieAnimation";
 
 interface Message {
     sender: "user" | "assistant";
@@ -47,18 +46,32 @@ export default function ChatPageComponent({
 
     const messagesEndRef = useRef<HTMLDivElement>(null);
 
-    // Conecta o socket e trata mensagens em tempo real
+    // Conecta o socket para chat em tempo real
     useEffect(() => {
-        const socketClient = io("https://backchat.jeanhenrique.site/");
-        socketClient.on("chat message", (msg: Message) => {
+        const socket = io("https://backchat.jeanhenrique.site/");
+        socket.on("chat message", (msg: Message) => {
             setMessages((prev) => [...prev, msg]);
         });
         return () => {
-            socketClient.disconnect();
+            socket.disconnect();
         };
     }, []);
 
-    // Configura o idioma e busca as conversas após carregar o usuário
+    // Função para buscar conversas do backend
+    const fetchConversations = async () => {
+        try {
+            const res = await fetch("https://backchat.jeanhenrique.site/api/chat/conversations?limit=1000");
+            if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
+            const data = await res.json();
+            if (data.conversations) {
+                setConversations(data.conversations);
+            }
+        } catch (error) {
+            console.error("Error fetching conversations:", error);
+        }
+    };
+
+    // Ao carregar o usuário, define o idioma e busca conversas
     useEffect(() => {
         const storedUser = localStorage.getItem("user");
         if (storedUser) {
@@ -72,7 +85,7 @@ export default function ChatPageComponent({
         messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
     }, [messages, isLoading]);
 
-    // Filtra as conversas conforme o termo de busca
+    // Filtra as conversas localmente (caso não esteja buscando via Elastic)
     const filteredConversations = searchQuery
         ? conversations.filter((conv) =>
             conv.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -80,19 +93,28 @@ export default function ChatPageComponent({
         )
         : conversations;
 
-    const fetchConversations = async () => {
+    // Busca conversas via endpoint do Elasticsearch
+    const fetchSearchedConversations = async (query: string) => {
         try {
-            const res = await fetch("https://backchat.jeanhenrique.site/api/chat/conversations?limit=1000", {
-
-            });
+            const res = await fetch(
+                `https://backchat.jeanhenrique.site/api/chat/search?q=${encodeURIComponent(query)}`
+            );
+            if (!res.ok) {
+                // Se não for OK, leia o texto para identificar o erro
+                const text = await res.text();
+                throw new Error(`Erro na requisição: ${res.status} - ${text}`);
+            }
             const data = await res.json();
-            if (data.conversations) setConversations(data.conversations);
+            if (data.conversations) {
+                setConversations(data.conversations);
+            }
         } catch (error) {
-            console.error("Error fetching conversations:", error);
+            console.error("Erro ao buscar conversas:", error);
         }
     };
 
-    // Cria nova conversa (limitada a 20)
+
+    // Cria nova conversa
     const handleNewConversation = async () => {
         if (conversations.length >= 20) {
             alert(t("errorConversationLimit"));
@@ -102,12 +124,12 @@ export default function ChatPageComponent({
             const res = await fetch("https://backchat.jeanhenrique.site/api/chat/conversations", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-
                 body: JSON.stringify({ title: t("newConversation"), messages: [] }),
             });
-            const data = await res.json();
-            setConversations((prev) => [data as Conversation, ...prev]);
-            setCurrentConversationId((data as Conversation)._id);
+            if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
+            const data: Conversation = await res.json();
+            setConversations((prev) => [data, ...prev]);
+            setCurrentConversationId(data._id);
             setMessages([]);
             setErrorMessage("");
             toggleConversationsAction();
@@ -133,7 +155,6 @@ export default function ChatPageComponent({
             await fetch("https://backchat.jeanhenrique.site/api/chat/conversations", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-
                 body: JSON.stringify({ conversationId, title, messages: msgs }),
             });
         } catch (error) {
@@ -152,7 +173,9 @@ export default function ChatPageComponent({
     };
 
     const handleEditKeyDown = (e: KeyboardEvent<HTMLInputElement>, convId: string) => {
-        if (e.key === "Enter") handleUpdateConversationTitle(convId);
+        if (e.key === "Enter") {
+            handleUpdateConversationTitle(convId);
+        }
     };
 
     const handleDeleteConversation = async (convId: string) => {
@@ -160,7 +183,6 @@ export default function ChatPageComponent({
         try {
             const res = await fetch(`https://backchat.jeanhenrique.site/api/chat/conversations/${convId}`, {
                 method: "DELETE",
-
             });
             if (res.ok) {
                 setConversations((prev) => prev.filter((conv) => conv._id !== convId));
@@ -190,12 +212,12 @@ export default function ChatPageComponent({
                 const createRes = await fetch("https://backchat.jeanhenrique.site/api/chat/conversations", {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
-
                     body: JSON.stringify({
                         title: conversationTitle,
                         messages: [{ sender: "user", content: userMessage.content }],
                     }),
                 });
+                if (!createRes.ok) throw new Error(`HTTP error! status: ${createRes.status}`);
                 const createdConv = await createRes.json();
                 convId = createdConv._id;
                 setCurrentConversationId(convId);
@@ -221,7 +243,6 @@ export default function ChatPageComponent({
                 );
             }
         }
-        // Dentro da função handleSubmit, substitua o trecho que chama a API por:
 
         setIsLoading(true);
         try {
@@ -232,7 +253,6 @@ export default function ChatPageComponent({
             const errorResponse = t("Api Falhou. Digite novamente a pergunta") || "API failed, please try again";
             let assistantContent = "";
             let attempts = 0;
-            // Loop de retry até obter uma resposta válida ou atingir 5 tentativas
             while (attempts < 5) {
                 attempts++;
                 const apiResponse = await fetch("https://openrouter.ai/api/v1/chat/completions", {
@@ -254,17 +274,11 @@ export default function ChatPageComponent({
                     data.choices && data.choices[0]?.message?.content?.trim()
                         ? data.choices[0].message.content.trim()
                         : errorResponse;
-                // Se a resposta for válida, sai do loop
-                if (assistantContent !== errorResponse) {
-                    break;
-                }
+                if (assistantContent !== errorResponse) break;
             }
-
-            // Caso todas as tentativas retornem erro, lança um erro para ser tratado
             if (assistantContent === errorResponse) {
                 throw new Error(errorResponse);
             }
-
             const assistantMessage: Message = { sender: "assistant", content: assistantContent };
             const finalMessages = [...updatedMessages, assistantMessage];
             setMessages(finalMessages);
@@ -284,8 +298,7 @@ export default function ChatPageComponent({
         } finally {
             setIsLoading(false);
         }
-    }
-
+    };
 
     return (
         <ProtectedRoute>
@@ -324,7 +337,10 @@ export default function ChatPageComponent({
                             value={searchQuery}
                             onChange={(e) => setSearchQuery(e.target.value)}
                             onKeyDown={(e) => {
-                                if (e.key === "Enter") setSearchActive(false);
+                                if (e.key === "Enter") {
+                                    setSearchActive(false);
+                                    fetchSearchedConversations(searchQuery);
+                                }
                             }}
                             placeholder={t("searchPlaceholder")}
                             className={`w-full p-2 mb-4 rounded border focus:outline-none ${darkMode ? "bg-gray-700 text-gray-100 border-gray-600" : "bg-gray-100 text-gray-800 border-gray-300"

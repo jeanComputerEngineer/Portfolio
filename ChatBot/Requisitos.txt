@@ -1,8 +1,5 @@
 REQUISITOS FALTANTES
 
-1. **Backend**
-    - Redis ou Memcache para caching
-    - Elasticsearch para busca avançada
 3. **Funcionalidades Essenciais**
     - Autenticação segura com OAuth2 e 2FA
     - Chat em tempo real com WebSockets

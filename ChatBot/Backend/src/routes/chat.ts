@@ -2,27 +2,64 @@
 import { Router } from 'express';
 import Conversation, { IConversation } from '../models/Conversation';
 import { enqueueTask } from '../services/queueService';
+import redisClient from '../services/redisClient';
+import {
+    indexConversation,
+    updateConversationIndex,
+    deleteConversationIndex,
+    searchConversations
+} from '../services/elasticService';
 
 const router = Router();
 
-// Busca de conversas
+// Busca de conversas usando Elasticsearch
+router.get('/search', async (req, res) => {
+    try {
+        const query = req.query.q as string;
+        if (!query) {
+            return res.status(400).json({ message: 'Query não informada' });
+        }
+        const results = await searchConversations(query);
+        res.json({ conversations: results });
+    } catch (err) {
+        res.status(500).json({ message: 'Erro ao buscar conversas', error: err });
+    }
+});
+
+// Busca de conversas com cache no Redis (rota original)
 router.get('/conversations', async (req, res) => {
     try {
+        console.log('Endpoint GET /conversations chamado');
+        const cacheKey = 'conversations_test';
+
+        // Tenta obter as conversas do cache
+        const cachedConversations = await redisClient.get(cacheKey);
+        if (cachedConversations) {
+            console.log('Retornando conversas do cache');
+            return res.json({ conversations: JSON.parse(cachedConversations) });
+        }
+
+        // Se não houver cache, busca do MongoDB
         const limit = parseInt(req.query.limit as string) || 100;
-        // Em uma aplicação real, filtre as conversas do usuário
         const conversations = await Conversation.find().limit(limit).sort({ createdAt: -1 });
+
+        // Armazena o resultado no cache por 60 segundos
+        await redisClient.set(cacheKey, JSON.stringify(conversations), { EX: 60 });
+        console.log(`Cache definido para "${cacheKey}"`);
+
         res.json({ conversations });
     } catch (err) {
         res.status(500).json({ message: 'Erro ao buscar conversas', error: err });
     }
 });
 
+
+
 // Criação ou atualização de uma conversa
 router.post('/conversations', async (req, res) => {
     const { conversationId, title, messages } = req.body;
     try {
         if (conversationId) {
-            // Atualiza a conversa existente
             const updated = await Conversation.findByIdAndUpdate(
                 conversationId,
                 { title, messages },
@@ -31,14 +68,15 @@ router.post('/conversations', async (req, res) => {
             if (!updated) {
                 return res.status(404).json({ message: 'Conversa não encontrada' });
             }
-            // Enfileira uma tarefa para processamento extra (exemplo)
+            // Atualiza o índice no Elasticsearch
+            await updateConversationIndex(updated);
             enqueueTask('processConversation', { conversationId: updated._id, title, messages });
             res.json(updated);
         } else {
-            // Cria nova conversa
             const newConversation: IConversation = new Conversation({ title, messages });
             await newConversation.save();
-            // Enfileira uma tarefa para a nova conversa
+            // Indexa a nova conversa no Elasticsearch
+            await indexConversation(newConversation);
             enqueueTask('processConversation', { conversationId: newConversation._id, title, messages });
             res.status(201).json(newConversation);
         }
@@ -55,6 +93,8 @@ router.delete('/conversations/:id', async (req, res) => {
         if (!deleted) {
             return res.status(404).json({ message: 'Conversa não encontrada' });
         }
+        // Remove a conversa do Elasticsearch
+        await deleteConversationIndex(id);
         res.json({ message: 'Conversa excluída' });
     } catch (err) {
         res.status(500).json({ message: 'Erro ao excluir conversa', error: err });
