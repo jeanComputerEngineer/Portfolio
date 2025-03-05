@@ -4,7 +4,7 @@ import { useRouter } from "next/navigation";
 import { useTranslation } from "react-i18next";
 import LanguageSwitcherHeader from "@/components/Menu Inicial/LanguageSwitcherHeader";
 import { csrfFetch } from "@/utils/csrfFetch";
-
+import { FiEye, FiEyeOff } from "react-icons/fi";
 
 export default function Login() {
     const router = useRouter();
@@ -14,6 +14,7 @@ export default function Login() {
     const [error, setError] = useState("");
     const [message, setMessage] = useState("");
     const [isDarkMode, setIsDarkMode] = useState<boolean | null>(null);
+    const [showPassword, setShowPassword] = useState(false);
 
     useEffect(() => {
         if (typeof window !== "undefined") {
@@ -26,7 +27,6 @@ export default function Login() {
             return () => mediaQuery.removeEventListener("change", handleThemeChange);
         }
     }, []);
-
 
     const handleLogin = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -63,7 +63,6 @@ export default function Login() {
                 overflow: "hidden"
             }}
         >
-            {/* LanguageSwitcher fixado no topo */}
             <div className="absolute top-0 left-0 w-full z-50">
                 <LanguageSwitcherHeader />
             </div>
@@ -77,10 +76,7 @@ export default function Login() {
                 </h1>
                 {error && <p className="text-red-500 mb-2" role="alert">{error}</p>}
                 {message && <p className="text-green-500 mb-2" role="alert">{message}</p>}
-                <label
-                    htmlFor="email"
-                    className="block text-sm font-medium text-gray-700 dark:text-gray-300"
-                >
+                <label htmlFor="email" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
                     {t("email")}
                 </label>
                 <input
@@ -89,24 +85,30 @@ export default function Login() {
                     placeholder={t("email")}
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    className="w-full p-2 mb-3 border rounded"
+                    className="w-full p-2 mb-3 border rounded bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100"
                     required
                 />
-                <label
-                    htmlFor="password"
-                    className="block text-sm font-medium text-gray-700 dark:text-gray-300"
-                >
+                <label htmlFor="password" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
                     {t("password")}
                 </label>
-                <input
-                    id="password"
-                    type="password"
-                    placeholder={t("password")}
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    className="w-full p-2 mb-3 border rounded"
-                    required
-                />
+                <div className="relative">
+                    <input
+                        id="password"
+                        type={showPassword ? "text" : "password"}
+                        placeholder={t("password")}
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                        className="w-full p-2 pr-10 mb-3 border rounded bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100"
+                        required
+                    />
+                    <button
+                        type="button"
+                        className="absolute inset-y-0 right-0 pr-2 flex items-center"
+                        onClick={() => setShowPassword(!showPassword)}
+                    >
+                        {showPassword ? <FiEyeOff /> : <FiEye />}
+                    </button>
+                </div>
                 <button
                     type="submit"
                     className="w-full p-2 bg-green-500 text-white rounded hover:bg-green-600"
@@ -114,12 +116,7 @@ export default function Login() {
                 >
                     {t("login")}
                 </button>
-                <p className="mt-3 text-center">
-                    {t("noAccount")}{" "}
-                    <a href="/register" className="text-blue-500">
-                        {t("register")}
-                    </a>
-                </p>
+                <p className="mt-3 text-center" dangerouslySetInnerHTML={{ __html: t("loginPrompt") }} />
             </form>
         </div>
     );

@@ -17,87 +17,7 @@ import { useTranslation } from "react-i18next";
 import i18n, { languageNames } from "@/components/Tradutor/i18n";
 import Select from "react-select";
 import { csrfFetch } from "@/utils/csrfFetch";
-
-const ChangePasswordModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
-    const { t } = useTranslation();
-    const [currentPassword, setCurrentPassword] = useState("");
-    const [newPassword, setNewPassword] = useState("");
-    const [confirmPassword, setConfirmPassword] = useState("");
-    const [modalError, setModalError] = useState("");
-    const [success, setSuccess] = useState("");
-
-    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-        e.preventDefault();
-        if (newPassword !== confirmPassword) {
-            setModalError(t("passwordMismatch"));
-            return;
-        }
-        try {
-            const res = await csrfFetch("https://backchat.jeanhenrique.site/api/auth/changePassword", {
-                method: "PUT",
-                headers: { "Content-Type": "application/json" },
-
-                body: JSON.stringify({ currentPassword, newPassword }),
-            });
-            if (res.ok) {
-                setSuccess(t("passwordChangedSuccessfully"));
-                setModalError("");
-                setTimeout(() => onClose(), 1500);
-            } else {
-                const data = await res.json();
-                setModalError(data.message || t("passwordChangeError"));
-            }
-        } catch (err) {
-            console.error("Password change error:", err);
-            setModalError(t("passwordChangeError"));
-        }
-    };
-
-    return (
-        <div className="fixed inset-0 z-[80] flex items-center justify-center bg-black bg-opacity-50">
-            <div className="bg-white dark:bg-gray-900 rounded-lg p-6 w-11/12 max-w-sm">
-                <div className="flex justify-end">
-                    <button onClick={onClose} className="text-red-500 focus:outline-none hover:opacity-80" title={t("close")}>
-                        <FiX size={24} />
-                    </button>
-                </div>
-                <h2 className="text-lg font-bold mb-4 text-gray-900 dark:text-white">{t("changePassword")}</h2>
-                <p className="text-sm text-gray-600 dark:text-gray-300 mb-4">{t("passwordChangeInstruction")}</p>
-                {modalError && <p className="text-red-500 mb-2">{modalError}</p>}
-                {success && <p className="text-green-500 mb-2">{success}</p>}
-                <form onSubmit={handleSubmit}>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">{t("currentPassword")}</label>
-                    <input
-                        type="password"
-                        value={currentPassword}
-                        onChange={(e) => setCurrentPassword(e.target.value)}
-                        className="w-full p-2 mb-3 border rounded bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100"
-                        required
-                    />
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">{t("newPassword")}</label>
-                    <input
-                        type="password"
-                        value={newPassword}
-                        onChange={(e) => setNewPassword(e.target.value)}
-                        className="w-full p-2 mb-3 border rounded bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100"
-                        required
-                    />
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">{t("confirmPassword")}</label>
-                    <input
-                        type="password"
-                        value={confirmPassword}
-                        onChange={(e) => setConfirmPassword(e.target.value)}
-                        className="w-full p-2 mb-3 border rounded bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100"
-                        required
-                    />
-                    <button type="submit" className="w-full p-2 bg-blue-500 text-white rounded hover:bg-blue-600">
-                        {t("updatePassword")}
-                    </button>
-                </form>
-            </div>
-        </div>
-    );
-};
+import ChangePasswordModal from "../AlterarSenha/ChangePasswordModal";
 
 export interface TopMenuProps {
     toggleConversationsAction: () => void;
@@ -109,31 +29,12 @@ export function TopMenu({ toggleConversationsAction }: TopMenuProps) {
     const { t } = useTranslation();
     const [user, setUser] = useState<{ name: string; email: string; preferredLanguage: string } | null>(null);
     const [selectedLang, setSelectedLang] = useState("English");
-
-    // Modal para edição de perfil e troca de senha
     const [profileModalOpen, setProfileModalOpen] = useState(false);
     const [profileName, setProfileName] = useState("");
     const [passwordModalOpen, setPasswordModalOpen] = useState(false);
     const [settingsOpen, setSettingsOpen] = useState(false);
 
-    const options = languageNames
-        .filter((lang) => {
-            const allowed = [
-                "English",
-                "Portuguese",
-                "Spanish",
-                "French",
-                "Arabic",
-                "Chinese",
-                "Russian",
-                "Hindi",
-                "Bengali",
-                "Indonesian",
-            ];
-            return allowed.includes(lang);
-        })
-        .map((lang) => ({ value: lang, label: lang }));
-
+    // Carrega usuário do localStorage
     useEffect(() => {
         const storedUser = localStorage.getItem("user");
         if (storedUser) {
@@ -148,7 +49,8 @@ export function TopMenu({ toggleConversationsAction }: TopMenuProps) {
         if (option) {
             setSelectedLang(option.value);
             i18n.changeLanguage(option.value);
-            if (user) {
+            if (user && user.name !== profileName) {
+                // Se o nome mudou, atualiza o perfil
                 try {
                     const res = await csrfFetch("https://backchat.jeanhenrique.site/api/auth/account", {
                         method: "PUT",
@@ -159,6 +61,7 @@ export function TopMenu({ toggleConversationsAction }: TopMenuProps) {
                         const data = await res.json();
                         localStorage.setItem("user", JSON.stringify(data.user));
                         setUser(data.user);
+                        console.log("Perfil atualizado com sucesso");
                     }
                 } catch (err) {
                     console.error("Error updating language:", err);
@@ -176,7 +79,11 @@ export function TopMenu({ toggleConversationsAction }: TopMenuProps) {
 
     const handleProfileUpdate = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        if (!user) return; // ou mostre uma mensagem de erro
+        if (!user || user.name === profileName) {
+            // Se não houve alteração, não envia a requisição
+            setProfileModalOpen(false);
+            return;
+        }
         try {
             const res = await csrfFetch("https://backchat.jeanhenrique.site/api/auth/account", {
                 method: "PUT",
@@ -198,15 +105,12 @@ export function TopMenu({ toggleConversationsAction }: TopMenuProps) {
         }
     };
 
-
     const handleOpenPasswordModal = () => setPasswordModalOpen(true);
-
     const handleProfileDelete = async () => {
         if (confirm(t("confirmDeleteAccount"))) {
             try {
                 const res = await csrfFetch("https://backchat.jeanhenrique.site/api/auth/account", {
                     method: "DELETE",
-
                 });
                 if (res.ok) {
                     localStorage.removeItem("user");
@@ -218,6 +122,54 @@ export function TopMenu({ toggleConversationsAction }: TopMenuProps) {
                 alert(t("accountDeleteError"));
             }
         }
+    };
+
+    const options = languageNames
+        .filter((lang) => {
+            const allowed = [
+                "English",
+                "Portuguese",
+                "Spanish",
+                "French",
+                "Arabic",
+                "Chinese",
+                "Russian",
+                "Hindi",
+                "Bengali",
+                "Indonesian",
+            ];
+            return allowed.includes(lang);
+        })
+        .map((lang) => ({ value: lang, label: lang }));
+
+    // Ajuste dos estilos do select em dark mode
+    const selectStyles = {
+        control: (provided: any) => ({
+            ...provided,
+            backgroundColor: darkMode ? "#2d3748" : "transparent",
+            border: "none",
+            boxShadow: "none",
+        }),
+        singleValue: (provided: any) => ({
+            ...provided,
+            color: darkMode ? "#f7fafc" : "#2d3748",
+        }),
+        menu: (provided: any) => ({
+            ...provided,
+            backgroundColor: darkMode ? "#2d3748" : "#fff",
+        }),
+        option: (provided: any, state: any) => ({
+            ...provided,
+            backgroundColor: state.isFocused
+                ? darkMode
+                    ? "#4a5568"
+                    : "#e2e8f0"
+                : darkMode
+                    ? "#2d3748"
+                    : "#fff",
+            color: darkMode ? "#f7fafc" : "#2d3748",
+            cursor: "pointer"
+        })
     };
 
     return (
@@ -254,18 +206,7 @@ export function TopMenu({ toggleConversationsAction }: TopMenuProps) {
                                         classNamePrefix="react-select"
                                         placeholder={t("changeLanguage")}
                                         isSearchable
-                                        styles={{
-                                            control: (provided) => ({
-                                                ...provided,
-                                                backgroundColor: "transparent",
-                                                border: "none",
-                                                boxShadow: "none",
-                                            }),
-                                            singleValue: (provided) => ({
-                                                ...provided,
-                                                color: darkMode ? "#f7fafc" : "#2d3748",
-                                            }),
-                                        }}
+                                        styles={selectStyles}
                                     />
                                 </div>
                             </div>
@@ -326,7 +267,6 @@ export function TopMenu({ toggleConversationsAction }: TopMenuProps) {
                     </div>
                 </div>
             )}
-
             {passwordModalOpen && <ChangePasswordModal onClose={() => setPasswordModalOpen(false)} />}
             {settingsOpen && (
                 <div className="fixed inset-0 z-[70] flex items-center justify-center bg-black bg-opacity-50">
@@ -352,22 +292,12 @@ export function TopMenu({ toggleConversationsAction }: TopMenuProps) {
                                         options={options}
                                         value={options.find((o) => o.value === selectedLang)}
                                         onChange={handleLanguageChange}
+                                        instanceId="language-select"
                                         className="react-select-container"
                                         classNamePrefix="react-select"
                                         placeholder={t("changeLanguage")}
                                         isSearchable
-                                        styles={{
-                                            control: (provided) => ({
-                                                ...provided,
-                                                backgroundColor: "transparent",
-                                                border: "none",
-                                                boxShadow: "none",
-                                            }),
-                                            singleValue: (provided) => ({
-                                                ...provided,
-                                                color: darkMode ? "#f7fafc" : "#2d3748",
-                                            }),
-                                        }}
+                                        styles={selectStyles}
                                     />
                                 </div>
                             </div>

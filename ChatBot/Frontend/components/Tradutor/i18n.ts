@@ -23,6 +23,7 @@ const resources = {
             register: "Register",
             email: "Email",
             password: "Password",
+            newPassword: "New Password",
             confirmPassword: "Confirm Password",
             updateProfile: "Update Profile",
             deleteAccount: "Delete Account",
@@ -31,8 +32,9 @@ const resources = {
             accountDeleted: "Account deleted.",
             accountDeleteError: "Error deleting account.",
             registration: "Registration",
-            alreadyHaveAccount: "Already have an account? Login",
-            noAccount: "Don't have an account? Register",
+            // These keys are used as link texts
+            loginPrompt: "Don't have an account? <a href='/register' class='text-blue-500'>register</a>",
+            registerPrompt: "Already have an account? <a href='/login' class='text-blue-500'>login</a>",
             changeLanguage: "Change Language",
             help: "Need help? Click here",
             errorConversationLimit: "Conversation limit reached.",
@@ -41,7 +43,9 @@ const resources = {
             searchPlaceholder: "Search conversations...",
             aiProcessing: "AI is processing...",
             confirmDeleteConversation: "Are you sure you want to delete this conversation?",
+            confirmDeleteAccount: "Are you sure you want to delete your account?",
             passwordMismatch: "Passwords do not match.",
+            passwordWeak: "Password must be at least 8 characters long and include uppercase, lowercase, digit, and special character.",
             // Rules / Instructions:
             ruleAccountExpires: "Your account will be automatically deleted after 7 days.",
             ruleTwoRegistrationsPerIP: "Only two accounts per IP per week are allowed.",
@@ -51,7 +55,6 @@ const resources = {
             registrationForm: "Registration Form",
             selectLanguage: "Select Language",
             rulesTitle: "Rules & Instructions",
-            needHelp: "Need help? Click here",
             // Change Password Modal keys:
             changePassword: "Change Password",
             passwordChangeInstruction: "Enter your current password, new password, and confirm the new password to change your password.",
@@ -82,6 +85,7 @@ const resources = {
             register: "Cadastro",
             email: "E-mail",
             password: "Senha",
+            newPassword: "nova senha", // em lowercase
             confirmPassword: "Confirmar Senha",
             updateProfile: "Atualizar Perfil",
             deleteAccount: "Excluir Conta",
@@ -90,8 +94,9 @@ const resources = {
             accountDeleted: "Conta excluída.",
             accountDeleteError: "Erro ao excluir conta.",
             registration: "Cadastro",
-            alreadyHaveAccount: "Já tem conta? Faça login",
-            noAccount: "Não tem conta? Cadastre-se",
+            // Links para navegação:
+            loginPrompt: "Não tem conta? <a href='/register' class='text-blue-500'>cadastre-se</a>",
+            registerPrompt: "Já possui conta? <a href='/login' class='text-blue-500'>faça login</a>",
             changeLanguage: "Alterar Idioma",
             help: "Precisa de ajuda? Clique aqui",
             errorConversationLimit: "Limite de 20 conversas atingido.",
@@ -100,7 +105,9 @@ const resources = {
             searchPlaceholder: "Buscar conversas...",
             aiProcessing: "IA está gerando a resposta...",
             confirmDeleteConversation: "Tem certeza que deseja excluir esta conversa?",
+            confirmDeleteAccount: "Tem certeza que deseja excluir sua conta?",
             passwordMismatch: "As senhas não conferem.",
+            passwordWeak: "A senha deve ter pelo menos 8 caracteres, incluindo letra maiúscula, minúscula, dígito e símbolo.",
             // Rules / Instructions:
             ruleAccountExpires: "Sua conta será automaticamente excluída após 7 dias.",
             ruleTwoRegistrationsPerIP: "Apenas duas contas por IP por semana são permitidas.",
@@ -110,7 +117,6 @@ const resources = {
             registrationForm: "Formulário de Cadastro",
             selectLanguage: "Selecione o Idioma",
             rulesTitle: "Regras e Instruções",
-            needHelp: "Precisa de ajuda? Clique aqui",
             // Change Password Modal keys:
             changePassword: "Alterar Senha",
             passwordChangeInstruction: "Digite sua senha atual, a nova senha e confirme a nova senha para alterar sua senha.",
@@ -141,16 +147,17 @@ const resources = {
             register: "Registro",
             email: "Correo Electrónico",
             password: "Contraseña",
+            newPassword: "nueva contraseña",
             confirmPassword: "Confirmar Contraseña",
             updateProfile: "Actualizar Perfil",
             deleteAccount: "Eliminar Cuenta",
             profileUpdated: "¡Perfil actualizado!",
-            profileUpdateError: "Error al actualizar perfil.",
+            profileUpdateError: "Error al actualizar el perfil.",
             accountDeleted: "Cuenta eliminada.",
             accountDeleteError: "Error al eliminar la cuenta.",
             registration: "Registro",
-            alreadyHaveAccount: "¿Ya tienes cuenta? Inicia sesión",
-            noAccount: "¿No tienes cuenta? Regístrate",
+            loginPrompt: "¿No tienes cuenta? <a href='/register' class='text-blue-500'>regístrate</a>",
+            registerPrompt: "¿Ya tienes cuenta? <a href='/login' class='text-blue-500'>inicia sesión</a>",
             changeLanguage: "Cambiar Idioma",
             help: "¿Necesitas ayuda? Haz clic aquí",
             errorConversationLimit: "Se alcanzó el límite de 20 conversaciones.",
@@ -158,21 +165,22 @@ const resources = {
             searchConversations: "Buscar conversaciones",
             searchPlaceholder: "Buscar conversaciones...",
             aiProcessing: "La IA está procesando...",
-            confirmDeleteConversation: "¿Estás seguro de querer eliminar esta conversación?",
+            confirmDeleteConversation: "¿Estás seguro de que deseas eliminar esta conversación?",
+            confirmDeleteAccount: "¿Estás seguro de que deseas eliminar tu cuenta?",
             passwordMismatch: "Las contraseñas no coinciden.",
+            passwordWeak: "La contraseña debe tener al menos 8 caracteres e incluir mayúsculas, minúsculas, dígitos y un carácter especial.",
             // Rules / Instructions:
             ruleAccountExpires: "Tu cuenta se eliminará automáticamente después de 7 días.",
             ruleTwoRegistrationsPerIP: "Solo se permiten dos cuentas por IP por semana.",
             ruleOneAccountPerEmail: "Solo se permite una cuenta por correo electrónico.",
-            ruleConversationLimits: "Cada cuenta puede tener un máximo de 20 conversaciones y cada conversación un máximo de 20,000 caracteres.",
+            ruleConversationLimits: "Cada cuenta puede tener un máximo de 20 conversaciones y cada conversación hasta 20,000 caracteres.",
             // Additional keys for modals:
             registrationForm: "Formulario de Registro",
             selectLanguage: "Selecciona el Idioma",
             rulesTitle: "Reglas e Instrucciones",
-            needHelp: "¿Necesitas ayuda? Haz clic aquí",
             // Change Password Modal keys:
             changePassword: "Cambiar Contraseña",
-            passwordChangeInstruction: "Introduce tu contraseña actual, la nueva contraseña y confírmala para cambiar la contraseña.",
+            passwordChangeInstruction: "Introduce tu contraseña actual, la nueva contraseña y confírmala para cambiar tu contraseña.",
             updatePassword: "Actualizar Contraseña",
             passwordChangedSuccessfully: "¡Contraseña actualizada con éxito!",
             currentPassword: "Contraseña Actual",
@@ -200,25 +208,28 @@ const resources = {
             register: "Inscription",
             email: "E-mail",
             password: "Mot de passe",
+            newPassword: "nouveau mot de passe",
             confirmPassword: "Confirmer le mot de passe",
             updateProfile: "Mettre à jour le Profil",
             deleteAccount: "Supprimer le Compte",
-            profileUpdated: "Profil mis à jour !",
+            profileUpdated: "Profil mis à jour !",
             profileUpdateError: "Erreur lors de la mise à jour du profil.",
             accountDeleted: "Compte supprimé.",
             accountDeleteError: "Erreur lors de la suppression du compte.",
             registration: "Inscription",
-            alreadyHaveAccount: "Vous avez déjà un compte ? Connectez-vous",
-            noAccount: "Pas de compte ? Inscrivez-vous",
+            loginPrompt: "Pas de compte ? <a href='/register' class='text-blue-500'>inscrivez-vous</a>",
+            registerPrompt: "Vous avez déjà un compte ? <a href='/login' class='text-blue-500'>connectez-vous</a>",
             changeLanguage: "Changer de Langue",
-            help: "Besoin d'aide ? Cliquez ici",
+            help: "Besoin d'aide ? Cliquez ici",
             errorConversationLimit: "Limite de 20 conversations atteinte.",
             errorCreatingConversation: "Erreur lors de la création de la conversation.",
             searchConversations: "Rechercher des conversations",
             searchPlaceholder: "Rechercher des conversations...",
             aiProcessing: "L'IA est en cours de traitement...",
-            confirmDeleteConversation: "Êtes-vous sûr de vouloir supprimer cette conversation ?",
+            confirmDeleteConversation: "Êtes-vous sûr de vouloir supprimer cette conversation ?",
+            confirmDeleteAccount: "Êtes-vous sûr de vouloir supprimer votre compte ?",
             passwordMismatch: "Les mots de passe ne correspondent pas.",
+            passwordWeak: "Le mot de passe doit comporter au moins 8 caractères et inclure des majuscules, minuscules, chiffres et caractères spéciaux.",
             // Rules / Instructions:
             ruleAccountExpires: "Votre compte sera automatiquement supprimé après 7 jours.",
             ruleTwoRegistrationsPerIP: "Seules deux inscriptions par IP par semaine sont autorisées.",
@@ -227,15 +238,7 @@ const resources = {
             // Additional keys for modals:
             registrationForm: "Formulaire d'Inscription",
             selectLanguage: "Sélectionnez la Langue",
-            rulesTitle: "Règles et Instructions",
-            needHelp: "Besoin d'aide ? Cliquez ici",
-            // Change Password Modal keys:
-            changePassword: "Changer le Mot de Passe",
-            passwordChangeInstruction: "Entrez votre mot de passe actuel, le nouveau mot de passe et confirmez-le pour le changer.",
-            updatePassword: "Mettre à jour le Mot de Passe",
-            passwordChangedSuccessfully: "Mot de passe mis à jour avec succès !",
-            currentPassword: "Mot de passe actuel",
-            name: "Nom"
+            rulesTitle: "Règles et Instructions"
         }
     },
     Arabic: {
@@ -259,6 +262,7 @@ const resources = {
             register: "تسجيل",
             email: "البريد الإلكتروني",
             password: "كلمة المرور",
+            newPassword: "كلمة مرور جديدة",
             confirmPassword: "تأكيد كلمة المرور",
             updateProfile: "تحديث الملف الشخصي",
             deleteAccount: "حذف الحساب",
@@ -267,8 +271,8 @@ const resources = {
             accountDeleted: "تم حذف الحساب.",
             accountDeleteError: "حدث خطأ أثناء حذف الحساب.",
             registration: "التسجيل",
-            alreadyHaveAccount: "هل لديك حساب؟ سجل الدخول",
-            noAccount: "ليس لديك حساب؟ سجل الآن",
+            loginPrompt: "ليس لديك حساب؟ <a href='/register' class='text-blue-500'>سجّل الآن</a>",
+            registerPrompt: "هل لديك حساب؟ <a href='/login' class='text-blue-500'>سجّل الدخول</a>",
             changeLanguage: "تغيير اللغة",
             help: "بحاجة إلى مساعدة؟ انقر هنا",
             errorConversationLimit: "لقد وصلت إلى الحد الأقصى من 20 محادثة.",
@@ -277,7 +281,9 @@ const resources = {
             searchPlaceholder: "البحث في المحادثات...",
             aiProcessing: "الذكاء الاصطناعي يعمل...",
             confirmDeleteConversation: "هل أنت متأكد من حذف هذه المحادثة؟",
+            confirmDeleteAccount: "هل أنت متأكد من حذف حسابك؟",
             passwordMismatch: "كلمتا المرور غير متطابقتين.",
+            passwordWeak: "يجب أن تكون كلمة المرور 8 أحرف على الأقل وتحتوي على حرف كبير، حرف صغير، رقم ورمز.",
             // Rules / Instructions:
             ruleAccountExpires: "سيتم حذف حسابك تلقائيًا بعد 7 أيام.",
             ruleTwoRegistrationsPerIP: "يسمح بحسابين فقط لكل IP في الأسبوع.",
@@ -286,15 +292,7 @@ const resources = {
             // Additional keys for modals:
             registrationForm: "نموذج التسجيل",
             selectLanguage: "اختر اللغة",
-            rulesTitle: "القواعد والتعليمات",
-            needHelp: "بحاجة إلى مساعدة؟ انقر هنا",
-            // Change Password Modal keys:
-            changePassword: "تغيير كلمة المرور",
-            passwordChangeInstruction: "أدخل كلمة المرور الحالية، الكلمة الجديدة، وأكد الكلمة الجديدة لتغيير كلمة المرور.",
-            updatePassword: "تحديث كلمة المرور",
-            passwordChangedSuccessfully: "تم تغيير كلمة المرور بنجاح!",
-            currentPassword: "كلمة المرور الحالية",
-            name: "الاسم"
+            rulesTitle: "القواعد والتعليمات"
         }
     },
     Chinese: {
@@ -318,6 +316,7 @@ const resources = {
             register: "注册",
             email: "电子邮件",
             password: "密码",
+            newPassword: "新密码",
             confirmPassword: "确认密码",
             updateProfile: "更新资料",
             deleteAccount: "删除账户",
@@ -326,8 +325,8 @@ const resources = {
             accountDeleted: "账户已删除。",
             accountDeleteError: "删除账户时出错。",
             registration: "注册",
-            alreadyHaveAccount: "已有账户？登录",
-            noAccount: "没有账户？注册",
+            loginPrompt: "没有账户？<a href='/register' class='text-blue-500'>注册</a>",
+            registerPrompt: "已有账户？<a href='/login' class='text-blue-500'>登录</a>",
             changeLanguage: "更改语言",
             help: "需要帮助？点击这里",
             errorConversationLimit: "已达到20个对话的上限。",
@@ -336,7 +335,9 @@ const resources = {
             searchPlaceholder: "搜索对话...",
             aiProcessing: "AI 正在处理...",
             confirmDeleteConversation: "确定要删除此对话吗？",
+            confirmDeleteAccount: "确定要删除您的账户吗？",
             passwordMismatch: "两次输入的密码不匹配。",
+            passwordWeak: "密码至少需要8个字符，并且包含大写字母、小写字母、数字和特殊字符。",
             // Rules / Instructions:
             ruleAccountExpires: "您的账户将在7天后自动删除。",
             ruleTwoRegistrationsPerIP: "每个IP每周最多允许两个账户。",
@@ -345,20 +346,11 @@ const resources = {
             // Additional keys for modals:
             registrationForm: "注册表单",
             selectLanguage: "选择语言",
-            rulesTitle: "规则与说明",
-            needHelp: "需要帮助？点击这里",
-            // Change Password Modal keys:
-            changePassword: "更改密码",
-            passwordChangeInstruction: "请输入当前密码、新密码，并确认新密码以更改密码。",
-            updatePassword: "更新密码",
-            passwordChangedSuccessfully: "密码更改成功！",
-            currentPassword: "当前密码",
-            name: "姓名"
+            rulesTitle: "规则与说明"
         }
     }
 };
 
-// Lista de nomes dos idiomas nos seus idiomas nativos
 export const languageNames: string[] = [
     "English",
     "Portuguese",
@@ -370,8 +362,6 @@ export const languageNames: string[] = [
     "Hindi",
     "Bengali",
     "Indonesian"
-
-
 ];
 
 i18n.use(initReactI18next).init({
