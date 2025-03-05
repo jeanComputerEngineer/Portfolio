@@ -10,21 +10,30 @@ const mongoose_1 = __importDefault(require("mongoose"));
 const cors_1 = __importDefault(require("cors"));
 const auth_1 = __importDefault(require("./routes/auth"));
 const chat_1 = __importDefault(require("./routes/chat"));
-const queueWorker_1 = require("./workers/queueWorker"); // Importe o worker
+const queueWorker_1 = require("./workers/queueWorker");
 const cookie_parser_1 = __importDefault(require("cookie-parser"));
+const securtyMiddleware_1 = require("./middlewares/securtyMiddleware");
+const express_mongo_sanitize_1 = __importDefault(require("express-mongo-sanitize")); // nova dependência
+const csrf_1 = __importDefault(require("./routes/csrf"));
 const app = (0, express_1.default)();
 const server = http_1.default.createServer(app);
 // Middlewares
 app.use(express_1.default.json());
 app.use((0, cookie_parser_1.default)());
+app.use((0, express_mongo_sanitize_1.default)()); // Prevê injeções no MongoDB
 app.use((0, cors_1.default)({
     origin: process.env.CORS_ORIGIN || "https://chatbot.jeanhenrique.site",
     credentials: true,
 }));
+app.use(securtyMiddleware_1.securityMiddleware); // Helmet, CORS e CSRF
+// Configuração do Swagger
+const swagger_1 = require("./config/swagger");
+(0, swagger_1.setupSwagger)(app);
 // Rotas
 app.use('/api/auth', auth_1.default);
 app.use('/api/chat', chat_1.default);
-// Inicia o worker para processamento assíncrono
+app.use('/api', csrf_1.default);
+// Inicia o worker para tarefas assíncronas
 (0, queueWorker_1.startWorker)().catch((err) => {
     console.error('Erro ao iniciar o worker:', err);
 });

@@ -10,8 +10,23 @@ REQUISITOS FALTANTES
 
 
 Bugs: 
--Edição de usuário 
--Tela de cadastro não responsiva
+- Modal de alterar senha em baixo na versão escura
+- mesmo sem mudar nada, ele atualiza o perfil 
+- select de idiomas em modo escuro tá claro 
+- Não tem visibilidade ao cadastrar a senha, ícone de ver a senha
+- Senha transparente na versão escura quando vai cadastrar ou alterar ou fazer login
+- As conversas estão indo para todos os usuários, tem que separar por pessoa 
+- new password não tá traduzindo ao alterar senha
+- Validador de senha forte 
+- confirm delete account não traduziu 
+- faça login login, cadastre cadastro, evite que repita
+
+Backend:
+- Erro ao excluir conta 
+- falta 2 fatores ainda 
+- OAuth 
+- csrf erro ao solicitar API
+- proteção de APIs JWT
 
 
 

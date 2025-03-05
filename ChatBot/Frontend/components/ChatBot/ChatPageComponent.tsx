@@ -7,6 +7,7 @@ import { useTheme } from "@/context/ThemeContext";
 import { FiSend, FiEdit, FiTrash, FiPlus, FiSearch } from "react-icons/fi";
 import ReactMarkdown from "react-markdown";
 import LottieAnimation from "@/components/Animação/LottieAnimation";
+import { csrfFetch } from "@/utils/csrfFetch";
 
 interface Message {
     sender: "user" | "assistant";
@@ -50,7 +51,7 @@ export default function ChatPageComponent({
     // Função para buscar conversas do backend
     const fetchConversations = async () => {
         try {
-            const res = await fetch("https://backchat.jeanhenrique.site/api/chat/conversations?limit=1000");
+            const res = await csrfFetch("https://backchat.jeanhenrique.site/api/chat/conversations?limit=1000");
             if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
             const data = await res.json();
             if (data.conversations) {
@@ -86,7 +87,7 @@ export default function ChatPageComponent({
     // Busca conversas via endpoint do Elasticsearch
     const fetchSearchedConversations = async (query: string) => {
         try {
-            const res = await fetch(
+            const res = await csrfFetch(
                 `https://backchat.jeanhenrique.site/api/chat/search?q=${encodeURIComponent(query)}`
             );
             if (!res.ok) {
@@ -111,7 +112,7 @@ export default function ChatPageComponent({
             return;
         }
         try {
-            const res = await fetch("https://backchat.jeanhenrique.site/api/chat/conversations", {
+            const res = await csrfFetch("https://backchat.jeanhenrique.site/api/chat/conversations", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ title: t("newConversation"), messages: [] }),
@@ -142,7 +143,7 @@ export default function ChatPageComponent({
 
     const updateConversationInBackend = async (conversationId: string, title: string, msgs: Message[]) => {
         try {
-            await fetch("https://backchat.jeanhenrique.site/api/chat/conversations", {
+            await csrfFetch("https://backchat.jeanhenrique.site/api/chat/conversations", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ conversationId, title, messages: msgs }),
@@ -171,7 +172,7 @@ export default function ChatPageComponent({
     const handleDeleteConversation = async (convId: string) => {
         if (!window.confirm(t("confirmDeleteConversation"))) return;
         try {
-            const res = await fetch(`https://backchat.jeanhenrique.site/api/chat/conversations/${convId}`, {
+            const res = await csrfFetch(`https://backchat.jeanhenrique.site/api/chat/conversations/${convId}`, {
                 method: "DELETE",
             });
             if (res.ok) {
@@ -199,7 +200,7 @@ export default function ChatPageComponent({
         if (!convId) {
             const conversationTitle = userMessage.content.substring(0, 50) || t("newConversation");
             try {
-                const createRes = await fetch("https://backchat.jeanhenrique.site/api/chat/conversations", {
+                const createRes = await csrfFetch("https://backchat.jeanhenrique.site/api/chat/conversations", {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({
@@ -273,7 +274,7 @@ export default function ChatPageComponent({
             const finalMessages = [...updatedMessages, assistantMessage];
             setMessages(finalMessages);
             if (convId) {
-                await fetch("https://backchat.jeanhenrique.site/api/chat/conversations", {
+                await csrfFetch("https://backchat.jeanhenrique.site/api/chat/conversations", {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({ conversationId: convId, messages: finalMessages }),

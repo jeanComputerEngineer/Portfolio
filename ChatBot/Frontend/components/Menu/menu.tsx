@@ -16,6 +16,7 @@ import { useTheme } from "@/context/ThemeContext";
 import { useTranslation } from "react-i18next";
 import i18n, { languageNames } from "@/components/Tradutor/i18n";
 import Select from "react-select";
+import { csrfFetch } from "@/utils/csrfFetch";
 
 const ChangePasswordModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
     const { t } = useTranslation();
@@ -32,7 +33,7 @@ const ChangePasswordModal: React.FC<{ onClose: () => void }> = ({ onClose }) => 
             return;
         }
         try {
-            const res = await fetch("https://backchat.jeanhenrique.site/api/auth/changePassword", {
+            const res = await csrfFetch("https://backchat.jeanhenrique.site/api/auth/changePassword", {
                 method: "PUT",
                 headers: { "Content-Type": "application/json" },
 
@@ -149,7 +150,7 @@ export function TopMenu({ toggleConversationsAction }: TopMenuProps) {
             i18n.changeLanguage(option.value);
             if (user) {
                 try {
-                    const res = await fetch("https://backchat.jeanhenrique.site/api/auth/account", {
+                    const res = await csrfFetch("https://backchat.jeanhenrique.site/api/auth/account", {
                         method: "PUT",
                         headers: { "Content-Type": "application/json" },
                         body: JSON.stringify({ email: user.email, name: profileName })
@@ -177,7 +178,7 @@ export function TopMenu({ toggleConversationsAction }: TopMenuProps) {
         e.preventDefault();
         if (!user) return; // ou mostre uma mensagem de erro
         try {
-            const res = await fetch("https://backchat.jeanhenrique.site/api/auth/account", {
+            const res = await csrfFetch("https://backchat.jeanhenrique.site/api/auth/account", {
                 method: "PUT",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ email: user.email, name: profileName })
@@ -203,7 +204,7 @@ export function TopMenu({ toggleConversationsAction }: TopMenuProps) {
     const handleProfileDelete = async () => {
         if (confirm(t("confirmDeleteAccount"))) {
             try {
-                const res = await fetch("https://backchat.jeanhenrique.site/api/auth/account", {
+                const res = await csrfFetch("https://backchat.jeanhenrique.site/api/auth/account", {
                     method: "DELETE",
 
                 });

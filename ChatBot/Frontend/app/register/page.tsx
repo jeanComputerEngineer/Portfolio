@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useTranslation } from "react-i18next";
 import LanguageSwitcherHeader from "@/components/Menu Inicial/LanguageSwitcherHeader";
+import { csrfFetch } from "@/utils/csrfFetch";
 
 export default function Register() {
     const router = useRouter();
@@ -22,7 +23,7 @@ export default function Register() {
         }
 
         try {
-            const res = await fetch("https://backchat.jeanhenrique.site/api/auth/register", {
+            const res = await csrfFetch("https://backchat.jeanhenrique.site/api/auth/register", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ name, email, password }),
