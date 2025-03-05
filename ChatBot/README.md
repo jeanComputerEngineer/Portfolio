@@ -1,7 +1,12 @@
 
+
+# URL Do Deploy da Aplicação: chatbot.jeanhenrique.site
 # ChatBot Application
 
+
 Este projeto é uma aplicação de ChatBot com autenticação e suporte multilíngue, desenvolvida com Next.js/React no frontend e Express/Node.js no backend. O sistema utiliza MongoDB para persistência, Redis e Bull para filas de processamento, Socket.IO para comunicação em tempo real e integra-se com uma API externa (OpenRouter) para gerar respostas de chat.
+
+
 
 ## Sumário
 
