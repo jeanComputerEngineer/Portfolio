@@ -49,11 +49,21 @@ export async function updateConversationIndex(conversation: any): Promise<void> 
  * Remove uma conversa do índice.
  */
 export async function deleteConversationIndex(conversationId: string): Promise<void> {
-    await elasticClient.delete({
-        index: INDEX_NAME,
-        id: conversationId,
-    });
+    try {
+        await elasticClient.delete({
+            index: INDEX_NAME,
+            id: conversationId,
+        });
+    } catch (err: any) {
+        // Se o status for 404, o documento não existe; apenas logamos e seguimos
+        if (err.meta && err.meta.statusCode === 404) {
+            console.warn("Documento não encontrado no Elasticsearch, ignorando.");
+        } else {
+            throw err; // para outros erros, lançamos a exceção
+        }
+    }
 }
+
 
 /**
  * Realiza a busca de conversas com base em um parâmetro.

@@ -6,7 +6,6 @@ import i18n from "@/components/Tradutor/i18n";
 import { useTheme } from "@/context/ThemeContext";
 import { FiSend, FiEdit, FiTrash, FiPlus, FiSearch } from "react-icons/fi";
 import ReactMarkdown from "react-markdown";
-import { io } from "socket.io-client";
 import LottieAnimation from "@/components/Animação/LottieAnimation";
 
 interface Message {
@@ -46,16 +45,7 @@ export default function ChatPageComponent({
 
     const messagesEndRef = useRef<HTMLDivElement>(null);
 
-    // Conecta o socket para chat em tempo real
-    useEffect(() => {
-        const socket = io("https://backchat.jeanhenrique.site/");
-        socket.on("chat message", (msg: Message) => {
-            setMessages((prev) => [...prev, msg]);
-        });
-        return () => {
-            socket.disconnect();
-        };
-    }, []);
+
 
     // Função para buscar conversas do backend
     const fetchConversations = async () => {

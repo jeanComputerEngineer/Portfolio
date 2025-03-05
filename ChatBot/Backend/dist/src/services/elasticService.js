@@ -69,10 +69,21 @@ function updateConversationIndex(conversation) {
  */
 function deleteConversationIndex(conversationId) {
     return __awaiter(this, void 0, void 0, function* () {
-        yield elasticClient_1.default.delete({
-            index: INDEX_NAME,
-            id: conversationId,
-        });
+        try {
+            yield elasticClient_1.default.delete({
+                index: INDEX_NAME,
+                id: conversationId,
+            });
+        }
+        catch (err) {
+            // Se o status for 404, o documento não existe; apenas logamos e seguimos
+            if (err.meta && err.meta.statusCode === 404) {
+                console.warn("Documento não encontrado no Elasticsearch, ignorando.");
+            }
+            else {
+                throw err; // para outros erros, lançamos a exceção
+            }
+        }
     });
 }
 /**

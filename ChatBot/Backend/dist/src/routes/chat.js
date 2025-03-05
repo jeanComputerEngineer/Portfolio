@@ -65,25 +65,49 @@ router.post('/conversations', (req, res) => __awaiter(void 0, void 0, void 0, fu
             if (!updated) {
                 return res.status(404).json({ message: 'Conversa não encontrada' });
             }
-            // Atualiza o índice no Elasticsearch
-            yield (0, elasticService_1.updateConversationIndex)(updated);
-            (0, queueService_1.enqueueTask)('processConversation', { conversationId: updated._id, title, messages });
-            res.json(updated);
+            // Tenta atualizar o índice no Elasticsearch
+            try {
+                yield (0, elasticService_1.updateConversationIndex)(updated);
+            }
+            catch (err) {
+                console.error("Erro ao atualizar índice no Elasticsearch:", err);
+            }
+            // Tenta enfileirar a tarefa; se falhar, log apenas o erro
+            try {
+                (0, queueService_1.enqueueTask)('processConversation', { conversationId: updated._id, title, messages });
+            }
+            catch (err) {
+                console.error("Erro ao enfileirar tarefa:", err);
+            }
+            return res.json(updated);
         }
         else {
             const newConversation = new Conversation_1.default({ title, messages });
             yield newConversation.save();
-            // Indexa a nova conversa no Elasticsearch
-            yield (0, elasticService_1.indexConversation)(newConversation);
-            (0, queueService_1.enqueueTask)('processConversation', { conversationId: newConversation._id, title, messages });
-            res.status(201).json(newConversation);
+            // Tenta indexar a nova conversa no Elasticsearch
+            try {
+                yield (0, elasticService_1.indexConversation)(newConversation);
+            }
+            catch (err) {
+                console.error("Erro ao indexar nova conversa:", err);
+            }
+            // Tenta enfileirar a tarefa
+            try {
+                (0, queueService_1.enqueueTask)('processConversation', { conversationId: newConversation._id, title, messages });
+            }
+            catch (err) {
+                console.error("Erro ao enfileirar tarefa:", err);
+            }
+            return res.status(201).json(newConversation);
         }
     }
     catch (err) {
-        res.status(500).json({ message: 'Erro ao processar a conversa', error: err });
+        console.error("Erro ao processar a conversa:", err);
+        return res.status(500).json({ message: 'Erro ao processar a conversa', error: err.message });
     }
 }));
 // Exclusão de conversa
+// src/routes/chat.ts
 router.delete('/conversations/:id', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { id } = req.params;
     try {
@@ -91,12 +115,24 @@ router.delete('/conversations/:id', (req, res) => __awaiter(void 0, void 0, void
         if (!deleted) {
             return res.status(404).json({ message: 'Conversa não encontrada' });
         }
-        // Remove a conversa do Elasticsearch
-        yield (0, elasticService_1.deleteConversationIndex)(id);
-        res.json({ message: 'Conversa excluída' });
+        // Tenta remover a conversa do Elasticsearch; se não existir, ignoramos o erro
+        try {
+            yield (0, elasticService_1.deleteConversationIndex)(id);
+        }
+        catch (err) {
+            // Se o erro indicar que o documento não foi encontrado (ex.: 404), apenas logamos
+            if (err.meta && err.meta.statusCode === 404) {
+                console.warn("Documento não encontrado no Elasticsearch, ignorando.");
+            }
+            else {
+                console.error("Erro ao remover documento do Elasticsearch:", err);
+            }
+        }
+        return res.json({ message: 'Conversa excluída' });
     }
     catch (err) {
-        res.status(500).json({ message: 'Erro ao excluir conversa', error: err });
+        console.error("Erro ao excluir conversa:", err);
+        return res.status(500).json({ message: 'Erro ao excluir conversa', error: err.message });
     }
 }));
 exports.default = router;

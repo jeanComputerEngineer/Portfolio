@@ -6,12 +6,6 @@ REQUISITOS FALTANTES
 4. **Segurança e Conformidade**
     - Prevenção contra injeções SQL, XSS e CSRF
     - Criptografia de dados sensíveis
-    - Conformidade com WCAG 2.1 para acessibilidade
-5. **Performance e Escalabilidade**
-    - Caching em múltiplas camadas (backend e frontend)
-8. **DevOps e Observabilidade**
-    - Pipeline básico de CI/CD
-    - Logging estruturado e métricas de performance
 9. **Documentação**
     - API documentada com Swagger/OpenAPI
 
