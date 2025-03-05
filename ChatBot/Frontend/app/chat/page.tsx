@@ -1,22 +1,27 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import { TopMenu } from "@/components/menu";
-import { Footer } from "@/components/footer";
+import dynamic from "next/dynamic";
 import { useTheme } from "@/context/ThemeContext";
 
-import dynamic from "next/dynamic";
-
-// Carrega o ChatPageComponent apenas quando necessário
-const ChatPageComponent = dynamic(() => import("@/components/ChatPageComponent"), {
+// Lazy load dos componentes
+const TopMenu = dynamic(() => import("@/components/Menu/menu"), {
+    loading: () => <p>Carregando menu...</p>,
+    ssr: false,
+});
+const Footer = dynamic(() => import("@/components/Rodape/footer"), {
+    loading: () => <p>Carregando rodapé...</p>,
+    ssr: false,
+});
+const ChatPageComponent = dynamic(() => import("@/components/ChatBot/ChatPageComponent"), {
     loading: () => <p>Carregando chat...</p>,
-    ssr: false, // se não for necessário o carregamento no lado do servidor
+    ssr: false,
 });
 
 export default function HomePage() {
     const [showConversations, setShowConversations] = useState(false);
     const { darkMode } = useTheme();
 
-    // Se desejar, sincronize a classe 'dark' na raiz do documento:
+    // Sincroniza a classe 'dark' na raiz do documento
     useEffect(() => {
         if (darkMode) {
             document.documentElement.classList.add("dark");
@@ -30,7 +35,6 @@ export default function HomePage() {
     };
 
     return (
-        // Aqui, o container principal usa o background e a cor definidos globalmente
         <div className="min-h-screen flex flex-col bg-background text-foreground overflow-hidden">
             <TopMenu toggleConversationsAction={toggleConversationsAction} />
             <main className="flex-grow">

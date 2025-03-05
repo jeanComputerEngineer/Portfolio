@@ -14,7 +14,7 @@ import {
 import { useRouter } from "next/navigation";
 import { useTheme } from "@/context/ThemeContext";
 import { useTranslation } from "react-i18next";
-import i18n, { languageNames } from "@/components/i18n/i18n";
+import i18n, { languageNames } from "@/components/Tradutor/i18n";
 import Select from "react-select";
 
 const ChangePasswordModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {

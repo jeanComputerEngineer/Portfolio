@@ -1,13 +1,13 @@
 "use client";
 import React, { useEffect, useState, useRef, KeyboardEvent } from "react";
-import ProtectedRoute from "@/components/ProtectedRoute";
+import ProtectedRoute from "@/components/Proteção de Rotas/ProtectedRoute";
 import { useTranslation } from "react-i18next";
-import i18n from "@/components/i18n/i18n";
+import i18n from "@/components/Tradutor/i18n";
 import { useTheme } from "@/context/ThemeContext";
 import { FiSend, FiEdit, FiTrash, FiPlus, FiSearch } from "react-icons/fi";
 import ReactMarkdown from "react-markdown";
 import { io } from "socket.io-client";
-import LottieAnimation from "@/components/LottieAnimation"; // Importa o LottieAnimation
+import LottieAnimation from "@/components/Animação/LottieAnimation"; // Importa o LottieAnimation
 
 
 interface Message {

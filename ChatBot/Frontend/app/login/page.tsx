@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useTranslation } from "react-i18next";
-import LanguageSwitcherHeader from "@/components/LanguageSwitcherHeader";
+import LanguageSwitcherHeader from "@/components/Menu Inicial/LanguageSwitcherHeader";
 
 export default function Login() {
     const router = useRouter();

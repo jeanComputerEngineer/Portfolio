@@ -2,7 +2,7 @@
 import React from "react";
 import { useTheme } from "@/context/ThemeContext";
 
-export function Footer() {
+export default function Footer() {
     const { darkMode } = useTheme();
     return (
         <footer

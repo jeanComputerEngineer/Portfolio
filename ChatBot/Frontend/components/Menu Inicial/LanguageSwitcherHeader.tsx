@@ -1,9 +1,9 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import Select, { StylesConfig } from "react-select";
-import { languageNames } from "@/components/i18n/i18n";
+import { languageNames } from "@/components/Tradutor/i18n";
 import { useTranslation } from "react-i18next";
-import i18n from "@/components/i18n/i18n";
+import i18n from "@/components/Tradutor/i18n";
 import { useTheme } from "@/context/ThemeContext";
 
 type OptionType = {

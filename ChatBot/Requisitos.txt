@@ -17,9 +17,6 @@ Requisitos Principais
 5. **Performance e Escalabilidade**
     - Caching em múltiplas camadas (backend e frontend)
     - Processamento assíncrono com filas
-    - Otimização de assets frontend (code splitting, lazy loading)
-6. **UX/UI**
-    - Animações suaves (escolha entre vanilla JS, Rive ou Lottie)
 8. **DevOps e Observabilidade**
     - Containerização com Docker
     - Pipeline básico de CI/CD
