@@ -18,6 +18,7 @@ interface Conversation {
     _id: string;
     title: string;
     messages: Message[];
+    owner: string; // campo que identifica o dono da conversa
 }
 
 export interface ChatPageComponentProps {
@@ -46,12 +47,18 @@ export default function ChatPageComponent({
 
     const messagesEndRef = useRef<HTMLDivElement>(null);
 
-
-
-    // Função para buscar conversas do backend
+    // Função para buscar conversas filtradas pelo e-mail do usuário
     const fetchConversations = async () => {
         try {
-            const res = await csrfFetch("https://backchat.jeanhenrique.site/api/chat/conversations?limit=1000");
+            const storedUser = localStorage.getItem("user");
+            const userData = storedUser ? JSON.parse(storedUser) : null;
+            if (!userData || !userData.email) {
+                alert("Usuário não autenticado");
+                return;
+            }
+            const res = await csrfFetch(
+                `https://backchat.jeanhenrique.site/api/chat/conversations?email=${userData.email}&limit=1000`
+            );
             if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
             const data = await res.json();
             if (data.conversations) {
@@ -62,7 +69,7 @@ export default function ChatPageComponent({
         }
     };
 
-    // Ao carregar o usuário, define o idioma e busca conversas
+    // Ao carregar o usuário, define o idioma e busca as conversas do usuário
     useEffect(() => {
         const storedUser = localStorage.getItem("user");
         if (storedUser) {
@@ -76,22 +83,31 @@ export default function ChatPageComponent({
         messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
     }, [messages, isLoading]);
 
-    // Filtra as conversas localmente (caso não esteja buscando via Elastic)
+    // Filtra as conversas localmente (caso não esteja buscando via Elasticsearch)
     const filteredConversations = searchQuery
         ? conversations.filter((conv) =>
             conv.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-            conv.messages.some((msg) => msg.content.toLowerCase().includes(searchQuery.toLowerCase()))
+            conv.messages.some((msg) =>
+                msg.content.toLowerCase().includes(searchQuery.toLowerCase())
+            )
         )
         : conversations;
 
-    // Busca conversas via endpoint do Elasticsearch
+    // Busca conversas via endpoint do Elasticsearch (também enviando o email do usuário)
     const fetchSearchedConversations = async (query: string) => {
         try {
+            const storedUser = localStorage.getItem("user");
+            const userData = storedUser ? JSON.parse(storedUser) : null;
+            if (!userData || !userData.email) {
+                alert("Usuário não autenticado");
+                return;
+            }
             const res = await csrfFetch(
-                `https://backchat.jeanhenrique.site/api/chat/search?q=${encodeURIComponent(query)}`
+                `https://backchat.jeanhenrique.site/api/chat/search?q=${encodeURIComponent(
+                    query
+                )}&email=${userData.email}`
             );
             if (!res.ok) {
-                // Se não for OK, leia o texto para identificar o erro
                 const text = await res.text();
                 throw new Error(`Erro na requisição: ${res.status} - ${text}`);
             }
@@ -104,18 +120,23 @@ export default function ChatPageComponent({
         }
     };
 
-
-    // Cria nova conversa
+    // Criação de nova conversa, enviando também o email do usuário
     const handleNewConversation = async () => {
         if (conversations.length >= 20) {
             alert(t("errorConversationLimit"));
+            return;
+        }
+        const storedUser = localStorage.getItem("user");
+        const userData = storedUser ? JSON.parse(storedUser) : null;
+        if (!userData || !userData.email) {
+            alert("Usuário não autenticado");
             return;
         }
         try {
             const res = await csrfFetch("https://backchat.jeanhenrique.site/api/chat/conversations", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ title: t("newConversation"), messages: [] }),
+                body: JSON.stringify({ title: t("newConversation"), messages: [], email: userData.email }),
             });
             if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
             const data: Conversation = await res.json();
@@ -200,12 +221,19 @@ export default function ChatPageComponent({
         if (!convId) {
             const conversationTitle = userMessage.content.substring(0, 50) || t("newConversation");
             try {
+                const storedUser = localStorage.getItem("user");
+                const userData = storedUser ? JSON.parse(storedUser) : null;
+                if (!userData || !userData.email) {
+                    alert("Usuário não autenticado");
+                    return;
+                }
                 const createRes = await csrfFetch("https://backchat.jeanhenrique.site/api/chat/conversations", {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({
                         title: conversationTitle,
                         messages: [{ sender: "user", content: userMessage.content }],
+                        email: userData.email
                     }),
                 });
                 if (!createRes.ok) throw new Error(`HTTP error! status: ${createRes.status}`);
@@ -343,10 +371,10 @@ export default function ChatPageComponent({
                             <div
                                 key={`conv-${conv._id}`}
                                 className={`flex items-center justify-between p-2 rounded cursor-pointer ${conv._id === currentConversationId
-                                    ? "bg-blue-600 text-white hover:bg-blue-500"
-                                    : darkMode
-                                        ? "bg-gray-900 text-gray-100 hover:bg-gray-800"
-                                        : "bg-gray-100 text-gray-800 hover:bg-gray-200"
+                                        ? "bg-blue-600 text-white hover:bg-blue-500"
+                                        : darkMode
+                                            ? "bg-gray-900 text-gray-100 hover:bg-gray-800"
+                                            : "bg-gray-100 text-gray-800 hover:bg-gray-200"
                                     }`}
                                 onClick={() => handleSelectConversation(conv._id)}
                             >
@@ -434,12 +462,12 @@ export default function ChatPageComponent({
                                 <div key={`message-${index}`} className={`mb-3 flex w-full ${msg.sender === "user" ? "justify-end" : "justify-start"}`}>
                                     <div
                                         className={`max-w-[70%] p-3 rounded-lg shadow-md text-sm ${msg.sender === "user"
-                                            ? darkMode
-                                                ? "bg-blue-600 text-white"
-                                                : "bg-blue-100 text-blue-900"
-                                            : darkMode
-                                                ? "bg-gray-700 text-white"
-                                                : "bg-gray-200 text-gray-900"
+                                                ? darkMode
+                                                    ? "bg-blue-600 text-white"
+                                                    : "bg-blue-100 text-blue-900"
+                                                : darkMode
+                                                    ? "bg-gray-700 text-white"
+                                                    : "bg-gray-200 text-gray-900"
                                             }`}
                                     >
                                         <ReactMarkdown className="whitespace-pre-line">{msg.content}</ReactMarkdown>

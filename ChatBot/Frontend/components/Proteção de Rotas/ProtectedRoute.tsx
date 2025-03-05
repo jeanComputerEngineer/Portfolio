@@ -10,12 +10,12 @@ interface ProtectedRouteProps {
 export default function ProtectedRoute({ children }: ProtectedRouteProps) {
     const router = useRouter();
 
-    // useEffect(() => {
-    //     const storedUser = localStorage.getItem("user");
-    //     if (!storedUser) {
-    //         router.push("/login");
-    //     }
-    // }, [router]);
+    useEffect(() => {
+        const storedUser = localStorage.getItem("user");
+        if (!storedUser) {
+            router.push("/login");
+        }
+    }, [router]);
 
     return <>{children}</>;
 }

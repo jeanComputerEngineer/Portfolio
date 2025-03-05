@@ -6,6 +6,7 @@ export interface IMessage {
 }
 
 export interface IConversation extends Document {
+    owner: string; // Adicionado para armazenar o dono da conversa
     title: string;
     messages: IMessage[];
 }
@@ -16,6 +17,7 @@ const MessageSchema: Schema = new Schema({
 });
 
 const ConversationSchema: Schema = new Schema({
+    owner: { type: String, required: true }, // novo campo
     title: { type: String, required: true },
     messages: { type: [MessageSchema], default: [] }
 }, { timestamps: true });

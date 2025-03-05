@@ -15,7 +15,7 @@ import { useRouter } from "next/navigation";
 import { useTheme } from "@/context/ThemeContext";
 import { useTranslation } from "react-i18next";
 import i18n, { languageNames } from "@/components/Tradutor/i18n";
-import Select from "react-select";
+import Select, { StylesConfig } from "react-select";
 import { csrfFetch } from "@/utils/csrfFetch";
 import ChangePasswordModal from "../AlterarSenha/ChangePasswordModal";
 
@@ -50,7 +50,6 @@ export function TopMenu({ toggleConversationsAction }: TopMenuProps) {
             setSelectedLang(option.value);
             i18n.changeLanguage(option.value);
             if (user && user.name !== profileName) {
-                // Se o nome mudou, atualiza o perfil
                 try {
                     const res = await csrfFetch("https://backchat.jeanhenrique.site/api/auth/account", {
                         method: "PUT",
@@ -80,7 +79,6 @@ export function TopMenu({ toggleConversationsAction }: TopMenuProps) {
     const handleProfileUpdate = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         if (!user || user.name === profileName) {
-            // Se não houve alteração, não envia a requisição
             setProfileModalOpen(false);
             return;
         }
@@ -109,8 +107,9 @@ export function TopMenu({ toggleConversationsAction }: TopMenuProps) {
     const handleProfileDelete = async () => {
         if (confirm(t("confirmDeleteAccount"))) {
             try {
-                const res = await csrfFetch("https://backchat.jeanhenrique.site/api/auth/account", {
-                    method: "DELETE",
+                // Envia o e-mail via query string
+                const res = await csrfFetch(`https://backchat.jeanhenrique.site/api/auth/account?email=${user?.email}`, {
+                    method: "DELETE"
                 });
                 if (res.ok) {
                     localStorage.removeItem("user");
@@ -124,6 +123,7 @@ export function TopMenu({ toggleConversationsAction }: TopMenuProps) {
         }
     };
 
+
     const options = languageNames
         .filter((lang) => {
             const allowed = [
@@ -136,29 +136,29 @@ export function TopMenu({ toggleConversationsAction }: TopMenuProps) {
                 "Russian",
                 "Hindi",
                 "Bengali",
-                "Indonesian",
+                "Indonesian"
             ];
             return allowed.includes(lang);
         })
         .map((lang) => ({ value: lang, label: lang }));
 
-    // Ajuste dos estilos do select em dark mode
-    const selectStyles = {
-        control: (provided: any) => ({
+    // Tipando o objeto de estilos para o Select
+    const selectStyles: StylesConfig<{ value: string; label: string }, false> = {
+        control: (provided) => ({
             ...provided,
             backgroundColor: darkMode ? "#2d3748" : "transparent",
             border: "none",
-            boxShadow: "none",
+            boxShadow: "none"
         }),
-        singleValue: (provided: any) => ({
+        singleValue: (provided) => ({
             ...provided,
-            color: darkMode ? "#f7fafc" : "#2d3748",
+            color: darkMode ? "#f7fafc" : "#2d3748"
         }),
-        menu: (provided: any) => ({
+        menu: (provided) => ({
             ...provided,
-            backgroundColor: darkMode ? "#2d3748" : "#fff",
+            backgroundColor: darkMode ? "#2d3748" : "#fff"
         }),
-        option: (provided: any, state: any) => ({
+        option: (provided, state) => ({
             ...provided,
             backgroundColor: state.isFocused
                 ? darkMode

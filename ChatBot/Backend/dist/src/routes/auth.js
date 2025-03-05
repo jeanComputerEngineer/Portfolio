@@ -180,7 +180,8 @@ router.put('/account', (req, res) => __awaiter(void 0, void 0, void 0, function*
 }));
 // Exclusão de conta
 router.delete('/account', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { email } = req.body;
+    // Tenta obter o e-mail do corpo ou da query string
+    const email = req.body.email || req.query.email;
     if (!email) {
         return res.status(400).json({ message: 'O e-mail é necessário para excluir a conta' });
     }

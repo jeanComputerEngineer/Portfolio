@@ -36,17 +36,21 @@ router.get('/search', (req, res) => __awaiter(void 0, void 0, void 0, function* 
 // Busca de conversas com cache no Redis (rota original)
 router.get('/conversations', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        console.log('Endpoint GET /conversations chamado');
-        const cacheKey = 'conversations_test';
+        const { email } = req.query; // recebe o email do usuário
+        if (!email) {
+            return res.status(400).json({ message: 'Email query parameter is required' });
+        }
+        console.log('Endpoint GET /conversations chamado para:', email);
+        const cacheKey = `conversations_${email}`; // cache específico para cada usuário
         // Tenta obter as conversas do cache
         const cachedConversations = yield redisClient_1.default.get(cacheKey);
         if (cachedConversations) {
-            console.log('Retornando conversas do cache');
+            console.log('Retornando conversas do cache para:', email);
             return res.json({ conversations: JSON.parse(cachedConversations) });
         }
-        // Se não houver cache, busca do MongoDB
+        // Se não houver cache, busca do MongoDB filtrando pelo owner
         const limit = parseInt(req.query.limit) || 100;
-        const conversations = yield Conversation_1.default.find().limit(limit).sort({ createdAt: -1 });
+        const conversations = yield Conversation_1.default.find({ owner: email }).limit(limit).sort({ createdAt: -1 });
         // Armazena o resultado no cache por 60 segundos
         yield redisClient_1.default.set(cacheKey, JSON.stringify(conversations), { EX: 60 });
         console.log(`Cache definido para "${cacheKey}"`);
@@ -58,21 +62,20 @@ router.get('/conversations', (req, res) => __awaiter(void 0, void 0, void 0, fun
 }));
 // Criação ou atualização de uma conversa
 router.post('/conversations', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { conversationId, title, messages } = req.body;
+    const { conversationId, title, messages, email } = req.body; // agora esperamos que email seja enviado
     try {
         if (conversationId) {
             const updated = yield Conversation_1.default.findByIdAndUpdate(conversationId, { title, messages }, { new: true });
             if (!updated) {
                 return res.status(404).json({ message: 'Conversa não encontrada' });
             }
-            // Tenta atualizar o índice no Elasticsearch
+            // Atualiza o índice no Elasticsearch e enfileira a tarefa (como antes)...
             try {
                 yield (0, elasticService_1.updateConversationIndex)(updated);
             }
             catch (err) {
                 console.error("Erro ao atualizar índice no Elasticsearch:", err);
             }
-            // Tenta enfileirar a tarefa; se falhar, log apenas o erro
             try {
                 (0, queueService_1.enqueueTask)('processConversation', { conversationId: updated._id, title, messages });
             }
@@ -82,16 +85,18 @@ router.post('/conversations', (req, res) => __awaiter(void 0, void 0, void 0, fu
             return res.json(updated);
         }
         else {
-            const newConversation = new Conversation_1.default({ title, messages });
+            if (!email) {
+                return res.status(400).json({ message: 'Email is required to create a conversation' });
+            }
+            // Ao criar nova conversa, associamos o dono
+            const newConversation = new Conversation_1.default({ owner: email, title, messages });
             yield newConversation.save();
-            // Tenta indexar a nova conversa no Elasticsearch
             try {
                 yield (0, elasticService_1.indexConversation)(newConversation);
             }
             catch (err) {
                 console.error("Erro ao indexar nova conversa:", err);
             }
-            // Tenta enfileirar a tarefa
             try {
                 (0, queueService_1.enqueueTask)('processConversation', { conversationId: newConversation._id, title, messages });
             }

@@ -10,23 +10,11 @@ REQUISITOS FALTANTES
 
 
 Bugs: 
-- Modal de alterar senha em baixo do modal de editar perfil, o alterar senha precisa estar em cima
-- mesmo sem mudar nada, ele atualiza o perfil, exibe mensagem no console
-- select de idiomas em modo escuro tá claro, altere para as cores escuras
-- Não tem visibilidade ao cadastrar a senha, ícone de ver a senha precisa estar no input
-- Senha transparente na versão escura quando vai cadastrar ou alterar ou fazer login
-- new password não tá traduzindo ao alterar senha
-- Validador de senha forte, insira
-- confirm delete account não traduziu, quando vai excluir a senha
-- faça login login, cadastre cadastro, evite que repita. A frase deve ser "Faça seu <link>Cadastro<\link>"
-
-Backend:
-- Erro ao excluir conta 
-- falta 2 fatores ainda 
 - OAuth 
-- csrf erro ao solicitar API
+- falta 2 fatores ainda 
+- socket
 - proteção de APIs JWT
-- As conversas estão indo para todos os usuários, tem que separar por pessoa 
+
 
 
 

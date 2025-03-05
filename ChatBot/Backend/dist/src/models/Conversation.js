@@ -39,6 +39,7 @@ const MessageSchema = new mongoose_1.Schema({
     content: { type: String, required: true }
 });
 const ConversationSchema = new mongoose_1.Schema({
+    owner: { type: String, required: true }, // novo campo
     title: { type: String, required: true },
     messages: { type: [MessageSchema], default: [] }
 }, { timestamps: true });

@@ -169,7 +169,8 @@ router.put('/account', async (req, res) => {
 
 // Exclusão de conta
 router.delete('/account', async (req, res) => {
-    const { email } = req.body;
+    // Tenta obter o e-mail do corpo ou da query string
+    const email = req.body.email || req.query.email;
     if (!email) {
         return res.status(400).json({ message: 'O e-mail é necessário para excluir a conta' });
     }
@@ -180,6 +181,7 @@ router.delete('/account', async (req, res) => {
         res.status(500).json({ message: 'Erro ao excluir conta', error: err });
     }
 });
+
 
 // Alteração de senha
 router.put('/changePassword', async (req, res) => {
