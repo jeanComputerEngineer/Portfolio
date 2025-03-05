@@ -3,7 +3,11 @@ import { ThemeProvider } from './ThemeContext'
 
 describe('<ThemeProvider />', () => {
   it('renders', () => {
-    // see: https://on.cypress.io/mounting-react
-    cy.mount(<ThemeProvider />)
+    // Envolva algum conteúdo, mesmo que simples, para atender à prop children
+    cy.mount(
+      <ThemeProvider>
+        <div>Teste</div>
+      </ThemeProvider>
+    )
   })
 })

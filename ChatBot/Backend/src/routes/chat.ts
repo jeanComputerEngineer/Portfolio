@@ -1,5 +1,7 @@
+// src/routes/chat.ts
 import { Router } from 'express';
 import Conversation, { IConversation } from '../models/Conversation';
+import { enqueueTask } from '../services/queueService';
 
 const router = Router();
 
@@ -7,7 +9,7 @@ const router = Router();
 router.get('/conversations', async (req, res) => {
     try {
         const limit = parseInt(req.query.limit as string) || 100;
-        // Em uma aplicação real, você filtraria as conversas do usuário
+        // Em uma aplicação real, filtre as conversas do usuário
         const conversations = await Conversation.find().limit(limit).sort({ createdAt: -1 });
         res.json({ conversations });
     } catch (err) {
@@ -21,15 +23,23 @@ router.post('/conversations', async (req, res) => {
     try {
         if (conversationId) {
             // Atualiza a conversa existente
-            const updated = await Conversation.findByIdAndUpdate(conversationId, { title, messages }, { new: true });
+            const updated = await Conversation.findByIdAndUpdate(
+                conversationId,
+                { title, messages },
+                { new: true }
+            );
             if (!updated) {
                 return res.status(404).json({ message: 'Conversa não encontrada' });
             }
+            // Enfileira uma tarefa para processamento extra (exemplo)
+            enqueueTask('processConversation', { conversationId: updated._id, title, messages });
             res.json(updated);
         } else {
             // Cria nova conversa
             const newConversation: IConversation = new Conversation({ title, messages });
             await newConversation.save();
+            // Enfileira uma tarefa para a nova conversa
+            enqueueTask('processConversation', { conversationId: newConversation._id, title, messages });
             res.status(201).json(newConversation);
         }
     } catch (err) {

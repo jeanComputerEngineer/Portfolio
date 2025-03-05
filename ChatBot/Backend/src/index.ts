@@ -1,44 +1,40 @@
+// src/server.ts
 import express from 'express';
 import http from 'http';
-import { Server as SocketIOServer } from 'socket.io';
 import mongoose from 'mongoose';
-import cors from 'cors'; // importe o pacote
+import cors from 'cors';
+import { Server as SocketIOServer } from 'socket.io';
 import authRoutes from './routes/auth';
 import chatRoutes from './routes/chat';
+import { startWorker } from './workers/queueWorker'; // Importe o worker
+import cookieParser from 'cookie-parser';
 
 const app = express();
 const server = http.createServer(app);
 
-// Configuração do CORS
-app.use(cors({
-    origin: "https://chatbot.jeanhenrique.site", // Permite apenas esse domínio
-    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-    allowedHeaders: ["Origin", "X-Requested-With", "Content-Type", "Accept"],
-    credentials: false  // Permite o envio de cookies e credenciais
-}));
-
-app.options('*', cors({
-    origin: "https://chatbot.jeanhenrique.site",
-    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-    allowedHeaders: ["Origin", "X-Requested-With", "Content-Type", "Accept"],
-    credentials: false
-}));
-
-
+// Middlewares
 app.use(express.json());
+app.use(cookieParser());
+app.use(cors({
+    origin: process.env.CORS_ORIGIN || "https://chatbot.jeanhenrique.site",
+    credentials: true,
+}));
 
-// Rotas de autenticação e chat
+// Rotas
 app.use('/api/auth', authRoutes);
 app.use('/api/chat', chatRoutes);
 
-// Integração com Socket.io
-const io = new SocketIOServer(server, {
-    cors: {
-        origin: "https://chatbot.jeanhenrique.site"
-    }
+// Inicia o worker para processamento assíncrono
+startWorker().catch((err) => {
+    console.error('Erro ao iniciar o worker:', err);
 });
 
-
+// Socket.io para chat em tempo real
+const io = new SocketIOServer(server, {
+    cors: {
+        origin: process.env.CORS_ORIGIN || "https://chatbot.jeanhenrique.site"
+    }
+});
 io.on('connection', (socket) => {
     console.log('Novo cliente conectado');
     socket.on('chat message', (msg) => {
@@ -49,14 +45,13 @@ io.on('connection', (socket) => {
     });
 });
 
-
-
 // Conexão com o MongoDB
 const MONGO_URI = process.env.MONGO_URI || 'mongodb://localhost:27017/backchat';
 mongoose.connect(MONGO_URI)
     .then(() => console.log('MongoDB conectado'))
     .catch((err) => console.error('Erro na conexão com o MongoDB:', err));
 
+// Inicializa o servidor
 const PORT = process.env.PORT || 6000;
 server.listen(PORT, () => {
     console.log(`Servidor rodando na porta ${PORT}`);

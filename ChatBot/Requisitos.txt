@@ -1,8 +1,4 @@
-
-
 REQUISITOS FALTANTES
-
-Requisitos Principais
 
 1. **Backend**
     - Redis ou Memcache para caching
@@ -16,16 +12,17 @@ Requisitos Principais
     - Conformidade com WCAG 2.1 para acessibilidade
 5. **Performance e Escalabilidade**
     - Caching em múltiplas camadas (backend e frontend)
-    - Processamento assíncrono com filas
 8. **DevOps e Observabilidade**
-    - Containerização com Docker
     - Pipeline básico de CI/CD
     - Logging estruturado e métricas de performance
 9. **Documentação**
     - API documentada com Swagger/OpenAPI
-10. **Bônus**
-    - Implementação básica em React Native
-    - Testes de performance com k6 ou similar
+
+
+Bugs: 
+-Edição de usuário 
+-Tela de cadastro não responsiva
+
 
 
 
@@ -82,9 +79,9 @@ REQUISITOS - TOTAIS
     - README detalhado para setup do projeto
     - Comentários claros em partes complexas do código
 10. **Bônus**
-    - Implementação básica em React Native
+    - Implementação básica em React Native - Não vai ser feito  
     - Integração com um LLM para respostas automáticas no chat
-    - Testes de performance com k6 ou similar
+    - Testes de performance com k6 ou similar - Não vai ser feito
 
 ## Entrega
 
