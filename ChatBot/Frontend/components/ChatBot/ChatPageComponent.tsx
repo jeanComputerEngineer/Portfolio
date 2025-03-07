@@ -357,24 +357,25 @@ export default function ChatPageComponent({
                             onChange={(e) => setSearchQuery(e.target.value)}
                             onKeyDown={(e) => {
                                 if (e.key === "Enter") {
-                                    setSearchActive(false);
+                                    e.preventDefault(); // previne a submissão do formulário, se for o caso
                                     fetchSearchedConversations(searchQuery);
+                                    // Não removemos o input, mantendo-o visível para o usuário
                                 }
                             }}
                             placeholder={t("searchPlaceholder")}
-                            className={`w-full p-2 mb-4 rounded border focus:outline-none ${darkMode ? "bg-gray-700 text-gray-100 border-gray-600" : "bg-gray-100 text-gray-800 border-gray-300"
-                                }`}
+                            className={`w-full p-2 mb-4 rounded border focus:outline-none ${darkMode ? "bg-gray-700 text-gray-100 border-gray-600" : "bg-gray-100 text-gray-800 border-gray-300"}`}
                         />
                     )}
+
                     <div className="space-y-1.5 mb-5 max-h-[70vh] overflow-y-auto">
                         {filteredConversations.map((conv) => (
                             <div
                                 key={`conv-${conv._id}`}
                                 className={`flex items-center justify-between p-2 rounded cursor-pointer ${conv._id === currentConversationId
-                                        ? "bg-blue-600 text-white hover:bg-blue-500"
-                                        : darkMode
-                                            ? "bg-gray-900 text-gray-100 hover:bg-gray-800"
-                                            : "bg-gray-100 text-gray-800 hover:bg-gray-200"
+                                    ? "bg-blue-600 text-white hover:bg-blue-500"
+                                    : darkMode
+                                        ? "bg-gray-900 text-gray-100 hover:bg-gray-800"
+                                        : "bg-gray-100 text-gray-800 hover:bg-gray-200"
                                     }`}
                                 onClick={() => handleSelectConversation(conv._id)}
                             >
@@ -462,12 +463,12 @@ export default function ChatPageComponent({
                                 <div key={`message-${index}`} className={`mb-3 flex w-full ${msg.sender === "user" ? "justify-end" : "justify-start"}`}>
                                     <div
                                         className={`max-w-[70%] p-3 rounded-lg shadow-md text-sm ${msg.sender === "user"
-                                                ? darkMode
-                                                    ? "bg-blue-600 text-white"
-                                                    : "bg-blue-100 text-blue-900"
-                                                : darkMode
-                                                    ? "bg-gray-700 text-white"
-                                                    : "bg-gray-200 text-gray-900"
+                                            ? darkMode
+                                                ? "bg-blue-600 text-white"
+                                                : "bg-blue-100 text-blue-900"
+                                            : darkMode
+                                                ? "bg-gray-700 text-white"
+                                                : "bg-gray-200 text-gray-900"
                                             }`}
                                     >
                                         <ReactMarkdown className="whitespace-pre-line">{msg.content}</ReactMarkdown>

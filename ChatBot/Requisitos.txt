@@ -10,7 +10,6 @@ REQUISITOS FALTANTES
 
 
 Bugs: 
-- Chat sumindo ao pesquisar algo. Não permita que o chat suma ao usuário apertar Enter, se não vai aparecer as listas filtradas e o usuário não vai saber.
 - OAuth 
 - falta 2 fatores ainda 
 - socket

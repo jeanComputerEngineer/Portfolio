@@ -13,16 +13,14 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const passport_1 = __importDefault(require("passport"));
-const passport_oauth2_1 = require("passport-oauth2");
-passport_1.default.use(new passport_oauth2_1.Strategy({
-    authorizationURL: 'https://github.com/login/oauth/authorize',
-    tokenURL: 'https://github.com/login/oauth/access_token',
+const passport_github2_1 = require("passport-github2");
+passport_1.default.use(new passport_github2_1.Strategy({
     clientID: process.env.OAUTH2_CLIENT_ID || '',
     clientSecret: process.env.OAUTH2_CLIENT_SECRET || '',
-    callbackURL: process.env.OAUTH2_CALLBACK_URL || 'http://localhost:6000/api/auth/oauth2/callback'
-}, (accessToken, refreshToken, profile, cb) => __awaiter(void 0, void 0, void 0, function* () {
-    // Aqui você pode implementar lógica para criar/atualizar o usuário no MongoDB
-    return cb(null, { accessToken, profile });
+    callbackURL: process.env.OAUTH2_CALLBACK_URL || 'http://localhost:6000/api/auth/oauth2/callback',
+}, (accessToken, refreshToken, profile, done) => __awaiter(void 0, void 0, void 0, function* () {
+    // Aqui você pode salvar ou atualizar o usuário no banco de dados
+    return done(null, { accessToken, profile });
 })));
 // Define a serialização e desserialização do usuário
 passport_1.default.serializeUser((user, done) => {

@@ -113,11 +113,9 @@ router.post('/login', (req, res) => __awaiter(void 0, void 0, void 0, function* 
     }
 }));
 // Inicia o fluxo OAuth2 (redireciona para o GitHub)
-router.get('/oauth2', passport_1.default.authenticate('oauth2'));
+router.get('/oauth2', passport_1.default.authenticate('github'));
 // Callback após autenticação no GitHub
-router.get('/oauth2/callback', passport_1.default.authenticate('oauth2', { failureRedirect: '/login' }), (req, res) => {
-    // Aqui você pode definir a lógica de criação da sessão ou envio de um token para o frontend.
-    // Neste exemplo, redirecionamos para a página do chat.
+router.get('/oauth2/callback', passport_1.default.authenticate('github', { failureRedirect: '/login' }), (req, res) => {
     res.redirect('https://chatbot.jeanhenrique.site/chat');
 });
 // Endpoint para configurar 2FA (gera secret e QR Code)
