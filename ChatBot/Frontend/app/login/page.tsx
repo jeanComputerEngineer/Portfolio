@@ -117,6 +117,16 @@ export default function Login() {
                     {t("login")}
                 </button>
                 <p className="mt-3 text-center" dangerouslySetInnerHTML={{ __html: t("loginPrompt") }} />
+
+                {/* Botão de login via GitHub */}
+                <div className="mt-4">
+                    <a
+                        href="https://backchat.jeanhenrique.site/api/auth/oauth2"
+                        className="w-full p-2 bg-gray-800 text-white rounded text-center block hover:bg-gray-700"
+                    >
+                        Login com GitHub
+                    </a>
+                </div>
             </form>
         </div>
     );

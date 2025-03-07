@@ -1,19 +1,34 @@
 "use strict";
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-// src/services/authService.ts
 const passport_1 = __importDefault(require("passport"));
 const passport_oauth2_1 = require("passport-oauth2");
 passport_1.default.use(new passport_oauth2_1.Strategy({
-    authorizationURL: process.env.OAUTH2_AUTH_URL || 'https://exemplo.com/oauth/authorize',
-    tokenURL: process.env.OAUTH2_TOKEN_URL || 'https://exemplo.com/oauth/token',
+    authorizationURL: 'https://github.com/login/oauth/authorize',
+    tokenURL: 'https://github.com/login/oauth/access_token',
     clientID: process.env.OAUTH2_CLIENT_ID || '',
     clientSecret: process.env.OAUTH2_CLIENT_SECRET || '',
-    callbackURL: process.env.OAUTH2_CALLBACK_URL || 'https://seusite.com/auth/callback'
-}, (accessToken, refreshToken, profile, cb) => {
-    // Implemente a lógica para encontrar ou criar o usuário
-    return cb(null, profile);
-}));
+    callbackURL: process.env.OAUTH2_CALLBACK_URL || 'http://localhost:6000/api/auth/oauth2/callback'
+}, (accessToken, refreshToken, profile, cb) => __awaiter(void 0, void 0, void 0, function* () {
+    // Aqui você pode implementar lógica para criar/atualizar o usuário no MongoDB
+    return cb(null, { accessToken, profile });
+})));
+// Define a serialização e desserialização do usuário
+passport_1.default.serializeUser((user, done) => {
+    done(null, user);
+});
+passport_1.default.deserializeUser((obj, done) => {
+    done(null, obj);
+});
 exports.default = passport_1.default;
