@@ -103,18 +103,40 @@ router.post('/login', async (req, res) => {
 // Inicia o fluxo OAuth2 (redireciona para o GitHub)
 router.get('/oauth2', passport.authenticate('github'));
 
-// Callback após autenticação no GitHub
-// Callback após autenticação no GitHub
-router.get('/oauth2/callback', passport.authenticate('github', { failureRedirect: '/login' }), (req, res) => {
-    // Define o cookie com o domínio principal para que seja compartilhado entre os subdomínios
-    res.cookie('user', JSON.stringify(req.user), {
-        httpOnly: false,
-        domain: '.jeanhenrique.site', // Permite acesso em chatbot.jeanhenrique.site
-        secure: process.env.NODE_ENV === 'production', // Use true em produção se estiver usando HTTPS
-        sameSite: 'lax' // Ou 'none' se necessário (lembrando de usar secure: true)
-    });
-    res.redirect('https://chatbot.jeanhenrique.site/chat');
-});
+router.get(
+    '/oauth2/callback',
+    passport.authenticate('github', { failureRedirect: '/login' }),
+    async (req, res) => {
+        // Faz a busca do usuário no banco, etc. (como já está no seu código).
+        // Supondo que userDoc seja o usuário encontrado ou criado
+        const passportUser: any = req.user;
+        const userDoc = await User.findOne({ githubId: passportUser.githubId });
+        if (!userDoc) {
+            return res.redirect('https://chatbot.jeanhenrique.site/login');
+        }
+
+        const safeUser = {
+            _id: userDoc._id,
+            name: userDoc.name,
+            email: userDoc.email,
+            isGitHub: userDoc.isGitHub,
+            preferredLanguage: userDoc.preferredLanguage || 'Portuguese',
+        };
+
+        // Define o cookie
+        res.cookie('user', JSON.stringify(safeUser), {
+            httpOnly: false,
+            domain: '.jeanhenrique.site',
+            secure: process.env.NODE_ENV === 'production',
+            sameSite: 'lax',
+        });
+
+        // Redireciona para /chat COM o parâmetro ?forceReload=1
+        res.redirect('https://chatbot.jeanhenrique.site/chat?forceReload=1');
+    }
+);
+
+
 
 
 
@@ -206,12 +228,20 @@ router.put('/changePassword', async (req, res) => {
         if (!isMatch) {
             return res.status(401).json({ message: 'Credenciais inválidas' });
         }
-        user.password = newPassword; // Será hasheada pelo pre-save
+        if (newPassword.length < 6 || newPassword.length > 20) {
+            return res.status(400).json({
+                message: 'A nova senha deve ter entre 6 e 20 caracteres.'
+            });
+        }
+        user.password = newPassword; // O pre-save do UserSchema cuidará do hash
         await user.save();
         res.json({ message: 'Senha alterada com sucesso' });
     } catch (err) {
         res.status(500).json({ message: 'Erro ao alterar senha', error: err });
     }
 });
+
+
+
 
 export default router;

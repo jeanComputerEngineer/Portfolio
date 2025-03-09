@@ -114,18 +114,31 @@ router.post('/login', (req, res) => __awaiter(void 0, void 0, void 0, function* 
 }));
 // Inicia o fluxo OAuth2 (redireciona para o GitHub)
 router.get('/oauth2', passport_1.default.authenticate('github'));
-// Callback após autenticação no GitHub
-// Callback após autenticação no GitHub
-router.get('/oauth2/callback', passport_1.default.authenticate('github', { failureRedirect: '/login' }), (req, res) => {
-    // Define o cookie com o domínio principal para que seja compartilhado entre os subdomínios
-    res.cookie('user', JSON.stringify(req.user), {
+router.get('/oauth2/callback', passport_1.default.authenticate('github', { failureRedirect: '/login' }), (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    // Faz a busca do usuário no banco, etc. (como já está no seu código).
+    // Supondo que userDoc seja o usuário encontrado ou criado
+    const passportUser = req.user;
+    const userDoc = yield User_1.default.findOne({ githubId: passportUser.githubId });
+    if (!userDoc) {
+        return res.redirect('https://chatbot.jeanhenrique.site/login');
+    }
+    const safeUser = {
+        _id: userDoc._id,
+        name: userDoc.name,
+        email: userDoc.email,
+        isGitHub: userDoc.isGitHub,
+        preferredLanguage: userDoc.preferredLanguage || 'Portuguese',
+    };
+    // Define o cookie
+    res.cookie('user', JSON.stringify(safeUser), {
         httpOnly: false,
-        domain: '.jeanhenrique.site', // Permite acesso em chatbot.jeanhenrique.site
-        secure: process.env.NODE_ENV === 'production', // Use true em produção se estiver usando HTTPS
-        sameSite: 'lax' // Ou 'none' se necessário (lembrando de usar secure: true)
+        domain: '.jeanhenrique.site',
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'lax',
     });
-    res.redirect('https://chatbot.jeanhenrique.site/chat');
-});
+    // Redireciona para /chat COM o parâmetro ?forceReload=1
+    res.redirect('https://chatbot.jeanhenrique.site/chat?forceReload=1');
+}));
 // Endpoint para configurar 2FA (gera secret e QR Code)
 router.get('/2fa/setup', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { email } = req.query;
@@ -214,7 +227,12 @@ router.put('/changePassword', (req, res) => __awaiter(void 0, void 0, void 0, fu
         if (!isMatch) {
             return res.status(401).json({ message: 'Credenciais inválidas' });
         }
-        user.password = newPassword; // Será hasheada pelo pre-save
+        if (newPassword.length < 6 || newPassword.length > 20) {
+            return res.status(400).json({
+                message: 'A nova senha deve ter entre 6 e 20 caracteres.'
+            });
+        }
+        user.password = newPassword; // O pre-save do UserSchema cuidará do hash
         yield user.save();
         res.json({ message: 'Senha alterada com sucesso' });
     }

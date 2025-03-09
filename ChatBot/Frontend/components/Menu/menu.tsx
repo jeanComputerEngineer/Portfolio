@@ -23,28 +23,41 @@ export interface TopMenuProps {
     toggleConversationsAction: () => void;
 }
 
-export function TopMenu({ toggleConversationsAction }: TopMenuProps) {
+export default function TopMenu({ toggleConversationsAction }: TopMenuProps) {
     const router = useRouter();
     const { darkMode, toggleDarkMode } = useTheme();
     const { t } = useTranslation();
-    const [user, setUser] = useState<{ name: string; email: string; preferredLanguage: string } | null>(null);
+
+    // Note: agora incluí `isGitHub` no tipo
+    const [user, setUser] = useState<{
+        name: string;
+        email: string;
+        preferredLanguage: string;
+        isGitHub?: boolean;
+    } | null>(null);
+
     const [selectedLang, setSelectedLang] = useState("English");
     const [profileModalOpen, setProfileModalOpen] = useState(false);
     const [profileName, setProfileName] = useState("");
     const [passwordModalOpen, setPasswordModalOpen] = useState(false);
     const [settingsOpen, setSettingsOpen] = useState(false);
 
-    // Carrega usuário do localStorage
+    // 1) Ler user do localStorage
     useEffect(() => {
-        const storedUser = localStorage.getItem("user");
-        if (storedUser) {
-            const parsed = JSON.parse(storedUser);
-            setUser(parsed);
-            setSelectedLang(parsed.preferredLanguage || "English");
-            setProfileName(parsed.name);
+        if (!user) {
+            const storedUser = localStorage.getItem("user");
+            if (storedUser) {
+                const parsed = JSON.parse(storedUser);
+                setUser(parsed);
+                setSelectedLang(parsed.preferredLanguage || "English");
+                setProfileName(parsed.name);
+            }
         }
-    }, []);
+    }, [user]);
 
+
+
+    // 2) Lidar com mudança de idioma
     const handleLanguageChange = async (option: { value: string; label: string } | null) => {
         if (option) {
             setSelectedLang(option.value);
@@ -60,7 +73,6 @@ export function TopMenu({ toggleConversationsAction }: TopMenuProps) {
                         const data = await res.json();
                         localStorage.setItem("user", JSON.stringify(data.user));
                         setUser(data.user);
-                        console.log("Perfil atualizado com sucesso");
                     }
                 } catch (err) {
                     console.error("Error updating language:", err);
@@ -69,13 +81,17 @@ export function TopMenu({ toggleConversationsAction }: TopMenuProps) {
         }
     };
 
+    // 3) Botão de editar perfil
     const handleEditProfile = () => setProfileModalOpen(true);
+
+    // 4) Botão de logout
     const handleLogout = () => {
         setSettingsOpen(false);
         localStorage.removeItem("user");
         router.push("/login");
     };
 
+    // 5) Atualizar perfil
     const handleProfileUpdate = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         if (!user || user.name === profileName) {
@@ -103,11 +119,13 @@ export function TopMenu({ toggleConversationsAction }: TopMenuProps) {
         }
     };
 
+    // 6) Botão de abrir modal de trocar senha
     const handleOpenPasswordModal = () => setPasswordModalOpen(true);
+
+    // 7) Botão de deletar conta
     const handleProfileDelete = async () => {
         if (confirm(t("confirmDeleteAccount"))) {
             try {
-                // Envia o e-mail via query string
                 const res = await csrfFetch(`https://backchat.jeanhenrique.site/api/auth/account?email=${user?.email}`, {
                     method: "DELETE"
                 });
@@ -123,7 +141,7 @@ export function TopMenu({ toggleConversationsAction }: TopMenuProps) {
         }
     };
 
-
+    // 8) Opções de idioma
     const options = languageNames
         .filter((lang) => {
             const allowed = [
@@ -142,7 +160,7 @@ export function TopMenu({ toggleConversationsAction }: TopMenuProps) {
         })
         .map((lang) => ({ value: lang, label: lang }));
 
-    // Tipando o objeto de estilos para o Select
+    // 9) Estilos do react-select
     const selectStyles: StylesConfig<{ value: string; label: string }, false> = {
         control: (provided) => ({
             ...provided,
@@ -176,6 +194,7 @@ export function TopMenu({ toggleConversationsAction }: TopMenuProps) {
         <>
             <header className={`sticky top-0 z-50 w-full shadow ${darkMode ? "bg-black" : "bg-gray-100"}`}>
                 <div className="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
+                    {/* Botão de abrir/fechar lista de conversas (mobile) */}
                     <button
                         className="md:hidden p-2 rounded focus:outline-none hover:opacity-80"
                         onClick={toggleConversationsAction}
@@ -183,19 +202,45 @@ export function TopMenu({ toggleConversationsAction }: TopMenuProps) {
                     >
                         <FiMenu className={darkMode ? "text-gray-100" : "text-gray-800"} size={24} />
                     </button>
-                    <h1 className={`text-xl font-semibold ${darkMode ? "text-gray-100" : "text-gray-800"}`}>ChatBot</h1>
+
+                    <h1 className={`text-xl font-semibold ${darkMode ? "text-gray-100" : "text-gray-800"}`}>
+                        ChatBot
+                    </h1>
+
                     <div className="flex items-center">
+                        {/* Área do menu (desktop) */}
                         <div className="hidden md:flex items-center space-x-4">
+
+                            {/* Exibe nome do usuário (para todos, GitHub ou não) */}
                             {user && (
-                                <div className="flex items-center space-x-2" title={t("userGreeting")}>
+                                <div className="flex items-center space-x-2" title="Usuário logado">
                                     <FiUser className={darkMode ? "text-gray-100" : "text-gray-800"} size={20} />
                                     <span className={`text-sm ${darkMode ? "text-gray-100" : "text-gray-800"}`}>
-                                        {t("userGreeting", { name: user.name })}
+                                        {user.name}
                                     </span>
                                 </div>
                             )}
+
+                            {/* Se NÃO for GitHub, mostra botão de editar perfil */}
+                            {user && !user.isGitHub && (
+                                <button
+                                    onClick={handleEditProfile}
+                                    className="p-2 rounded focus:outline-none hover:opacity-80"
+                                    title={t("editProfile")}
+                                >
+                                    <FiEdit size={20} className="text-blue-500 hover:text-blue-400" />
+                                </button>
+                            )}
+
+                            {/* Se for GitHub, não mostra nada de edição */}
+
+                            {/* Seletor de idioma */}
                             <div className="flex items-center space-x-1">
-                                <FiGlobe className={darkMode ? "text-gray-100" : "text-gray-800"} size={20} title={t("language")} />
+                                <FiGlobe
+                                    className={darkMode ? "text-gray-100" : "text-gray-800"}
+                                    size={20}
+                                    title={t("language")}
+                                />
                                 <div className="w-40 cursor-pointer">
                                     <Select
                                         options={options}
@@ -210,39 +255,64 @@ export function TopMenu({ toggleConversationsAction }: TopMenuProps) {
                                     />
                                 </div>
                             </div>
-                            <button onClick={handleEditProfile} className="p-2 rounded focus:outline-none hover:opacity-80" title={t("editProfile")}>
-                                <FiEdit size={20} className="text-blue-500 hover:text-blue-400" />
-                            </button>
-                            <button onClick={toggleDarkMode} className="p-2 rounded focus:outline-none hover:opacity-80" title={darkMode ? t("lightMode") : t("darkMode")}>
+
+                            {/* Botão de tema */}
+                            <button
+                                onClick={toggleDarkMode}
+                                className="p-2 rounded focus:outline-none hover:opacity-80"
+                                title={darkMode ? t("lightMode") : t("darkMode")}
+                            >
                                 {darkMode ? (
-                                    <FiSun size={20} className="text-white hover:text-gray-200" title={t("lightMode")} />
+                                    <FiSun size={20} className="text-white hover:text-gray-200" />
                                 ) : (
-                                    <FiMoon size={20} className="text-black hover:text-gray-700" title={t("darkMode")} />
+                                    <FiMoon size={20} className="text-black hover:text-gray-700" />
                                 )}
                             </button>
-                            <button onClick={handleLogout} className="p-2 rounded focus:outline-none hover:opacity-80" title={t("logout")}>
+
+                            {/* Botão de logout */}
+                            <button
+                                onClick={handleLogout}
+                                className="p-2 rounded focus:outline-none hover:opacity-80"
+                                title={t("logout")}
+                            >
                                 <FiLogOut size={20} className="text-red-500 hover:text-red-400" />
                             </button>
                         </div>
+
+                        {/* Botão para abrir configurações (mobile) */}
                         <div className="md:hidden">
-                            <button className="p-2 rounded focus:outline-none hover:opacity-80" onClick={() => setSettingsOpen(true)} title={t("settings")}>
+                            <button
+                                className="p-2 rounded focus:outline-none hover:opacity-80"
+                                onClick={() => setSettingsOpen(true)}
+                                title={t("settings")}
+                            >
                                 <FiEdit className={darkMode ? "text-gray-100" : "text-gray-800"} size={24} />
                             </button>
                         </div>
                     </div>
                 </div>
             </header>
+
+            {/* Modal de editar perfil */}
             {profileModalOpen && (
                 <div className="fixed inset-0 z-[90] flex items-center justify-center bg-black bg-opacity-50">
                     <div className="bg-white dark:bg-gray-900 rounded-lg p-6 w-11/12 max-w-md">
                         <div className="flex justify-end">
-                            <button onClick={() => setProfileModalOpen(false)} className="text-red-500 focus:outline-none hover:opacity-80" title={t("close")}>
+                            <button
+                                onClick={() => setProfileModalOpen(false)}
+                                className="text-red-500 focus:outline-none hover:opacity-80"
+                                title={t("close")}
+                            >
                                 <FiX size={24} />
                             </button>
                         </div>
                         <form onSubmit={handleProfileUpdate} className="mt-4">
-                            <h1 className="text-xl font-bold mb-4 text-gray-900 dark:text-white">{t("editProfile")}</h1>
-                            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">{t("name")}</label>
+                            <h1 className="text-xl font-bold mb-4 text-gray-900 dark:text-white">
+                                {t("editProfile")}
+                            </h1>
+                            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                                {t("name")}
+                            </label>
                             <input
                                 type="text"
                                 value={profileName}
@@ -250,42 +320,76 @@ export function TopMenu({ toggleConversationsAction }: TopMenuProps) {
                                 className="w-full p-2 mb-3 border rounded bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100"
                                 required
                             />
-                            <button type="submit" className="w-full p-2 bg-blue-500 text-white rounded hover:bg-blue-600">
+                            <button
+                                type="submit"
+                                className="w-full p-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+                            >
                                 {t("updateProfile")}
                             </button>
                         </form>
                         <div className="mt-4">
-                            <button onClick={handleOpenPasswordModal} className="w-full p-2 bg-yellow-500 text-white rounded hover:bg-yellow-600">
+                            <button
+                                onClick={handleOpenPasswordModal}
+                                className="w-full p-2 bg-yellow-500 text-white rounded hover:bg-yellow-600"
+                            >
                                 <FiKey className="inline mr-2" /> {t("changePassword")}
                             </button>
                         </div>
                         <div className="mt-4">
-                            <button onClick={handleProfileDelete} className="w-full p-2 bg-red-500 text-white rounded hover:bg-red-600">
+                            <button
+                                onClick={handleProfileDelete}
+                                className="w-full p-2 bg-red-500 text-white rounded hover:bg-red-600"
+                            >
                                 {t("deleteAccount")}
                             </button>
                         </div>
                     </div>
                 </div>
             )}
+
+            {/* Modal de trocar senha */}
             {passwordModalOpen && <ChangePasswordModal onClose={() => setPasswordModalOpen(false)} />}
+
+            {/* Modal de configurações (mobile) */}
             {settingsOpen && (
                 <div className="fixed inset-0 z-[70] flex items-center justify-center bg-black bg-opacity-50">
                     <div className="bg-white dark:bg-gray-900 rounded-lg p-6 w-11/12 max-w-md">
                         <div className="flex justify-end">
-                            <button onClick={() => setSettingsOpen(false)} className="text-red-500 focus:outline-none hover:opacity-80" title={t("close")}>
+                            <button
+                                onClick={() => setSettingsOpen(false)}
+                                className="text-red-500 focus:outline-none hover:opacity-80"
+                                title={t("close")}
+                            >
                                 <FiX size={24} />
                             </button>
                         </div>
                         <div className="grid grid-cols-2 gap-4 mt-4">
-                            <button onClick={handleEditProfile} className="flex flex-col items-center justify-center p-2 bg-blue-600 hover:bg-blue-500 rounded text-white" title={t("editProfile")}>
-                                <FiEdit size={20} />
-                                <span className="text-xs mt-1">{t("editProfile")}</span>
-                            </button>
-                            <button onClick={toggleDarkMode} className="flex flex-col items-center justify-center p-2 bg-gray-600 hover:bg-gray-500 rounded text-white" title={darkMode ? t("lightMode") : t("darkMode")}>
-                                {darkMode ? <FiSun size={20} className="text-white" /> : <FiMoon size={20} className="text-black" />}
+                            {/* Botão de editar perfil (mobile) */}
+                            {!user?.isGitHub && (
+                                <button
+                                    onClick={handleEditProfile}
+                                    className="flex flex-col items-center justify-center p-2 bg-blue-600 hover:bg-blue-500 rounded text-white"
+                                    title={t("editProfile")}
+                                >
+                                    <FiEdit size={20} />
+                                    <span className="text-xs mt-1">{t("editProfile")}</span>
+                                </button>
+                            )}
+                            {/* Botão de tema */}
+                            <button
+                                onClick={toggleDarkMode}
+                                className="flex flex-col items-center justify-center p-2 bg-gray-600 hover:bg-gray-500 rounded text-white"
+                                title={darkMode ? t("lightMode") : t("darkMode")}
+                            >
+                                {darkMode ? <FiSun size={20} /> : <FiMoon size={20} />}
                                 <span className="text-xs mt-1">{darkMode ? t("lightMode") : t("darkMode")}</span>
                             </button>
-                            <div className="flex flex-col items-center justify-center p-2 bg-green-600 rounded text-white" title={t("language")}>
+
+                            {/* Seletor de idioma (mobile) */}
+                            <div
+                                className="flex flex-col items-center justify-center p-2 bg-green-600 rounded text-white"
+                                title={t("language")}
+                            >
                                 <FiGlobe size={20} />
                                 <div className="w-28 mt-1">
                                     <Select
@@ -301,7 +405,13 @@ export function TopMenu({ toggleConversationsAction }: TopMenuProps) {
                                     />
                                 </div>
                             </div>
-                            <button onClick={handleLogout} className="flex flex-col items-center justify-center p-2 bg-black hover:bg-gray-700 rounded text-white" title={t("logout")}>
+
+                            {/* Logout (mobile) */}
+                            <button
+                                onClick={handleLogout}
+                                className="flex flex-col items-center justify-center p-2 bg-black hover:bg-gray-700 rounded text-white"
+                                title={t("logout")}
+                            >
                                 <FiLogOut size={20} />
                                 <span className="text-xs mt-1">{t("logout")}</span>
                             </button>
@@ -312,5 +422,3 @@ export function TopMenu({ toggleConversationsAction }: TopMenuProps) {
         </>
     );
 }
-
-export default TopMenu;

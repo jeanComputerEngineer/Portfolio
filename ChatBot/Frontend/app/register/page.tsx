@@ -17,12 +17,23 @@ export default function Register() {
     const [showPassword, setShowPassword] = useState(false);
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
+    // Validação: senha entre 6 e 20 caracteres
+    const isValidLength = (pwd: string) => pwd.length >= 6 && pwd.length <= 20;
+
     const handleRegister = async (e: React.FormEvent) => {
         e.preventDefault();
+
         if (password !== confirmPassword) {
             setError(t("passwordMismatch") || "As senhas não coincidem.");
             return;
         }
+
+        if (!isValidLength(password)) {
+            setError(t("invalidPasswordLength"));
+            return;
+        }
+
+
         try {
             const res = await csrfFetch("https://backchat.jeanhenrique.site/api/auth/register", {
                 method: "POST",
@@ -123,7 +134,10 @@ export default function Register() {
                         >
                             {t("register")}
                         </button>
-                        <p className="mt-3 text-center" dangerouslySetInnerHTML={{ __html: t("registerPrompt") }} />
+                        <p
+                            className="mt-3 text-center"
+                            dangerouslySetInnerHTML={{ __html: t("registerPrompt") }}
+                        />
                     </form>
                     <div className="bg-white dark:bg-gray-800 p-6 rounded shadow-md w-80 md:w-[400px]">
                         <h2 className="text-lg font-bold mb-2 text-gray-900 dark:text-white">

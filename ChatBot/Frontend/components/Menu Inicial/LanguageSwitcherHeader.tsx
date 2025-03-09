@@ -19,9 +19,9 @@ const allowedLanguages = [
     "Arabic",
     "Chinese",
     "Russian",
-    "Hindi",
-    "Bengali",
-    "Indonesian"
+    "German",
+    "Japanese",
+    "Korean"
 ];
 
 const options: OptionType[] = languageNames

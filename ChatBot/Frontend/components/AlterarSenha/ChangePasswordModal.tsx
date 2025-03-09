@@ -4,13 +4,6 @@ import { FiX, FiEye, FiEyeOff } from "react-icons/fi";
 import { useTranslation } from "react-i18next";
 import { csrfFetch } from "@/utils/csrfFetch";
 
-// Função de validação de senha forte
-function validateStrongPassword(password: string): boolean {
-    // Exemplo: mínimo 8 caracteres, pelo menos 1 letra maiúscula, 1 minúscula, 1 dígito e 1 símbolo
-    const regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&#^()_+\-=[\]{};':"\\|,.<>/?]).{8,}$/;
-    return regex.test(password);
-}
-
 const ChangePasswordModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
     const { t } = useTranslation();
     const [currentPassword, setCurrentPassword] = useState("");
@@ -23,19 +16,36 @@ const ChangePasswordModal: React.FC<{ onClose: () => void }> = ({ onClose }) => 
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
+
         if (newPassword !== confirmPassword) {
             setModalError(t("passwordMismatch"));
             return;
         }
-        if (!validateStrongPassword(newPassword)) {
-            setModalError(t("passwordWeak") || "A senha não atende aos requisitos de segurança.");
+
+        if (newPassword.length < 6 || newPassword.length > 20) {
+            setModalError(t("invalidPasswordLength"));
             return;
         }
+
+
+        // Recupera o email do usuário salvo no localStorage
+        const storedUser = localStorage.getItem("user");
+        const userData = storedUser ? JSON.parse(storedUser) : null;
+        if (!userData || !userData.email) {
+            setModalError(t("userNotAuthenticated") || "Usuário não autenticado.");
+            return;
+        }
+
         try {
+            const payload = {
+                email: userData.email,
+                currentPassword,
+                newPassword,
+            };
             const res = await csrfFetch("https://backchat.jeanhenrique.site/api/auth/changePassword", {
                 method: "PUT",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ currentPassword, newPassword }),
+                body: JSON.stringify(payload),
             });
             if (res.ok) {
                 setSuccess(t("passwordChangedSuccessfully"));
@@ -52,7 +62,6 @@ const ChangePasswordModal: React.FC<{ onClose: () => void }> = ({ onClose }) => 
     };
 
     return (
-        // z-index elevado para ficar acima do modal de editar perfil
         <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black bg-opacity-50">
             <div className="bg-white dark:bg-gray-900 rounded-lg p-6 w-11/12 max-w-sm">
                 <div className="flex justify-end">
