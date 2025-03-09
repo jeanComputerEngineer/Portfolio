@@ -18,6 +18,7 @@ export default function Register() {
     const [error, setError] = useState("");
     const [showPassword, setShowPassword] = useState(false);
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+    const [enable2FA, setEnable2FA] = useState(false);
 
     const isValidLength = (pwd: string) => pwd.length >= 6 && pwd.length <= 20;
 
@@ -42,7 +43,12 @@ export default function Register() {
             });
             const data = await res.json();
             if (res.ok) {
-                router.push("/login");
+                // Se 2FA estiver ativado, redireciona para a página de setup
+                if (enable2FA) {
+                    router.push(`/2fa-setup?email=${encodeURIComponent(email)}`);
+                } else {
+                    router.push("/login");
+                }
             } else {
                 setError(data.message || t("registerError") || "Erro ao registrar.");
             }
@@ -131,6 +137,19 @@ export default function Register() {
                                 {showConfirmPassword ? <FiEyeOff /> : <FiEye />}
                             </button>
                         </div>
+                        <div className="mb-3">
+                            <label className="inline-flex items-center">
+                                <input
+                                    type="checkbox"
+                                    checked={enable2FA}
+                                    onChange={() => setEnable2FA(!enable2FA)}
+                                    className="form-checkbox"
+                                />
+                                <span className="ml-2">
+                                    {t("enable2FA") || "Ativar autenticação de dois fatores (2FA)"}
+                                </span>
+                            </label>
+                        </div>
                         <button
                             type="submit"
                             className={`w-full p-2 rounded ${darkMode ? "bg-gray-800 hover:bg-gray-700" : "bg-gray-500 hover:bg-gray-600"
@@ -140,8 +159,10 @@ export default function Register() {
                         </button>
                         <p className="mt-3 text-center" dangerouslySetInnerHTML={{ __html: t("registerPrompt") }} />
                     </form>
-                    <div className={`p-6 rounded shadow-md w-80 md:w-[400px] ${darkMode ? "bg-gray-950 text-white" : "bg-gray-100 text-gray-900"
-                        }`}>
+                    <div
+                        className={`p-6 rounded shadow-md w-80 md:w-[400px] ${darkMode ? "bg-gray-950 text-white" : "bg-gray-100 text-gray-900"
+                            }`}
+                    >
                         <h2 className="text-lg font-bold mb-2">{t("rulesTitle")}</h2>
                         <ul className="list-disc list-inside">
                             <li>{t("ruleAccountExpires")}</li>
