@@ -5,10 +5,12 @@ import { useTranslation } from "react-i18next";
 import LanguageSwitcherHeader from "@/components/Menu Inicial/LanguageSwitcherHeader";
 import { csrfFetch } from "@/utils/csrfFetch";
 import { FiEye, FiEyeOff } from "react-icons/fi";
+import { useTheme } from "@/context/ThemeContext";
 
 export default function Register() {
     const router = useRouter();
     const { t } = useTranslation();
+    const { darkMode } = useTheme();
     const [name, setName] = useState("");
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
@@ -17,7 +19,6 @@ export default function Register() {
     const [showPassword, setShowPassword] = useState(false);
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
-    // Validação: senha entre 6 e 20 caracteres
     const isValidLength = (pwd: string) => pwd.length >= 6 && pwd.length <= 20;
 
     const handleRegister = async (e: React.FormEvent) => {
@@ -32,7 +33,6 @@ export default function Register() {
             setError(t("invalidPasswordLength"));
             return;
         }
-
 
         try {
             const res = await csrfFetch("https://backchat.jeanhenrique.site/api/auth/register", {
@@ -57,10 +57,10 @@ export default function Register() {
                 <LanguageSwitcherHeader />
             </div>
             <div
-                className="fixed inset-0 flex flex-col items-center justify-center bg-gray-50 dark:bg-gray-900 bg-cover bg-no-repeat"
+                className={`fixed inset-0 flex flex-col items-center justify-center bg-cover bg-no-repeat ${darkMode ? "bg-gray-950" : "bg-gray-100"
+                    }`}
                 style={{
                     backgroundImage: "url('/AI.jpg')",
-                    backgroundColor: "transparent",
                     backgroundSize: "cover",
                     backgroundPosition: "center",
                     height: "100vh",
@@ -68,22 +68,22 @@ export default function Register() {
                     overflow: "hidden",
                 }}
             >
-                <div className="flex flex-col md:flex-row gap-6 mt-80 md:mt-16">
+                <div className="flex flex-col md:flex-row gap-6 mt-20 md:mt-16">
                     <form
                         onSubmit={handleRegister}
-                        className="bg-white dark:bg-gray-800 p-6 rounded shadow-md w-80 md:w-[400px]"
+                        className={`p-6 rounded shadow-md w-80 md:w-[400px] ${darkMode ? "bg-gray-950 text-white" : "bg-gray-100 text-gray-900"
+                            }`}
                         aria-label={t("registrationForm")}
                     >
-                        <h1 className="text-xl font-bold mb-4 text-gray-900 dark:text-white">
-                            {t("registration")}
-                        </h1>
+                        <h1 className="text-xl font-bold mb-4">{t("registration")}</h1>
                         {error && <p className="text-red-500 mb-2">{error}</p>}
                         <input
                             type="text"
                             placeholder={t("name")}
                             value={name}
                             onChange={(e) => setName(e.target.value)}
-                            className="w-full p-2 mb-3 border rounded bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100"
+                            className={`w-full p-2 pr-10 mb-3 border rounded ${darkMode ? "bg-gray-900 text-white border-gray-600" : "bg-white text-gray-900 border-gray-300"
+                                }`}
                             required
                         />
                         <input
@@ -91,7 +91,8 @@ export default function Register() {
                             placeholder={t("email")}
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
-                            className="w-full p-2 mb-3 border rounded bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100"
+                            className={`w-full p-2 pr-10 mb-3 border rounded ${darkMode ? "bg-gray-900 text-white border-gray-600" : "bg-white text-gray-900 border-gray-300"
+                                }`}
                             required
                         />
                         <div className="relative">
@@ -100,7 +101,8 @@ export default function Register() {
                                 placeholder={t("password")}
                                 value={password}
                                 onChange={(e) => setPassword(e.target.value)}
-                                className="w-full p-2 pr-10 mb-3 border rounded bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100"
+                                className={`w-full p-2 pr-10 mb-3 border rounded ${darkMode ? "bg-gray-900 text-white border-gray-600" : "bg-white text-gray-900 border-gray-300"
+                                    }`}
                                 required
                             />
                             <button
@@ -117,7 +119,8 @@ export default function Register() {
                                 placeholder={t("confirmPassword") || "Confirme sua senha"}
                                 value={confirmPassword}
                                 onChange={(e) => setConfirmPassword(e.target.value)}
-                                className="w-full p-2 pr-10 mb-3 border rounded bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100"
+                                className={`w-full p-2 pr-10 mb-3 border rounded ${darkMode ? "bg-gray-900 text-white border-gray-600" : "bg-white text-gray-900 border-gray-300"
+                                    }`}
                                 required
                             />
                             <button
@@ -130,20 +133,17 @@ export default function Register() {
                         </div>
                         <button
                             type="submit"
-                            className="w-full p-2 bg-green-500 text-white rounded hover:bg-green-600"
+                            className={`w-full p-2 rounded ${darkMode ? "bg-gray-800 hover:bg-gray-700" : "bg-gray-500 hover:bg-gray-600"
+                                } text-white`}
                         >
                             {t("register")}
                         </button>
-                        <p
-                            className="mt-3 text-center"
-                            dangerouslySetInnerHTML={{ __html: t("registerPrompt") }}
-                        />
+                        <p className="mt-3 text-center" dangerouslySetInnerHTML={{ __html: t("registerPrompt") }} />
                     </form>
-                    <div className="bg-white dark:bg-gray-800 p-6 rounded shadow-md w-80 md:w-[400px]">
-                        <h2 className="text-lg font-bold mb-2 text-gray-900 dark:text-white">
-                            {t("rulesTitle")}
-                        </h2>
-                        <ul className="list-disc list-inside text-gray-700 dark:text-gray-300">
+                    <div className={`p-6 rounded shadow-md w-80 md:w-[400px] ${darkMode ? "bg-gray-950 text-white" : "bg-gray-100 text-gray-900"
+                        }`}>
+                        <h2 className="text-lg font-bold mb-2">{t("rulesTitle")}</h2>
+                        <ul className="list-disc list-inside">
                             <li>{t("ruleAccountExpires")}</li>
                             <li>{t("ruleOneAccountPerEmail")}</li>
                             <li>{t("ruleTwoRegistrationsPerIP")}</li>
