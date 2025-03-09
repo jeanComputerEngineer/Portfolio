@@ -1,5 +1,5 @@
 // src/routes/chat.ts
-import { Router } from 'express';
+import { Router, Request, Response } from 'express';
 import Conversation, { IConversation } from '../models/Conversation';
 import { enqueueTask } from '../services/queueService';
 import redisClient from '../services/redisClient';
@@ -62,8 +62,9 @@ router.get('/conversations', async (req, res) => {
 
 
 // Criação ou atualização de uma conversa
-router.post('/conversations', async (req, res) => {
-    const { conversationId, title, messages, email } = req.body; // agora esperamos que email seja enviado
+router.post('/conversations', async (req: Request, res: Response) => {
+    const { conversationId, title, messages, email } = req.body;
+    const io = req.app.get('io'); // obtém a instância do socket.io
     try {
         if (conversationId) {
             const updated = await Conversation.findByIdAndUpdate(
@@ -74,7 +75,6 @@ router.post('/conversations', async (req, res) => {
             if (!updated) {
                 return res.status(404).json({ message: 'Conversa não encontrada' });
             }
-            // Atualiza o índice no Elasticsearch e enfileira a tarefa (como antes)...
             try {
                 await updateConversationIndex(updated);
             } catch (err) {
@@ -85,12 +85,13 @@ router.post('/conversations', async (req, res) => {
             } catch (err) {
                 console.error("Erro ao enfileirar tarefa:", err);
             }
+            // Emite atualização via WebSocket para a sala da conversa
+            io.to(updated._id.toString()).emit("newMessage", { messages: updated.messages });
             return res.json(updated);
         } else {
             if (!email) {
                 return res.status(400).json({ message: 'Email is required to create a conversation' });
             }
-            // Ao criar nova conversa, associamos o dono
             const newConversation: IConversation = new Conversation({ owner: email, title, messages });
             await newConversation.save();
             try {
@@ -103,6 +104,8 @@ router.post('/conversations', async (req, res) => {
             } catch (err) {
                 console.error("Erro ao enfileirar tarefa:", err);
             }
+            // Emite criação via WebSocket para a nova conversa
+            io.to(newConversation._id.toString()).emit("newMessage", { messages: newConversation.messages });
             return res.status(201).json(newConversation);
         }
     } catch (err: any) {

@@ -62,14 +62,14 @@ router.get('/conversations', (req, res) => __awaiter(void 0, void 0, void 0, fun
 }));
 // Criação ou atualização de uma conversa
 router.post('/conversations', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { conversationId, title, messages, email } = req.body; // agora esperamos que email seja enviado
+    const { conversationId, title, messages, email } = req.body;
+    const io = req.app.get('io'); // obtém a instância do socket.io
     try {
         if (conversationId) {
             const updated = yield Conversation_1.default.findByIdAndUpdate(conversationId, { title, messages }, { new: true });
             if (!updated) {
                 return res.status(404).json({ message: 'Conversa não encontrada' });
             }
-            // Atualiza o índice no Elasticsearch e enfileira a tarefa (como antes)...
             try {
                 yield (0, elasticService_1.updateConversationIndex)(updated);
             }
@@ -82,13 +82,14 @@ router.post('/conversations', (req, res) => __awaiter(void 0, void 0, void 0, fu
             catch (err) {
                 console.error("Erro ao enfileirar tarefa:", err);
             }
+            // Emite atualização via WebSocket para a sala da conversa
+            io.to(updated._id.toString()).emit("newMessage", { messages: updated.messages });
             return res.json(updated);
         }
         else {
             if (!email) {
                 return res.status(400).json({ message: 'Email is required to create a conversation' });
             }
-            // Ao criar nova conversa, associamos o dono
             const newConversation = new Conversation_1.default({ owner: email, title, messages });
             yield newConversation.save();
             try {
@@ -103,6 +104,8 @@ router.post('/conversations', (req, res) => __awaiter(void 0, void 0, void 0, fu
             catch (err) {
                 console.error("Erro ao enfileirar tarefa:", err);
             }
+            // Emite criação via WebSocket para a nova conversa
+            io.to(newConversation._id.toString()).emit("newMessage", { messages: newConversation.messages });
             return res.status(201).json(newConversation);
         }
     }

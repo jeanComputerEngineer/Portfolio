@@ -1,5 +1,6 @@
 "use client";
 import React, { useEffect, useState, useRef, KeyboardEvent } from "react";
+import { io, Socket } from "socket.io-client";
 import ProtectedRoute from "@/components/Proteção de Rotas/ProtectedRoute";
 import { useTranslation } from "react-i18next";
 import i18n from "@/components/Tradutor/i18n";
@@ -18,8 +19,14 @@ interface Conversation {
     _id: string;
     title: string;
     messages: Message[];
-    owner: string; // campo que identifica o dono da conversa
+    owner: string;
 }
+
+interface NewMessagePayload {
+    content?: string;
+    messages?: Message[];
+}
+
 
 export interface ChatPageComponentProps {
     showConversations: boolean;
@@ -46,8 +53,50 @@ export default function ChatPageComponent({
     const [searchQuery, setSearchQuery] = useState("");
 
     const messagesEndRef = useRef<HTMLDivElement>(null);
+    const socketRef = useRef<Socket | null>(null);
 
-    // Função para buscar conversas filtradas pelo e-mail do usuário
+    // Inicializa a conexão do WebSocket
+    useEffect(() => {
+        socketRef.current = io("https://backchat.jeanhenrique.site", {
+            withCredentials: true,
+        });
+        return () => {
+            socketRef.current?.disconnect();
+        };
+    }, []);
+
+    // Ao selecionar uma conversa, junta-se à "room" correspondente
+    useEffect(() => {
+        if (currentConversationId && socketRef.current) {
+            socketRef.current.emit("joinConversation", currentConversationId);
+            return () => {
+                socketRef.current?.emit("leaveConversation", currentConversationId);
+            };
+        }
+    }, [currentConversationId]);
+
+    // Escuta os eventos de novas mensagens
+    useEffect(() => {
+        if (socketRef.current) {
+            socketRef.current.on("newMessage", (data: NewMessagePayload) => {
+                if (data && data.content) {
+                    const newMessage: Message = {
+                        sender: "assistant", // Or whichever value is appropriate
+                        content: data.content,
+                    };
+                    setMessages((prev) => [...prev, newMessage]);
+                } else if (data && data.messages) {
+                    setMessages(data.messages);
+                }
+            });
+
+        }
+        return () => {
+            socketRef.current?.off("newMessage");
+        };
+    }, []);
+
+    // Função para buscar conversas via API
     const fetchConversations = async () => {
         try {
             const storedUser = localStorage.getItem("user");
@@ -85,8 +134,6 @@ export default function ChatPageComponent({
         }
     }, []);
 
-
-    // Ao carregar o usuário, define o idioma e busca as conversas do usuário
     useEffect(() => {
         const storedUser = localStorage.getItem("user");
         if (storedUser) {
@@ -100,7 +147,6 @@ export default function ChatPageComponent({
         messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
     }, [messages, isLoading]);
 
-    // Filtra as conversas localmente (caso não esteja buscando via Elasticsearch)
     const filteredConversations = searchQuery
         ? conversations.filter((conv) =>
             conv.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -110,7 +156,6 @@ export default function ChatPageComponent({
         )
         : conversations;
 
-    // Busca conversas via endpoint do Elasticsearch (também enviando o email do usuário)
     const fetchSearchedConversations = async (query: string) => {
         try {
             const storedUser = localStorage.getItem("user");
@@ -137,7 +182,6 @@ export default function ChatPageComponent({
         }
     };
 
-    // Criação de nova conversa, enviando também o email do usuário
     const handleNewConversation = async () => {
         if (conversations.length >= 20) {
             alert(t("errorConversationLimit"));
@@ -162,6 +206,8 @@ export default function ChatPageComponent({
             setMessages([]);
             setErrorMessage("");
             toggleConversationsAction();
+            // Junta-se à sala da nova conversa
+            socketRef.current?.emit("joinConversation", data._id);
         } catch (error) {
             console.error("Error creating conversation:", error);
             alert(t("errorCreatingConversation"));
@@ -258,6 +304,8 @@ export default function ChatPageComponent({
                 convId = createdConv._id;
                 setCurrentConversationId(convId);
                 setConversations((prev) => [createdConv, ...prev]);
+                // Junta-se à sala da nova conversa
+                socketRef.current?.emit("joinConversation", convId);
             } catch (error) {
                 console.error("Error creating conversation:", error);
             }
@@ -278,6 +326,11 @@ export default function ChatPageComponent({
                     )
                 );
             }
+        }
+
+        // Emite a nova mensagem via WebSocket para os demais clientes conectados na conversa
+        if (socketRef.current && convId) {
+            socketRef.current.emit("sendMessage", { conversationId: convId, message: userMessage });
         }
 
         setIsLoading(true);
@@ -327,6 +380,8 @@ export default function ChatPageComponent({
                 setConversations((prev) =>
                     prev.map((conv) => (conv._id === convId ? { ...conv, messages: finalMessages } : conv))
                 );
+                // Emite a resposta do assistente via WebSocket
+                socketRef.current?.emit("sendMessage", { conversationId: convId, message: assistantMessage });
             }
         } catch (error) {
             console.error("Error fetching AI response:", error);
@@ -374,9 +429,8 @@ export default function ChatPageComponent({
                             onChange={(e) => setSearchQuery(e.target.value)}
                             onKeyDown={(e) => {
                                 if (e.key === "Enter") {
-                                    e.preventDefault(); // previne a submissão do formulário, se for o caso
+                                    e.preventDefault();
                                     fetchSearchedConversations(searchQuery);
-                                    // Não removemos o input, mantendo-o visível para o usuário
                                 }
                             }}
                             placeholder={t("searchPlaceholder")}

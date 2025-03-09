@@ -10,9 +10,6 @@ REQUISITOS FALTANTES
 
 
 Bugs: 
-- Tentar colocar modo escuro no menu inicial
-- falta 2 fatores ainda 
-- socket
 - proteção de APIs JWT
 
 
