@@ -45,7 +45,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-// src/models/User.ts
 const mongoose_1 = __importStar(require("mongoose"));
 const bcrypt_1 = __importDefault(require("bcrypt"));
 const UserSchema = new mongoose_1.Schema({
@@ -55,6 +54,8 @@ const UserSchema = new mongoose_1.Schema({
     preferredLanguage: { type: String, default: 'Portuguese' },
     twoFactorEnabled: { type: Boolean, default: false },
     twoFactorSecret: { type: String },
+    githubId: { type: String, unique: true, sparse: true },
+    isGitHub: { type: Boolean, default: false }
 });
 // Hasheia a senha antes de salvar (somente se modificada)
 UserSchema.pre('save', function (next) {
@@ -67,7 +68,7 @@ UserSchema.pre('save', function (next) {
             next();
         }
         catch (err) {
-            next(err); // <-- Corrigido
+            next(err);
         }
     });
 });

@@ -104,9 +104,19 @@ router.post('/login', async (req, res) => {
 router.get('/oauth2', passport.authenticate('github'));
 
 // Callback após autenticação no GitHub
+// Callback após autenticação no GitHub
 router.get('/oauth2/callback', passport.authenticate('github', { failureRedirect: '/login' }), (req, res) => {
+    // Define o cookie com o domínio principal para que seja compartilhado entre os subdomínios
+    res.cookie('user', JSON.stringify(req.user), {
+        httpOnly: false,
+        domain: '.jeanhenrique.site', // Permite acesso em chatbot.jeanhenrique.site
+        secure: process.env.NODE_ENV === 'production', // Use true em produção se estiver usando HTTPS
+        sameSite: 'lax' // Ou 'none' se necessário (lembrando de usar secure: true)
+    });
     res.redirect('https://chatbot.jeanhenrique.site/chat');
 });
+
+
 
 // Endpoint para configurar 2FA (gera secret e QR Code)
 router.get('/2fa/setup', async (req, res) => {

@@ -10,6 +10,9 @@ REQUISITOS FALTANTES
 
 
 Bugs: 
+- Falta colocar validador de senha no registro. 
+- Edição de senha não funcionando
+- Tentar colocar modo escuro no menu inicial
 - OAuth 
 - falta 2 fatores ainda 
 - socket

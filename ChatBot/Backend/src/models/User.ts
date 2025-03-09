@@ -1,4 +1,3 @@
-// src/models/User.ts
 import mongoose, { Document, Schema } from 'mongoose';
 import bcrypt from 'bcrypt';
 
@@ -9,6 +8,8 @@ export interface IUser extends Document {
     preferredLanguage?: string;
     twoFactorEnabled?: boolean;
     twoFactorSecret?: string;
+    githubId?: string;          // Novo campo para o ID do GitHub
+    isGitHub?: boolean;         // Novo campo para identificar login via GitHub
 }
 
 const UserSchema: Schema = new Schema({
@@ -18,6 +19,8 @@ const UserSchema: Schema = new Schema({
     preferredLanguage: { type: String, default: 'Portuguese' },
     twoFactorEnabled: { type: Boolean, default: false },
     twoFactorSecret: { type: String },
+    githubId: { type: String, unique: true, sparse: true },
+    isGitHub: { type: Boolean, default: false }
 });
 
 // Hasheia a senha antes de salvar (somente se modificada)
@@ -28,9 +31,8 @@ UserSchema.pre<IUser>('save', async function (next) {
         this.password = await bcrypt.hash(this.password, salt);
         next();
     } catch (err) {
-        next(err as any); // <-- Corrigido
+        next(err as any);
     }
 });
-
 
 export default mongoose.model<IUser>('User', UserSchema);
