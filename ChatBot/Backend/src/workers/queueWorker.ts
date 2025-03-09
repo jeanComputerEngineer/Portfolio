@@ -18,4 +18,3 @@ export async function startWorker(): Promise<void> {
     });
 }
 
-startWorker().catch((err) => console.error('Erro no worker:', err));

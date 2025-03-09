@@ -82,8 +82,8 @@ router.post('/conversations', (req, res) => __awaiter(void 0, void 0, void 0, fu
             catch (err) {
                 console.error("Erro ao enfileirar tarefa:", err);
             }
-            // Emite atualização via WebSocket para a sala da conversa
-            io.to(updated._id.toString()).emit("newMessage", { messages: updated.messages });
+            // REMOVIDO: Emissão imediata para evitar duplicação
+            // io.to(updated._id.toString()).emit("newMessage", { messages: updated.messages });
             return res.json(updated);
         }
         else {
@@ -104,8 +104,8 @@ router.post('/conversations', (req, res) => __awaiter(void 0, void 0, void 0, fu
             catch (err) {
                 console.error("Erro ao enfileirar tarefa:", err);
             }
-            // Emite criação via WebSocket para a nova conversa
-            io.to(newConversation._id.toString()).emit("newMessage", { messages: newConversation.messages });
+            // REMOVIDO: Emissão imediata para evitar duplicação
+            // io.to(newConversation._id.toString()).emit("newMessage", { messages: newConversation.messages });
             return res.status(201).json(newConversation);
         }
     }

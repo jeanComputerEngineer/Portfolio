@@ -28,4 +28,3 @@ function startWorker() {
         });
     });
 }
-startWorker().catch((err) => console.error('Erro no worker:', err));

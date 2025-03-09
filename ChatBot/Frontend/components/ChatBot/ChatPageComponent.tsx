@@ -59,21 +59,29 @@ export default function ChatPageComponent({
     useEffect(() => {
         socketRef.current = io("https://backchat.jeanhenrique.site", {
             withCredentials: true,
+            transports: ["polling"],
         });
+
         return () => {
             socketRef.current?.disconnect();
         };
     }, []);
 
-    // Ao selecionar uma conversa, junta-se à "room" correspondente
+    const joinedConversationRef = useRef<string | null>(null);
+
     useEffect(() => {
         if (currentConversationId && socketRef.current) {
-            socketRef.current.emit("joinConversation", currentConversationId);
+            if (joinedConversationRef.current !== currentConversationId) {
+                socketRef.current.emit("joinConversation", currentConversationId);
+                joinedConversationRef.current = currentConversationId;
+            }
             return () => {
                 socketRef.current?.emit("leaveConversation", currentConversationId);
+                joinedConversationRef.current = null;
             };
         }
     }, [currentConversationId]);
+
 
     // Escuta os eventos de novas mensagens
     useEffect(() => {
@@ -81,7 +89,7 @@ export default function ChatPageComponent({
             socketRef.current.on("newMessage", (data: NewMessagePayload) => {
                 if (data && data.content) {
                     const newMessage: Message = {
-                        sender: "assistant", // Or whichever value is appropriate
+                        sender: "assistant",
                         content: data.content,
                     };
                     setMessages((prev) => [...prev, newMessage]);
@@ -90,11 +98,18 @@ export default function ChatPageComponent({
                 }
             });
 
+            // eslint-disable-next-line @typescript-eslint/no-unused-vars
+            socketRef.current.on("connect_error", (_err) => {
+                // Ignorando erro de conexão
+            });
+
         }
         return () => {
             socketRef.current?.off("newMessage");
+            socketRef.current?.off("connect_error");
         };
     }, []);
+
 
     // Função para buscar conversas via API
     const fetchConversations = async () => {

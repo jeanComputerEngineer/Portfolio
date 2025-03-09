@@ -31,19 +31,20 @@ export default function Login() {
             const data = await res.json();
             if (res.ok) {
                 if (data.user && data.user.twoFactorEnabled) {
-                    // Se o 2FA estiver ativado, exibe o formulário para o token
+                    // Exibe o formulário para o token se 2FA estiver habilitado
                     setRequires2FA(true);
-                    setMessage("2FA requerido. Por favor, insira o token do autenticador.");
+                    setMessage(t("twoFactorInstruction"));
                 } else {
-                    // Login efetuado sem 2FA
+                    // Salva o usuário e o token no localStorage
                     localStorage.setItem("user", JSON.stringify(data.user));
+                    localStorage.setItem("token", data.token);
                     router.push("/chat");
                 }
             } else {
-                setError(data.message || t("loginError") || "Erro no login");
+                setError(data.message || t("loginError"));
             }
         } catch {
-            setError(t("loginError") || "Erro no login");
+            setError(t("loginError"));
         }
     };
 
@@ -58,20 +59,21 @@ export default function Login() {
             });
             const data = await res.json();
             if (res.ok) {
+                // Salva usuário e token no localStorage após verificação 2FA
                 localStorage.setItem("user", JSON.stringify(data.user));
+                localStorage.setItem("token", data.token);
                 router.push("/chat");
             } else {
-                setError(data.message || "Token inválido.");
+                setError(data.message || t("invalidToken"));
             }
         } catch {
-            setError("Erro ao verificar token.");
+            setError(t("tokenVerificationError"));
         }
     };
 
     return (
         <div
-            className={`fixed inset-0 flex flex-col items-center justify-center bg-cover bg-no-repeat ${darkMode ? "bg-gray-950" : "bg-gray-100"
-                }`}
+            className={`fixed inset-0 flex flex-col items-center justify-center bg-cover bg-no-repeat ${darkMode ? "bg-gray-950" : "bg-gray-100"}`}
             style={{
                 backgroundImage: "url('/AI.jpg')",
                 backgroundSize: "cover",
@@ -87,8 +89,7 @@ export default function Login() {
             {!requires2FA ? (
                 <form
                     onSubmit={handleLogin}
-                    className={`p-6 rounded shadow-md w-96 md:w-[400px] ${darkMode ? "bg-gray-950 text-white" : "bg-gray-100 text-gray-900"
-                        }`}
+                    className={`p-6 rounded shadow-md w-96 md:w-[400px] ${darkMode ? "bg-gray-950 text-white" : "bg-gray-100 text-gray-900"}`}
                     aria-label={t("loginForm")}
                 >
                     <h1 className="text-xl font-bold mb-4">{t("login")}</h1>
@@ -103,8 +104,7 @@ export default function Login() {
                         placeholder={t("email")}
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
-                        className={`w-full p-2 mb-3 border rounded ${darkMode ? "bg-gray-900 text-white border-gray-600" : "bg-white text-gray-900 border-gray-300"
-                            }`}
+                        className={`w-full p-2 mb-3 border rounded ${darkMode ? "bg-gray-900 text-white border-gray-600" : "bg-white text-gray-900 border-gray-300"}`}
                         required
                     />
                     <label htmlFor="password" className="block text-sm font-medium mb-1">
@@ -117,8 +117,7 @@ export default function Login() {
                             placeholder={t("password")}
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
-                            className={`w-full p-2 pr-10 mb-3 border rounded ${darkMode ? "bg-gray-900 text-white border-gray-600" : "bg-white text-gray-900 border-gray-300"
-                                }`}
+                            className={`w-full p-2 pr-10 mb-3 border rounded ${darkMode ? "bg-gray-900 text-white border-gray-600" : "bg-white text-gray-900 border-gray-300"}`}
                             required
                         />
                         <button
@@ -131,8 +130,7 @@ export default function Login() {
                     </div>
                     <button
                         type="submit"
-                        className={`w-full p-2 rounded ${darkMode ? "bg-gray-800 hover:bg-gray-700" : "bg-gray-500 hover:bg-gray-600"
-                            } text-white`}
+                        className={`w-full p-2 rounded ${darkMode ? "bg-gray-800 hover:bg-gray-700" : "bg-gray-500 hover:bg-gray-600"} text-white`}
                         aria-label={t("login")}
                     >
                         {t("login")}
@@ -143,36 +141,33 @@ export default function Login() {
                             href="https://backchat.jeanhenrique.site/api/auth/oauth2"
                             className="w-full p-2 bg-gray-800 text-white rounded text-center block hover:bg-gray-900"
                         >
-                            Login com GitHub
+                            {t("loginWithGitHub")}
                         </a>
                     </div>
                 </form>
             ) : (
                 <form
                     onSubmit={handleTokenVerification}
-                    className={`p-6 rounded shadow-md w-96 md:w-[400px] ${darkMode ? "bg-gray-950 text-white" : "bg-gray-100 text-gray-900"
-                        }`}
-                    aria-label="2FA Verification Form"
+                    className={`p-6 rounded shadow-md w-96 md:w-[400px] ${darkMode ? "bg-gray-950 text-white" : "bg-gray-100 text-gray-900"}`}
+                    aria-label={t("twoFactorForm")}
                 >
-                    <h1 className="text-xl font-bold mb-4">Verificação 2FA</h1>
+                    <h1 className="text-xl font-bold mb-4">{t("twoFactorTitle")}</h1>
                     {error && <p className="text-red-500 mb-2" role="alert">{error}</p>}
                     {message && <p className="text-green-500 mb-2" role="alert">{message}</p>}
-                    <p className="mb-3">Insira o código do autenticador:</p>
+                    <p className="mb-3">{t("twoFactorInstruction")}</p>
                     <input
                         type="text"
-                        placeholder="Código de 2FA"
+                        placeholder={t("twoFactorPlaceholder")}
                         value={token}
                         onChange={(e) => setToken(e.target.value)}
-                        className={`w-full p-2 mb-3 border rounded ${darkMode ? "bg-gray-900 text-white border-gray-600" : "bg-white text-gray-900 border-gray-300"
-                            }`}
+                        className={`w-full p-2 mb-3 border rounded ${darkMode ? "bg-gray-900 text-white border-gray-600" : "bg-white text-gray-900 border-gray-300"}`}
                         required
                     />
                     <button
                         type="submit"
-                        className={`w-full p-2 rounded ${darkMode ? "bg-gray-800 hover:bg-gray-700" : "bg-gray-500 hover:bg-gray-600"
-                            } text-white`}
+                        className={`w-full p-2 rounded ${darkMode ? "bg-gray-800 hover:bg-gray-700" : "bg-gray-500 hover:bg-gray-600"} text-white`}
                     >
-                        Verificar Token
+                        {t("verifyToken")}
                     </button>
                 </form>
             )}

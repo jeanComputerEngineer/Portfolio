@@ -1,16 +1,11 @@
-REQUISITOS FALTANTES
-
-3. **Funcionalidades Essenciais**
-    - Autenticação segura com OAuth2 e 2FA
-4. **Segurança e Conformidade**
-    - Prevenção contra injeções SQL, XSS e CSRF
-    - Criptografia de dados sensíveis
-9. **Documentação**
-    - API documentada com Swagger/OpenAPI
 
 
-Bugs: 
-- proteção de APIs JWT
+Verificações finais
+- Testar todo frontend
+- Verificar JWT, CSRF, too many requests, mais de duas contas por ip, conexão com o banco, limitação de banco, limitação de tudo
+- Verificar todos os requisitos, verificar se todos foram satisfeitos e explica pra que cada serve, como foi implementado, etc
+- API documentada com Swagger/OpenAPI
+
 
 
 

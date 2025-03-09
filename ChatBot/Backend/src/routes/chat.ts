@@ -60,7 +60,6 @@ router.get('/conversations', async (req, res) => {
 
 
 
-
 // Criação ou atualização de uma conversa
 router.post('/conversations', async (req: Request, res: Response) => {
     const { conversationId, title, messages, email } = req.body;
@@ -85,8 +84,8 @@ router.post('/conversations', async (req: Request, res: Response) => {
             } catch (err) {
                 console.error("Erro ao enfileirar tarefa:", err);
             }
-            // Emite atualização via WebSocket para a sala da conversa
-            io.to(updated._id.toString()).emit("newMessage", { messages: updated.messages });
+            // REMOVIDO: Emissão imediata para evitar duplicação
+            // io.to(updated._id.toString()).emit("newMessage", { messages: updated.messages });
             return res.json(updated);
         } else {
             if (!email) {
@@ -104,8 +103,8 @@ router.post('/conversations', async (req: Request, res: Response) => {
             } catch (err) {
                 console.error("Erro ao enfileirar tarefa:", err);
             }
-            // Emite criação via WebSocket para a nova conversa
-            io.to(newConversation._id.toString()).emit("newMessage", { messages: newConversation.messages });
+            // REMOVIDO: Emissão imediata para evitar duplicação
+            // io.to(newConversation._id.toString()).emit("newMessage", { messages: newConversation.messages });
             return res.status(201).json(newConversation);
         }
     } catch (err: any) {
@@ -113,6 +112,7 @@ router.post('/conversations', async (req: Request, res: Response) => {
         return res.status(500).json({ message: 'Erro ao processar a conversa', error: err.message });
     }
 });
+
 
 
 

@@ -44,24 +44,33 @@ const resources = {
             confirmDeleteConversation: "Are you sure you want to delete this conversation?",
             confirmDeleteAccount: "Are you sure you want to delete your account?",
             passwordMismatch: "Passwords do not match.",
-            // Mensagem de validação de comprimento da senha
             invalidPasswordLength: "Your password must be between 6 and 20 characters.",
-            // Rules / Instructions:
             ruleAccountExpires: "Your account will be automatically deleted after 7 days.",
             ruleTwoRegistrationsPerIP: "Only two accounts per IP per week are allowed.",
             ruleOneAccountPerEmail: "Only one account per email is allowed.",
             ruleConversationLimits: "Each account can have at most 20 conversations and each conversation up to 20,000 characters.",
-            // Additional keys for modals:
             registrationForm: "Registration Form",
             selectLanguage: "Select Language",
             rulesTitle: "Rules & Instructions",
-            // Change Password Modal keys:
             changePassword: "Change Password",
             passwordChangeInstruction: "Enter your current password, new password, and confirm the new password to change your password.",
             updatePassword: "Update Password",
             passwordChangedSuccessfully: "Password changed successfully!",
             currentPassword: "Current Password",
-            name: "Name"
+            name: "Name",
+            enable2FA: "Enable Two-Factor Authentication",
+            twoFactorTitle: "Two-Factor Authentication",
+            twoFactorInstruction: "Two-factor authentication is required. Please enter your authenticator app code.",
+            twoFactorPlaceholder: "Enter authentication code",
+            verifyToken: "Verify Token",
+            tokenVerificationError: "Error verifying token.",
+            invalidToken: "Invalid token.",
+            qrCodeError: "Error obtaining QR Code.",
+            loadingQRCode: "Loading QR Code...",
+            scanQRCode: "Scan the QR Code with your authenticator app:",
+            qrCodeAlt: "QR Code for 2FA",
+            secretLabel: "Secret",
+            loginWithGitHub: "Login with GitHub"
         }
     },
     Portuguese: {
@@ -106,9 +115,7 @@ const resources = {
             confirmDeleteConversation: "Tem certeza que deseja excluir esta conversa?",
             confirmDeleteAccount: "Tem certeza que deseja excluir sua conta?",
             passwordMismatch: "As senhas não conferem.",
-            // Validação de comprimento de senha
             invalidPasswordLength: "Sua senha deve ter entre 6 e 20 caracteres.",
-            // Rules / Instructions:
             ruleAccountExpires: "Sua conta será automaticamente excluída após 7 dias.",
             ruleTwoRegistrationsPerIP: "Apenas duas contas por IP por semana são permitidas.",
             ruleOneAccountPerEmail: "Apenas uma conta por e-mail é permitida.",
@@ -116,13 +123,25 @@ const resources = {
             registrationForm: "Formulário de Cadastro",
             selectLanguage: "Selecione o Idioma",
             rulesTitle: "Regras e Instruções",
-            // Change Password Modal keys:
             changePassword: "Alterar Senha",
             passwordChangeInstruction: "Digite sua senha atual, a nova senha e confirme a nova senha para alterar sua senha.",
             updatePassword: "Atualizar Senha",
             passwordChangedSuccessfully: "Senha alterada com sucesso!",
             currentPassword: "Senha Atual",
-            name: "Nome"
+            name: "Nome",
+            enable2FA: "Ativar autenticação de dois fatores",
+            twoFactorTitle: "Verificação 2FA",
+            twoFactorInstruction: "Autenticação de dois fatores é necessária. Por favor, insira o código do seu aplicativo autenticador.",
+            twoFactorPlaceholder: "Digite o código de 2FA",
+            verifyToken: "Verificar Token",
+            tokenVerificationError: "Erro ao verificar o token.",
+            invalidToken: "Token inválido.",
+            qrCodeError: "Erro ao obter o QR Code.",
+            loadingQRCode: "Carregando QR Code...",
+            scanQRCode: "Escaneie o QR Code com seu aplicativo autenticador:",
+            qrCodeAlt: "QR Code para 2FA",
+            secretLabel: "Segredo",
+            loginWithGitHub: "Login com GitHub"
         }
     },
     Spanish: {
@@ -167,7 +186,6 @@ const resources = {
             confirmDeleteConversation: "¿Estás seguro de que deseas eliminar esta conversación?",
             confirmDeleteAccount: "¿Estás seguro de que deseas eliminar tu cuenta?",
             passwordMismatch: "Las contraseñas no coinciden.",
-            // Validação de comprimento de senha
             invalidPasswordLength: "Tu contraseña debe tener entre 6 y 20 caracteres.",
             ruleAccountExpires: "Tu cuenta se eliminará automáticamente después de 7 días.",
             ruleTwoRegistrationsPerIP: "Solo se permiten dos cuentas por IP por semana.",
@@ -181,7 +199,20 @@ const resources = {
             updatePassword: "Actualizar Contraseña",
             passwordChangedSuccessfully: "¡Contraseña actualizada con éxito!",
             currentPassword: "Contraseña Actual",
-            name: "Nombre"
+            name: "Nombre",
+            enable2FA: "Habilitar Autenticación de Dos Factores",
+            twoFactorTitle: "Autenticación de Dos Factores",
+            twoFactorInstruction: "Se requiere autenticación de dos factores. Por favor, introduce el código de tu aplicación autenticadora.",
+            twoFactorPlaceholder: "Introduce el código de 2FA",
+            verifyToken: "Verificar Código",
+            tokenVerificationError: "Error al verificar el código.",
+            invalidToken: "Código inválido.",
+            qrCodeError: "Error al obtener el QR Code.",
+            loadingQRCode: "Cargando QR Code...",
+            scanQRCode: "Escanea el QR Code con tu aplicación autenticadora:",
+            qrCodeAlt: "QR Code para 2FA",
+            secretLabel: "Secreto",
+            loginWithGitHub: "Iniciar sesión con GitHub"
         }
     },
     French: {
@@ -226,7 +257,6 @@ const resources = {
             confirmDeleteConversation: "Êtes-vous sûr de vouloir supprimer cette conversation ?",
             confirmDeleteAccount: "Êtes-vous sûr de vouloir supprimer votre compte ?",
             passwordMismatch: "Les mots de passe ne correspondent pas.",
-            // Validação de comprimento de senha
             invalidPasswordLength: "Votre mot de passe doit comporter entre 6 et 20 caractères.",
             ruleAccountExpires: "Votre compte sera automatiquement supprimé après 7 jours.",
             ruleTwoRegistrationsPerIP: "Seules deux inscriptions par IP par semaine sont autorisées.",
@@ -234,7 +264,26 @@ const resources = {
             ruleConversationLimits: "Chaque compte ne peut avoir que 20 conversations et chaque conversation est limitée à 20 000 caractères.",
             registrationForm: "Formulaire d'Inscription",
             selectLanguage: "Sélectionnez la Langue",
-            rulesTitle: "Règles et Instructions"
+            rulesTitle: "Règles et Instructions",
+            changePassword: "Changer de Mot de Passe",
+            passwordChangeInstruction: "Entrez votre mot de passe actuel, votre nouveau mot de passe et confirmez le nouveau mot de passe pour le changer.",
+            updatePassword: "Mettre à jour le Mot de Passe",
+            passwordChangedSuccessfully: "Mot de passe changé avec succès !",
+            currentPassword: "Mot de passe actuel",
+            name: "Nom",
+            enable2FA: "Activer l'Authentification à Deux Facteurs",
+            twoFactorTitle: "Authentification à Deux Facteurs",
+            twoFactorInstruction: "L'authentification à deux facteurs est requise. Veuillez saisir le code de votre application d'authentification.",
+            twoFactorPlaceholder: "Entrez le code 2FA",
+            verifyToken: "Vérifier le Code",
+            tokenVerificationError: "Erreur lors de la vérification du code.",
+            invalidToken: "Code invalide.",
+            qrCodeError: "Erreur lors de l'obtention du QR Code.",
+            loadingQRCode: "Chargement du QR Code...",
+            scanQRCode: "Scannez le QR Code avec votre application d'authentification :",
+            qrCodeAlt: "QR Code pour 2FA",
+            secretLabel: "Secret",
+            loginWithGitHub: "Connexion avec GitHub"
         }
     },
     Arabic: {
@@ -279,7 +328,6 @@ const resources = {
             confirmDeleteConversation: "هل أنت متأكد من حذف هذه المحادثة؟",
             confirmDeleteAccount: "هل أنت متأكد من حذف حسابك؟",
             passwordMismatch: "كلمتا المرور غير متطابقتين.",
-            // Validação de comprimento de senha
             invalidPasswordLength: "يجب أن تكون كلمة المرور بين 6 و20 حرفاً.",
             ruleAccountExpires: "سيتم حذف حسابك تلقائيًا بعد 7 أيام.",
             ruleTwoRegistrationsPerIP: "يسمح بحسابين فقط لكل IP في الأسبوع.",
@@ -287,7 +335,26 @@ const resources = {
             ruleConversationLimits: "كل حساب يمكن أن يحتوي على 20 محادثة كحد أقصى، وكل محادثة بحد أقصى 20,000 حرف.",
             registrationForm: "نموذج التسجيل",
             selectLanguage: "اختر اللغة",
-            rulesTitle: "القواعد والتعليمات"
+            rulesTitle: "القواعد والتعليمات",
+            changePassword: "تغيير كلمة المرور",
+            passwordChangeInstruction: "أدخل كلمة المرور الحالية، والكلمة الجديدة، وأكد الكلمة الجديدة لتغيير كلمة المرور.",
+            updatePassword: "تحديث كلمة المرور",
+            passwordChangedSuccessfully: "تم تغيير كلمة المرور بنجاح!",
+            currentPassword: "كلمة المرور الحالية",
+            name: "الاسم",
+            enable2FA: "تفعيل المصادقة الثنائية",
+            twoFactorTitle: "المصادقة الثنائية",
+            twoFactorInstruction: "المصادقة الثنائية مطلوبة. الرجاء إدخال رمز تطبيق المصادقة الخاص بك.",
+            twoFactorPlaceholder: "أدخل رمز 2FA",
+            verifyToken: "تحقق من الرمز",
+            tokenVerificationError: "حدث خطأ أثناء التحقق من الرمز.",
+            invalidToken: "رمز غير صالح.",
+            qrCodeError: "حدث خطأ أثناء الحصول على رمز الاستجابة السريعة.",
+            loadingQRCode: "جاري تحميل رمز الاستجابة السريعة...",
+            scanQRCode: "امسح رمز الاستجابة السريعة باستخدام تطبيق المصادقة الخاص بك:",
+            qrCodeAlt: "رمز الاستجابة السريعة للمصادقة الثنائية",
+            secretLabel: "السر",
+            loginWithGitHub: "تسجيل الدخول عبر GitHub"
         }
     },
     Chinese: {
@@ -332,7 +399,6 @@ const resources = {
             confirmDeleteConversation: "确定要删除此对话吗？",
             confirmDeleteAccount: "确定要删除您的账户吗？",
             passwordMismatch: "两次输入的密码不匹配。",
-            // Validação de comprimento de senha
             invalidPasswordLength: "您的密码必须介于6到20个字符之间。",
             ruleAccountExpires: "您的账户将在7天后自动删除。",
             ruleTwoRegistrationsPerIP: "每个IP每周最多允许两个账户。",
@@ -340,7 +406,26 @@ const resources = {
             ruleConversationLimits: "每个账户最多可以拥有20个对话，每个对话最多20000个字符。",
             registrationForm: "注册表单",
             selectLanguage: "选择语言",
-            rulesTitle: "规则与说明"
+            rulesTitle: "规则与说明",
+            changePassword: "更改密码",
+            passwordChangeInstruction: "请输入当前密码、新密码以及确认新密码以更改密码。",
+            updatePassword: "更新密码",
+            passwordChangedSuccessfully: "密码更新成功！",
+            currentPassword: "当前密码",
+            name: "姓名",
+            enable2FA: "启用双重身份验证",
+            twoFactorTitle: "双重身份验证",
+            twoFactorInstruction: "需要进行双重身份验证。请输入您身份验证应用中的代码。",
+            twoFactorPlaceholder: "请输入2FA代码",
+            verifyToken: "验证代码",
+            tokenVerificationError: "验证代码时出错。",
+            invalidToken: "代码无效。",
+            qrCodeError: "获取二维码时出错。",
+            loadingQRCode: "正在加载二维码...",
+            scanQRCode: "请使用您的身份验证应用扫描二维码：",
+            qrCodeAlt: "用于2FA的二维码",
+            secretLabel: "密钥",
+            loginWithGitHub: "使用GitHub登录"
         }
     },
     Russian: {
@@ -385,7 +470,6 @@ const resources = {
             confirmDeleteConversation: "Вы уверены, что хотите удалить этот диалог?",
             confirmDeleteAccount: "Вы уверены, что хотите удалить свой аккаунт?",
             passwordMismatch: "Пароли не совпадают.",
-            // Validação de comprimento de senha
             invalidPasswordLength: "Ваш пароль должен содержать от 6 до 20 символов.",
             ruleAccountExpires: "Ваш аккаунт будет автоматически удалён через 7 дней.",
             ruleTwoRegistrationsPerIP: "Максимум два аккаунта с одного IP в неделю.",
@@ -399,7 +483,20 @@ const resources = {
             updatePassword: "Обновить пароль",
             passwordChangedSuccessfully: "Пароль успешно изменён!",
             currentPassword: "Текущий пароль",
-            name: "Имя"
+            name: "Имя",
+            enable2FA: "Включить двухфакторную аутентификацию",
+            twoFactorTitle: "Двухфакторная аутентификация",
+            twoFactorInstruction: "Для входа требуется двухфакторная аутентификация. Пожалуйста, введите код из вашего приложения-аутентификатора.",
+            twoFactorPlaceholder: "Введите код 2FA",
+            verifyToken: "Проверить код",
+            tokenVerificationError: "Ошибка проверки кода.",
+            invalidToken: "Неверный код.",
+            qrCodeError: "Ошибка получения QR-кода.",
+            loadingQRCode: "Загрузка QR-кода...",
+            scanQRCode: "Отсканируйте QR-код с помощью вашего аутентификатора:",
+            qrCodeAlt: "QR-код для 2FA",
+            secretLabel: "Секрет",
+            loginWithGitHub: "Войти через GitHub"
         }
     },
     German: {
@@ -444,7 +541,6 @@ const resources = {
             confirmDeleteConversation: "Sind Sie sicher, dass Sie diese Unterhaltung löschen möchten?",
             confirmDeleteAccount: "Sind Sie sicher, dass Sie Ihr Konto löschen möchten?",
             passwordMismatch: "Passwörter stimmen nicht überein.",
-            // Validação de comprimento de senha
             invalidPasswordLength: "Ihr Passwort muss zwischen 6 und 20 Zeichen lang sein.",
             ruleAccountExpires: "Ihr Konto wird nach 7 Tagen automatisch gelöscht.",
             ruleTwoRegistrationsPerIP: "Maximal zwei Konten pro IP pro Woche erlaubt.",
@@ -458,7 +554,20 @@ const resources = {
             updatePassword: "Passwort aktualisieren",
             passwordChangedSuccessfully: "Passwort erfolgreich geändert!",
             currentPassword: "Aktuelles Passwort",
-            name: "Name"
+            name: "Name",
+            enable2FA: "Zwei-Faktor-Authentifizierung aktivieren",
+            twoFactorTitle: "Zwei-Faktor-Authentifizierung",
+            twoFactorInstruction: "Die Zwei-Faktor-Authentifizierung ist erforderlich. Bitte geben Sie den Code Ihrer Authentifizierungs-App ein.",
+            twoFactorPlaceholder: "Geben Sie den 2FA-Code ein",
+            verifyToken: "Code verifizieren",
+            tokenVerificationError: "Fehler bei der Codeüberprüfung.",
+            invalidToken: "Ungültiger Code.",
+            qrCodeError: "Fehler beim Abrufen des QR-Codes.",
+            loadingQRCode: "QR-Code wird geladen...",
+            scanQRCode: "Scannen Sie den QR-Code mit Ihrer Authentifizierungs-App:",
+            qrCodeAlt: "QR-Code für 2FA",
+            secretLabel: "Geheimnis",
+            loginWithGitHub: "Mit GitHub anmelden"
         }
     },
     Japanese: {
@@ -503,7 +612,6 @@ const resources = {
             confirmDeleteConversation: "この会話を削除してもよろしいですか？",
             confirmDeleteAccount: "アカウントを削除してもよろしいですか？",
             passwordMismatch: "パスワードが一致しません。",
-            // Validação de comprimento de senha
             invalidPasswordLength: "パスワードは6文字以上20文字以下でなければなりません。",
             ruleAccountExpires: "アカウントは7日後に自動的に削除されます。",
             ruleTwoRegistrationsPerIP: "IPごとに1週間で最大2つのアカウントが許可されます。",
@@ -517,7 +625,20 @@ const resources = {
             updatePassword: "パスワード更新",
             passwordChangedSuccessfully: "パスワードが正常に変更されました！",
             currentPassword: "現在のパスワード",
-            name: "名前"
+            name: "名前",
+            enable2FA: "二要素認証を有効にする",
+            twoFactorTitle: "二要素認証",
+            twoFactorInstruction: "二要素認証が必要です。認証アプリからコードを入力してください。",
+            twoFactorPlaceholder: "認証コードを入力",
+            verifyToken: "コードを確認",
+            tokenVerificationError: "コードの確認中にエラーが発生しました。",
+            invalidToken: "無効なコードです。",
+            qrCodeError: "QRコードの取得中にエラーが発生しました。",
+            loadingQRCode: "QRコードを読み込み中...",
+            scanQRCode: "認証アプリでQRコードをスキャンしてください：",
+            qrCodeAlt: "二要素認証用QRコード",
+            secretLabel: "シークレット",
+            loginWithGitHub: "GitHubでログイン"
         }
     },
     Korean: {
@@ -562,7 +683,6 @@ const resources = {
             confirmDeleteConversation: "이 대화를 삭제하시겠습니까?",
             confirmDeleteAccount: "계정을 삭제하시겠습니까?",
             passwordMismatch: "비밀번호가 일치하지 않습니다.",
-            // Validação de comprimento de senha
             invalidPasswordLength: "비밀번호는 6자 이상 20자 이하여야 합니다.",
             ruleAccountExpires: "계정은 7일 후 자동으로 삭제됩니다.",
             ruleTwoRegistrationsPerIP: "IP당 주당 최대 2개의 계정이 허용됩니다.",
@@ -576,12 +696,25 @@ const resources = {
             updatePassword: "비밀번호 업데이트",
             passwordChangedSuccessfully: "비밀번호가 성공적으로 변경되었습니다!",
             currentPassword: "현재 비밀번호",
-            name: "이름"
+            name: "이름",
+            enable2FA: "2단계 인증 활성화",
+            twoFactorTitle: "2단계 인증",
+            twoFactorInstruction: "2단계 인증이 필요합니다. 인증 앱에서 코드를 입력하세요.",
+            twoFactorPlaceholder: "인증 코드를 입력하세요",
+            verifyToken: "코드 확인",
+            tokenVerificationError: "코드 확인 중 오류가 발생했습니다.",
+            invalidToken: "잘못된 코드입니다.",
+            qrCodeError: "QR 코드를 가져오는 중 오류가 발생했습니다.",
+            loadingQRCode: "QR 코드를 로딩 중입니다...",
+            scanQRCode: "인증 앱으로 QR 코드를 스캔하세요:",
+            qrCodeAlt: "2단계 인증용 QR 코드",
+            secretLabel: "비밀",
+            loginWithGitHub: "GitHub로 로그인"
         }
     }
 };
 
-export const languageNames: string[] = [
+export const languageNames = [
     "English",
     "Portuguese",
     "Spanish",

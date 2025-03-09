@@ -1,3 +1,4 @@
+// components/Auth/Register.tsx
 "use client";
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
@@ -24,17 +25,15 @@ export default function Register() {
 
     const handleRegister = async (e: React.FormEvent) => {
         e.preventDefault();
-
+        setError("");
         if (password !== confirmPassword) {
-            setError(t("passwordMismatch") || "As senhas não coincidem.");
+            setError(t("passwordMismatch"));
             return;
         }
-
         if (!isValidLength(password)) {
             setError(t("invalidPasswordLength"));
             return;
         }
-
         try {
             const res = await csrfFetch("https://backchat.jeanhenrique.site/api/auth/register", {
                 method: "POST",
@@ -43,17 +42,16 @@ export default function Register() {
             });
             const data = await res.json();
             if (res.ok) {
-                // Se 2FA estiver ativado, redireciona para a página de setup
                 if (enable2FA) {
                     router.push(`/2fa-setup?email=${encodeURIComponent(email)}`);
                 } else {
                     router.push("/login");
                 }
             } else {
-                setError(data.message || t("registerError") || "Erro ao registrar.");
+                setError(data.message || t("registerError"));
             }
         } catch {
-            setError(t("registerError") || "Erro ao registrar.");
+            setError(t("registerError"));
         }
     };
 
@@ -122,7 +120,7 @@ export default function Register() {
                         <div className="relative">
                             <input
                                 type={showConfirmPassword ? "text" : "password"}
-                                placeholder={t("confirmPassword") || "Confirme sua senha"}
+                                placeholder={t("confirmPassword")}
                                 value={confirmPassword}
                                 onChange={(e) => setConfirmPassword(e.target.value)}
                                 className={`w-full p-2 pr-10 mb-3 border rounded ${darkMode ? "bg-gray-900 text-white border-gray-600" : "bg-white text-gray-900 border-gray-300"
@@ -145,9 +143,7 @@ export default function Register() {
                                     onChange={() => setEnable2FA(!enable2FA)}
                                     className="form-checkbox"
                                 />
-                                <span className="ml-2">
-                                    {t("enable2FA") || "Ativar autenticação de dois fatores (2FA)"}
-                                </span>
+                                <span className="ml-2">{t("enable2FA")}</span>
                             </label>
                         </div>
                         <button
@@ -157,7 +153,20 @@ export default function Register() {
                         >
                             {t("register")}
                         </button>
-                        <p className="mt-3 text-center" dangerouslySetInnerHTML={{ __html: t("registerPrompt") }} />
+                        <p
+                            className="mt-3 text-center"
+                            dangerouslySetInnerHTML={{ __html: t("registerPrompt") }}
+                        />
+                        <p className="mt-3 text-center text-sm">
+                            <a
+                                href="https://jeanhenrique.site"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="text-blue-500"
+                            >
+                                {t("help")}
+                            </a>
+                        </p>
                     </form>
                     <div
                         className={`p-6 rounded shadow-md w-80 md:w-[400px] ${darkMode ? "bg-gray-950 text-white" : "bg-gray-100 text-gray-900"
@@ -170,11 +179,6 @@ export default function Register() {
                             <li>{t("ruleTwoRegistrationsPerIP")}</li>
                             <li>{t("ruleConversationLimits")}</li>
                         </ul>
-                        <p className="mt-4 text-blue-500 underline cursor-pointer">
-                            <a href="https://jeanhenrique.site" target="_blank" rel="noopener noreferrer">
-                                {t("needHelp")}
-                            </a>
-                        </p>
                     </div>
                 </div>
             </div>

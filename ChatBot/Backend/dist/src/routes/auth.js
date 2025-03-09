@@ -19,36 +19,13 @@ const bcrypt_1 = __importDefault(require("bcrypt"));
 const passport_1 = __importDefault(require("passport"));
 const speakeasy_1 = __importDefault(require("speakeasy"));
 const qrcode_1 = __importDefault(require("qrcode"));
+const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
+const jwtMiddleware_1 = require("../middlewares/jwtMiddleware");
 const router = (0, express_1.Router)();
 /**
- * @swagger
- * /api/auth/register:
- *   post:
- *     summary: Registra um novo usuário
- *     description: Registra um novo usuário com nome, email e senha.
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             required:
- *               - name
- *               - email
- *               - password
- *             properties:
- *               name:
- *                 type: string
- *               email:
- *                 type: string
- *               password:
- *                 type: string
- *               preferredLanguage:
- *                 type: string
- *     responses:
- *       201:
- *         description: Usuário registrado com sucesso.
+ * Rotas públicas
  */
+// Registro de usuário
 router.post('/register', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { name, email, password, preferredLanguage } = req.body;
     if (!name || !email || !password) {
@@ -67,30 +44,7 @@ router.post('/register', (req, res) => __awaiter(void 0, void 0, void 0, functio
         res.status(500).json({ message: 'Erro ao registrar usuário', error: err });
     }
 }));
-/**
- * @swagger
- * /api/auth/login:
- *   post:
- *     summary: Realiza login do usuário
- *     description: Autentica usuário com email e senha.
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             required:
- *               - email
- *               - password
- *             properties:
- *               email:
- *                 type: string
- *               password:
- *                 type: string
- *     responses:
- *       200:
- *         description: Login efetuado com sucesso.
- */
+// Login com e‑mail e senha
 router.post('/login', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { email, password } = req.body;
     try {
@@ -106,7 +60,16 @@ router.post('/login', (req, res) => __awaiter(void 0, void 0, void 0, function* 
         if (user.twoFactorEnabled) {
             return res.json({ message: '2FA requerido', user: { email: user.email, twoFactorEnabled: true } });
         }
-        res.json({ message: 'Login efetuado com sucesso', user });
+        // Gera o token JWT
+        const token = jsonwebtoken_1.default.sign({ userId: user._id, email: user.email }, process.env.JWT_SECRET, { expiresIn: '1h' });
+        const safeUser = {
+            _id: user._id,
+            name: user.name,
+            email: user.email,
+            isGitHub: user.isGitHub,
+            preferredLanguage: user.preferredLanguage || 'Portuguese',
+        };
+        res.json({ message: 'Login efetuado com sucesso', token, user: safeUser });
     }
     catch (err) {
         res.status(500).json({ message: 'Erro no login', error: err });
@@ -114,9 +77,8 @@ router.post('/login', (req, res) => __awaiter(void 0, void 0, void 0, function* 
 }));
 // Inicia o fluxo OAuth2 (redireciona para o GitHub)
 router.get('/oauth2', passport_1.default.authenticate('github'));
+// Callback OAuth2
 router.get('/oauth2/callback', passport_1.default.authenticate('github', { failureRedirect: '/login' }), (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    // Faz a busca do usuário no banco, etc. (como já está no seu código).
-    // Supondo que userDoc seja o usuário encontrado ou criado
     const passportUser = req.user;
     const userDoc = yield User_1.default.findOne({ githubId: passportUser.githubId });
     if (!userDoc) {
@@ -129,22 +91,23 @@ router.get('/oauth2/callback', passport_1.default.authenticate('github', { failu
         isGitHub: userDoc.isGitHub,
         preferredLanguage: userDoc.preferredLanguage || 'Portuguese',
     };
-    // Define o cookie
-    res.cookie('user', JSON.stringify(safeUser), {
-        httpOnly: false,
+    const token = jsonwebtoken_1.default.sign({ userId: userDoc._id, email: userDoc.email }, process.env.JWT_SECRET, { expiresIn: '1h' });
+    res.cookie('token', token, {
+        httpOnly: true,
         domain: '.jeanhenrique.site',
         secure: process.env.NODE_ENV === 'production',
         sameSite: 'lax',
     });
-    // Redireciona para /chat COM o parâmetro ?forceReload=1
     res.redirect('https://chatbot.jeanhenrique.site/chat?forceReload=1');
 }));
-// Endpoint para configurar 2FA (gera secret e QR Code)
+// Rotas de 2FA – essas rotas são públicas para permitir a configuração logo após o registro
+// Configuração de 2FA (setup)
 router.get('/2fa/setup', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { email } = req.query;
+    // Permite obter o email via query (útil logo após o registro)
+    const email = req.query.email;
     if (!email)
-        return res.status(400).json({ message: 'Email é necessário' });
-    const user = yield User_1.default.findOne({ email: email });
+        return res.status(400).json({ message: 'Email é necessário para configurar 2FA' });
+    const user = yield User_1.default.findOne({ email });
     if (!user)
         return res.status(404).json({ message: 'Usuário não encontrado' });
     const secret = speakeasy_1.default.generateSecret({ name: `ChatBot (${user.email})` });
@@ -156,7 +119,7 @@ router.get('/2fa/setup', (req, res) => __awaiter(void 0, void 0, void 0, functio
         res.json({ message: '2FA setup iniciado', qrCode: data_url, secret: secret.base32 });
     });
 }));
-// Endpoint para verificar token 2FA
+// Verificação de 2FA
 router.post('/2fa/verify', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { email, token } = req.body;
     if (!email || !token) {
@@ -174,20 +137,28 @@ router.post('/2fa/verify', (req, res) => __awaiter(void 0, void 0, void 0, funct
     if (verified) {
         user.twoFactorEnabled = true;
         yield user.save();
-        return res.json({ message: '2FA verificado com sucesso', user });
+        // Gera o token JWT
+        const jwtToken = jsonwebtoken_1.default.sign({ userId: user._id, email: user.email }, process.env.JWT_SECRET, { expiresIn: '1h' });
+        return res.json({ message: '2FA verificado com sucesso', token: jwtToken, user });
     }
     else {
         return res.status(400).json({ message: 'Token 2FA inválido' });
     }
 }));
+/**
+ * A partir deste ponto, as rotas são protegidas – o jwtMiddleware é aplicado.
+ */
+router.use(jwtMiddleware_1.jwtMiddleware);
+// Rotas protegidas (ex.: atualizar conta, alterar senha, etc.)
 // Atualização de conta
 router.put('/account', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { email, name, preferredLanguage } = req.body;
-    if (!email) {
-        return res.status(400).json({ message: 'O e-mail é necessário para atualizar a conta' });
+    const { name, preferredLanguage } = req.body;
+    const userEmail = req.user.email;
+    if (!userEmail) {
+        return res.status(400).json({ message: 'Usuário não autenticado' });
     }
     try {
-        const user = yield User_1.default.findOneAndUpdate({ email }, { name, preferredLanguage }, { new: true });
+        const user = yield User_1.default.findOneAndUpdate({ email: userEmail }, { name, preferredLanguage }, { new: true });
         if (!user) {
             return res.status(404).json({ message: 'Usuário não encontrado' });
         }
@@ -199,13 +170,12 @@ router.put('/account', (req, res) => __awaiter(void 0, void 0, void 0, function*
 }));
 // Exclusão de conta
 router.delete('/account', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    // Tenta obter o e-mail do corpo ou da query string
-    const email = req.body.email || req.query.email;
-    if (!email) {
-        return res.status(400).json({ message: 'O e-mail é necessário para excluir a conta' });
+    const userEmail = req.user.email;
+    if (!userEmail) {
+        return res.status(400).json({ message: 'Usuário não autenticado' });
     }
     try {
-        yield User_1.default.findOneAndDelete({ email });
+        yield User_1.default.findOneAndDelete({ email: userEmail });
         res.json({ message: 'Conta excluída' });
     }
     catch (err) {
@@ -214,12 +184,13 @@ router.delete('/account', (req, res) => __awaiter(void 0, void 0, void 0, functi
 }));
 // Alteração de senha
 router.put('/changePassword', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { email, currentPassword, newPassword } = req.body;
-    if (!email || !currentPassword || !newPassword) {
+    const { currentPassword, newPassword } = req.body;
+    const userEmail = req.user.email;
+    if (!userEmail || !currentPassword || !newPassword) {
         return res.status(400).json({ message: 'Campos obrigatórios ausentes' });
     }
     try {
-        const user = yield User_1.default.findOne({ email });
+        const user = yield User_1.default.findOne({ email: userEmail });
         if (!user) {
             return res.status(401).json({ message: 'Credenciais inválidas' });
         }
@@ -232,7 +203,7 @@ router.put('/changePassword', (req, res) => __awaiter(void 0, void 0, void 0, fu
                 message: 'A nova senha deve ter entre 6 e 20 caracteres.'
             });
         }
-        user.password = newPassword; // O pre-save do UserSchema cuidará do hash
+        user.password = newPassword;
         yield user.save();
         res.json({ message: 'Senha alterada com sucesso' });
     }
