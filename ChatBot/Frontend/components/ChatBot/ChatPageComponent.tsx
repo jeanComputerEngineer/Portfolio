@@ -9,6 +9,8 @@ import { FiSend, FiEdit, FiTrash, FiPlus, FiSearch } from "react-icons/fi";
 import ReactMarkdown from "react-markdown";
 import LottieAnimation from "@/components/Animação/LottieAnimation";
 import { csrfFetch } from "@/utils/csrfFetch";
+import { getCookie } from "@/utils/cookieUtils";
+
 
 interface Message {
     sender: "user" | "assistant";
@@ -51,6 +53,7 @@ export default function ChatPageComponent({
     const [editingTitle, setEditingTitle] = useState("");
     const [searchActive, setSearchActive] = useState(false);
     const [searchQuery, setSearchQuery] = useState("");
+
 
     const messagesEndRef = useRef<HTMLDivElement>(null);
     const socketRef = useRef<Socket | null>(null);
@@ -114,7 +117,7 @@ export default function ChatPageComponent({
     // Função para buscar conversas via API
     const fetchConversations = async () => {
         try {
-            const storedUser = localStorage.getItem("user");
+            const storedUser = getCookie("user");
             const userData = storedUser ? JSON.parse(storedUser) : null;
             if (!userData || !userData.email) {
                 alert("Usuário não autenticado");
@@ -134,14 +137,15 @@ export default function ChatPageComponent({
     };
 
     useEffect(() => {
-        const storedUser = localStorage.getItem("user");
+        const storedUser = getCookie("user");
+
         if (!storedUser) {
             const userCookie = document.cookie.split('; ').find(row => row.startsWith('user='));
             if (userCookie) {
                 try {
                     const cookieValue = decodeURIComponent(userCookie.split('=')[1]);
                     const userData = JSON.parse(cookieValue);
-                    localStorage.setItem("user", JSON.stringify(userData));
+                    document.cookie = `user=${encodeURIComponent(JSON.stringify(userData))}; path=/; secure; samesite=strict;`;
                 } catch (err) {
                     console.error("Erro ao ler o cookie do usuário:", err);
                 }
@@ -150,7 +154,8 @@ export default function ChatPageComponent({
     }, []);
 
     useEffect(() => {
-        const storedUser = localStorage.getItem("user");
+        const storedUser = getCookie("user");
+
         if (storedUser) {
             const parsed = JSON.parse(storedUser);
             i18n.changeLanguage(parsed.preferredLanguage || "Portuguese");
@@ -173,7 +178,8 @@ export default function ChatPageComponent({
 
     const fetchSearchedConversations = async (query: string) => {
         try {
-            const storedUser = localStorage.getItem("user");
+            const storedUser = getCookie("user");
+
             const userData = storedUser ? JSON.parse(storedUser) : null;
             if (!userData || !userData.email) {
                 alert("Usuário não autenticado");
@@ -202,7 +208,8 @@ export default function ChatPageComponent({
             alert(t("errorConversationLimit"));
             return;
         }
-        const storedUser = localStorage.getItem("user");
+        const storedUser = getCookie("user");
+
         const userData = storedUser ? JSON.parse(storedUser) : null;
         if (!userData || !userData.email) {
             alert("Usuário não autenticado");
@@ -299,7 +306,8 @@ export default function ChatPageComponent({
         if (!convId) {
             const conversationTitle = userMessage.content.substring(0, 50) || t("newConversation");
             try {
-                const storedUser = localStorage.getItem("user");
+                const storedUser = getCookie("user");
+
                 const userData = storedUser ? JSON.parse(storedUser) : null;
                 if (!userData || !userData.email) {
                     alert("Usuário não autenticado");

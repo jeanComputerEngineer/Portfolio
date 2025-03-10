@@ -1,3 +1,4 @@
+// components/Login.tsx
 "use client";
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
@@ -17,7 +18,7 @@ export default function Login() {
     const [message, setMessage] = useState("");
     const [showPassword, setShowPassword] = useState(false);
     const [requires2FA, setRequires2FA] = useState(false);
-    const [token, setToken] = useState("");
+    const [tokenInput, setTokenInput] = useState("");
 
     const handleLogin = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -31,13 +32,10 @@ export default function Login() {
             const data = await res.json();
             if (res.ok) {
                 if (data.user && data.user.twoFactorEnabled) {
-                    // Exibe o formulário para o token se 2FA estiver habilitado
                     setRequires2FA(true);
                     setMessage(t("twoFactorInstruction"));
                 } else {
-                    // Salva o usuário e o token no localStorage
-                    localStorage.setItem("user", JSON.stringify(data.user));
-                    localStorage.setItem("token", data.token);
+
                     router.push("/chat");
                 }
             } else {
@@ -55,13 +53,11 @@ export default function Login() {
             const res = await csrfFetch("https://backchat.jeanhenrique.site/api/auth/2fa/verify", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ email, token }),
+                body: JSON.stringify({ email, token: tokenInput }),
             });
             const data = await res.json();
             if (res.ok) {
-                // Salva usuário e token no localStorage após verificação 2FA
-                localStorage.setItem("user", JSON.stringify(data.user));
-                localStorage.setItem("token", data.token);
+                // O backend define o cookie httpOnly com o token
                 router.push("/chat");
             } else {
                 setError(data.message || t("invalidToken"));
@@ -73,7 +69,8 @@ export default function Login() {
 
     return (
         <div
-            className={`fixed inset-0 flex flex-col items-center justify-center bg-cover bg-no-repeat ${darkMode ? "bg-gray-950" : "bg-gray-100"}`}
+            className={`fixed inset-0 flex flex-col items-center justify-center bg-cover bg-no-repeat ${darkMode ? "bg-gray-950" : "bg-gray-100"
+                }`}
             style={{
                 backgroundImage: "url('/AI.jpg')",
                 backgroundSize: "cover",
@@ -89,12 +86,21 @@ export default function Login() {
             {!requires2FA ? (
                 <form
                     onSubmit={handleLogin}
-                    className={`p-6 rounded shadow-md w-96 md:w-[400px] ${darkMode ? "bg-gray-950 text-white" : "bg-gray-100 text-gray-900"}`}
+                    className={`p-6 rounded shadow-md w-96 md:w-[400px] ${darkMode ? "bg-gray-950 text-white" : "bg-gray-100 text-gray-900"
+                        }`}
                     aria-label={t("loginForm")}
                 >
                     <h1 className="text-xl font-bold mb-4">{t("login")}</h1>
-                    {error && <p className="text-red-500 mb-2" role="alert">{error}</p>}
-                    {message && <p className="text-green-500 mb-2" role="alert">{message}</p>}
+                    {error && (
+                        <p className="text-red-500 mb-2" role="alert">
+                            {error}
+                        </p>
+                    )}
+                    {message && (
+                        <p className="text-green-500 mb-2" role="alert">
+                            {message}
+                        </p>
+                    )}
                     <label htmlFor="email" className="block text-sm font-medium mb-1">
                         {t("email")}
                     </label>
@@ -104,7 +110,8 @@ export default function Login() {
                         placeholder={t("email")}
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
-                        className={`w-full p-2 mb-3 border rounded ${darkMode ? "bg-gray-900 text-white border-gray-600" : "bg-white text-gray-900 border-gray-300"}`}
+                        className={`w-full p-2 mb-3 border rounded ${darkMode ? "bg-gray-900 text-white border-gray-600" : "bg-white text-gray-900 border-gray-300"
+                            }`}
                         required
                     />
                     <label htmlFor="password" className="block text-sm font-medium mb-1">
@@ -117,7 +124,8 @@ export default function Login() {
                             placeholder={t("password")}
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
-                            className={`w-full p-2 pr-10 mb-3 border rounded ${darkMode ? "bg-gray-900 text-white border-gray-600" : "bg-white text-gray-900 border-gray-300"}`}
+                            className={`w-full p-2 pr-10 mb-3 border rounded ${darkMode ? "bg-gray-900 text-white border-gray-600" : "bg-white text-gray-900 border-gray-300"
+                                }`}
                             required
                         />
                         <button
@@ -130,7 +138,8 @@ export default function Login() {
                     </div>
                     <button
                         type="submit"
-                        className={`w-full p-2 rounded ${darkMode ? "bg-gray-800 hover:bg-gray-700" : "bg-gray-500 hover:bg-gray-600"} text-white`}
+                        className={`w-full p-2 rounded ${darkMode ? "bg-gray-800 hover:bg-gray-700" : "bg-gray-500 hover:bg-gray-600"
+                            } text-white`}
                         aria-label={t("login")}
                     >
                         {t("login")}
@@ -148,24 +157,35 @@ export default function Login() {
             ) : (
                 <form
                     onSubmit={handleTokenVerification}
-                    className={`p-6 rounded shadow-md w-96 md:w-[400px] ${darkMode ? "bg-gray-950 text-white" : "bg-gray-100 text-gray-900"}`}
+                    className={`p-6 rounded shadow-md w-96 md:w-[400px] ${darkMode ? "bg-gray-950 text-white" : "bg-gray-100 text-gray-900"
+                        }`}
                     aria-label={t("twoFactorForm")}
                 >
                     <h1 className="text-xl font-bold mb-4">{t("twoFactorTitle")}</h1>
-                    {error && <p className="text-red-500 mb-2" role="alert">{error}</p>}
-                    {message && <p className="text-green-500 mb-2" role="alert">{message}</p>}
+                    {error && (
+                        <p className="text-red-500 mb-2" role="alert">
+                            {error}
+                        </p>
+                    )}
+                    {message && (
+                        <p className="text-green-500 mb-2" role="alert">
+                            {message}
+                        </p>
+                    )}
                     <p className="mb-3">{t("twoFactorInstruction")}</p>
                     <input
                         type="text"
                         placeholder={t("twoFactorPlaceholder")}
-                        value={token}
-                        onChange={(e) => setToken(e.target.value)}
-                        className={`w-full p-2 mb-3 border rounded ${darkMode ? "bg-gray-900 text-white border-gray-600" : "bg-white text-gray-900 border-gray-300"}`}
+                        value={tokenInput}
+                        onChange={(e) => setTokenInput(e.target.value)}
+                        className={`w-full p-2 mb-3 border rounded ${darkMode ? "bg-gray-900 text-white border-gray-600" : "bg-white text-gray-900 border-gray-300"
+                            }`}
                         required
                     />
                     <button
                         type="submit"
-                        className={`w-full p-2 rounded ${darkMode ? "bg-gray-800 hover:bg-gray-700" : "bg-gray-500 hover:bg-gray-600"} text-white`}
+                        className={`w-full p-2 rounded ${darkMode ? "bg-gray-800 hover:bg-gray-700" : "bg-gray-500 hover:bg-gray-600"
+                            } text-white`}
                     >
                         {t("verifyToken")}
                     </button>

@@ -6,6 +6,8 @@ import { useTranslation } from "react-i18next";
 import i18n from "@/components/Tradutor/i18n";
 import { useTheme } from "@/context/ThemeContext";
 import { FiSun, FiMoon } from "react-icons/fi";
+import { getCookie } from "@/utils/cookieUtils";
+
 
 type OptionType = {
     value: string;
@@ -35,7 +37,8 @@ const LanguageSwitcherHeader: React.FC = () => {
     const [selectedLang, setSelectedLang] = useState("Portuguese");
 
     useEffect(() => {
-        const storedUser = localStorage.getItem("user");
+        const storedUser = getCookie("user");
+
         if (storedUser) {
             const parsed = JSON.parse(storedUser);
             const lang = parsed.preferredLanguage || "Portuguese";

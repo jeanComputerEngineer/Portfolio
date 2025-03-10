@@ -1,20 +1,17 @@
+// utils/csrfFetch.ts
 export async function csrfFetch(url: string, options: RequestInit = {}) {
-    // Obtenha o token CSRF
+    // Obtém o token CSRF via endpoint (que pode ser armazenado em um cookie ou retornado na resposta)
     const tokenResponse = await fetch("https://backchat.jeanhenrique.site/api/csrf-token", {
         credentials: 'include'
     });
     const { csrfToken } = await tokenResponse.json();
 
-    // Certifica que as credenciais serão incluídas
-    options.credentials = 'include';
-
-    // Leia o token JWT armazenado (caso exista)
-    const jwtToken = localStorage.getItem("token");
+    options.credentials = 'include'; // importante para enviar os cookies httpOnly
 
     options.headers = {
         ...(options.headers || {}),
-        "X-CSRF-Token": csrfToken,
-        ...(jwtToken ? { "Authorization": `Bearer ${jwtToken}` } : {})
+        "X-CSRF-Token": csrfToken
+        // Não precisamos incluir o token de autenticação aqui, pois ele está em um cookie httpOnly
     };
 
     return fetch(url, options);

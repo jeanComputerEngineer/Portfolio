@@ -1,182 +1,221 @@
+# ChatBot
 
+O **ChatBot** é uma aplicação completa de chat com autenticação segura, conversas em tempo real e busca avançada. A aplicação foi desenvolvida utilizando um stack moderno, integrando **Node.js com TypeScript e express** no backend e **Next.js com TypeScript** no frontend, garantindo performance, segurança e escalabilidade.
 
-# URL Do Deploy da Aplicação: chatbot.jeanhenrique.site
-# ChatBot Application
-
-
-Este projeto é uma aplicação de ChatBot com autenticação e suporte multilíngue, desenvolvida com Next.js/React no frontend e Express/Node.js no backend. O sistema utiliza MongoDB para persistência, Redis e Bull para filas de processamento, Socket.IO para comunicação em tempo real e integra-se com uma API externa (OpenRouter) para gerar respostas de chat.
-
-
+---
 
 ## Sumário
 
-- [Arquitetura](#arquitetura)
-- [Pré-requisitos](#pré-requisitos)
-- [Setup e Instalação](#setup-e-instalação)
-  - [Frontend](#frontend)
-  - [Backend](#backend)
-- [Estrutura de Diretórios](#estrutura-de-diretórios)
-- [Documentação da API (Swagger/OpenAPI)](#documentação-da-api)
-- [Requisitos Implementados](#requisitos-implementados)
-- [Requisitos Não Implementados](#requisitos-não-implementados)
+- [Características](#características)
+- [Tecnologias e Conceitos Utilizados](#tecnologias-utilizadas)
+- [Arquitetura da Aplicação](#arquitetura-da-aplicação)
+- [Configuração e Setup](#configuração-e-setup)
+- [Executando a Aplicação](#executando-a-aplicação)
+- [Testes](#testes)
+- [Documentação da API](#documentação-da-api)
+- [CI/CD e Containerização](#cicd-e-containerização)
+- [Considerações de Segurança e Performance](#considerações-de-segurança-e-performance)
+- [Licença](#licença)
 
 ---
 
-## 🏗 Arquitetura
+## Características
 
-A aplicação é dividida em duas camadas principais:
+- **Autenticação Segura:**
+  - Login com email/senha usando JWT e bcrypt.
+  - Autenticação de dois fatores (2FA) com tokens TOTP e OAuth2 (GitHub).
 
-### **Frontend**  
-- Desenvolvido com **Next.js e React**.
-- Utiliza **Context API** para gerenciamento de temas e tradução (**i18next**).
-- Implementa **rotas protegidas**, testes com **Jest** e **Cypress** e **testes unitários** com Testing Library.
-- Suporte a **múltiplos idiomas** através de um recurso robusto de tradução.
+- **Chat em Tempo Real:**
+  - Comunicação instantânea via **Socket.IO**.
+  - Histórico de mensagens com armazenamento em **MongoDB** e indexação no **Elasticsearch**.
 
-### **Backend**  
-- Desenvolvido com **Express e Node.js**.
-- Utiliza **Passport** para autenticação (**estratégia local**), sessões e proteção via **CSRF**.
-- Persistência com **MongoDB** (usando **Mongoose**) e gerenciamento de **conversas e mensagens**.
-- Comunicação em tempo real por meio do **Socket.IO**.
-- **Fila de jobs** para processamento assíncrono de chamadas à API do OpenRouter usando **Bull e Redis**.
-- Middleware de segurança com **Helmet, CORS e csurf**.
+- **Interface Responsiva:**
+  - Desenvolvida com **Next.js**, **Tailwind CSS** e suporte a **react-i18next** para múltiplos idiomas.
+  - Modo escuro integrado e animações suaves com **Lottie**.
+
+- **Processamento Assíncrono:**
+  - Tarefas enfileiradas utilizando **RabbitMQ**.
+
+- **Testes Automatizados:**
+  - Testes unitários no backend e testes E2E no frontend com **Cypress**.
+
 
 ---
 
-## ⚙️ Pré-requisitos
+# Tecnologias e Conceitos Utilizados
 
-- **Node.js** (v16 ou superior)
-- **npm** ou **yarn**
-- **MongoDB** (instância local ou remota)
-- **Chave de API do OpenRouter** (caso necessário)
+## Frontend
+- **Next.js** com suporte a Server-Side Rendering e rotas dinâmicas
+- **React** (componentes, hooks, Suspense, lazy loading)
+- **TypeScript**
+- **Tailwind CSS** para estilização e design responsivo (mobile-first)
+- **i18next / react-i18next** para internacionalização (i18n)
+- **React Icons** para ícones
+- **React Markdown** para renderizar conteúdos em Markdown
+- **Lottie-web** para animações suaves
+- **react-select** para seleção (ex.: troca de idioma)
+- **Dynamic Imports** (Next.js dynamic) para carregamento sob demanda
+- **Protected Route** – controle de acesso a páginas via componentes de proteção
+- **Context API (ThemeContext)** para gerenciamento de temas (dark mode)
+
+## Backend
+- **Node.js com Express** para criação da API
+- **TypeScript** (ou JavaScript com tipagem, dependendo do módulo)
+- **MongoDB com Mongoose** para modelagem e persistência de dados
+- **Redis** para caching de respostas (por exemplo, conversas)
+- **RabbitMQ** (via **amqplib**) para enfileiramento e processamento assíncrono de tarefas
+- **Elasticsearch** para busca avançada (indexação de conversas)
+- **JWT (JSON Web Tokens)** para autenticação e autorização
+- **OAuth2 com Passport.js** para login via GitHub
+- **2FA (Autenticação de Dois Fatores)** utilizando Speakeasy e QRCode
+- **bcrypt** para hash de senhas
+- **Helmet** para segurança dos headers HTTP
+- **CORS** para configuração de acesso entre domínios
+- **csurf** para proteção contra CSRF
+- **express-rate-limit** para limitar requisições (rate limiting)
+- **express-mongo-sanitize** para prevenir injeções (especialmente em MongoDB)
+- **cookie-parser** para manipulação de cookies
+- **express-session com connect-mongo** para gerenciamento de sessão persistente
+- **Socket.IO** para comunicação em tempo real (chat e eventos)
+- **dotenv** para gerenciamento de variáveis de ambiente
+- **Winston** para logging estruturado e monitoramento de performance
+
+## DevOps, Containerização e CI/CD
+- **Docker e Docker Compose** para containerização de serviços (Redis, Elasticsearch, RabbitMQ)
+- **GitHub Actions** para pipeline de CI/CD (build, lint, testes e deploy)
+- **Git** para versionamento e repositório público
+
+## Testes e Qualidade
+- **Cypress** para testes end-to-end (E2E) da interface
+- **Testes unitários** (exemplo com Jest/Mocha para modelos Mongoose)
+- **ESLint** para linting e manutenção da qualidade do código
+
+## Conceitos e Práticas Adicionais
+- Arquitetura de monolito
+- **CRUD completo** de usuários e conversas
+- **Chat em tempo real** com histórico, paginação e busca
+- **Caching em múltiplas camadas** (frontend e backend)
+- **Processamento assíncrono com filas** (RabbitMQ)
+- **Segurança da aplicação** (prevenção contra SQL Injection, XSS, CSRF, sanitização de inputs, criptografia de dados sensíveis)
+- **Acessibilidade** (conformidade com WCAG 2.1)
+- **Otimização de assets** (code splitting, lazy loading)
+- **Dark Mode e temas dinâmicos**
+- **Logging estruturado** e métricas de performance
+
 
 ---
 
-## 🚀 Setup e Instalação
+## Arquitetura da Aplicação
 
-### **Frontend**
+- **Backend:** API RESTful, endpoints para autenticação, gerenciamento de usuários, conversas e comunicação em tempo real usando WebSockets.
+- **Frontend:** Interface amigável e responsiva com Next.js, internacionalização, modo escuro e interação dinâmica.
 
-1. Navegue até a pasta do frontend:
-   cd frontend
-2. Instale as dependências:
-   npm install
-3. Inicie o servidor de desenvolvimento:
-   npm run dev
-4. Acesse a aplicação em [http://chatbot.jeanhenrique.site](http://chatbot.jeanhenrique.site).
+---
 
+## Configuração e Setup
 
+### Pré-requisitos
 
-### **Backend**
+- Node.js ≥ 16
+- MongoDB
+- Redis
+- Elasticsearch
+- RabbitMQ
+- Docker
 
-1. Navegue até a pasta do backend:
-   cd my-chat-backend
-2. Instale as dependências:
-   npm install
-3. Crie um arquivo **.env** na raiz do backend e configure as variáveis:
-   env
-   PORT=5000
-   MONGO_URI=mongodb://localhost:27017/mychat
-   SESSION_SECRET=seuSegredoAqui
-   ENCRYPTION_KEY=0123456789abcdef0123456789abcdef
-   # (Opcional) YOUR_API_KEY para o OpenRouter, se necessário
-   
-4. Inicie o servidor:
-   npm start
-   
-5. O servidor estará disponível em [https://backchat.jeanhenrique.site/](https://backchat.jeanhenrique.site/).
+### Instalação
+
+Clone o projeto:
 
 
-
-## 📂 Estrutura de Diretórios
-
-
-/ (raiz do projeto)
-│
-├── frontend/              # Código da aplicação Next.js/React
-│   ├── app/               # Páginas (login, chat, register, etc.)
-│   ├── components/        # Componentes React (TopMenu, Footer, ChatPageComponent, etc.)
-│   ├── context/           # Gerenciamento de temas e tradução (ThemeContext, i18n)
-│   ├── hooks/             # Hooks customizados (useCsrfToken, etc.)
-│   ├── cypress/           # Testes end-to-end com Cypress
-│   ├── package.json
-│   └── README.md          # Documentação do frontend (opcional)
-│
-├── backend/               # Código da API Express/Node.js
-│   ├── config/            # Configurações (MongoDB, Passport, Redis, etc.)
-│   ├── models/            # Modelos Mongoose (Account, Conversation)
-│   ├── routes/            # Rotas da API (auth, chat, csrf)
-│   ├── jobs/              # Processamento de filas com Bull
-│   ├── logger.js          # Logger (morgan integrado)
-│   ├── index.js           # Entry point da aplicação
-│   ├── package.json
-│   └── README.md          # Documentação do backend (opcional)
-│
-└── swagger.yaml           # Especificação da API (Swagger/OpenAPI)
+git clone https://github.com/seu-usuario/chatbot.git
+cd chatbot
+npm install
 
 
-## 📜 Documentação da API (Swagger/OpenAPI)
+### Variáveis de Ambiente
 
-### **Endpoints de Autenticação**
-- `POST /api/auth/register` – Registro de novos usuários.
-- `POST /api/auth/login` – Login de usuários.
-- `PUT /api/auth/account` – Atualização de conta.
-- `DELETE /api/auth/account` – Exclusão de conta.
+Arquivo `.env`:
 
-### **Endpoints de Chat**
-- `POST /api/chat/async` – Requisição síncrona para chat.
-- `POST /api/chat/conversations` – Criação/atualização de conversas.
-- `GET /api/chat/conversations` – Listagem de conversas (suporta paginação).
-- `PUT /api/chat/conversations/{conversationId}` – Atualização de uma conversa.
-- `DELETE /api/chat/conversations/{conversationId}` – Exclusão de uma conversa.
-
-### **Endpoint para CSRF Token**
-- `GET /csrf-token` – Retorna o token CSRF para requisições seguras.
-
-**A documentação interativa pode ser visualizada no Swagger UI ou outro visualizador de arquivos OpenAPI.**
+env
+PORT=6000
+API_URL=http://localhost:6000
+MONGO_URI=mongodb://localhost:27017/chatbot
+JWT_SECRET=chaveSecreta
+REDIS_URL=redis://localhost:6379
+ELASTICSEARCH_URL=http://localhost:9200
+RABBITMQ_URL=amqp://localhost
+CORS_ORIGIN=http://localhost:3000
 
 
+---
 
-## ✅ Requisitos Implementados
+## Executando a Aplicação
 
-### **Backend**
-- ✅ **Node.js com TypeScript**.
-- ✅ **Arquitetura monolítica** (único projeto com múltiplos módulos).
-- ✅ **Persistência com MongoDB**.
-- ✅ **CRUD de usuários** (registro, login, atualização e exclusão).
-- ✅ **Chat em tempo real** com WebSockets (Socket.IO).
-- ✅ **Histórico de conversas com paginação**.
-- ✅ **Processamento assíncrono com filas** usando Bull.
-- ✅ **Segurança com CSRF, Helmet e bcrypt**.
-- ✅ **Pipeline de CI/CD** com GitHub Actions.
-- ✅ **Logging estruturado** com morgan.
-
-### **Frontend**
-- ✅ **Next.js com TypeScript**.
-- ✅ **Tailwind CSS para estilização**.
-- ✅ **Design responsivo, mobile-first**.
-- ✅ **Suporte a múltiplos idiomas** (i18next).
-- ✅ **Testes de componentes e E2E** (Jest, Cypress).
-- ✅ **Code splitting e otimização de assets**.
-- ✅ **Modo escuro** (ThemeContext).
-- ✅ **Indicador de "IA pensando" no chat**.
-
-### **Outros**
-- ✅ **Documentação completa de setup e README detalhado**.
-
-### **Bônus**
-- ✅ **Integração com LLM para respostas automáticas**.
+### Backend
 
 
+npm run dev
 
-## ❌ Requisitos Não Implementados
 
-- ❌ Redis/Memcache para caching.
-- ❌ Elasticsearch para busca avançada.
-- ❌ Autenticação com OAuth2 e 2FA.
-- ❌ Caching em múltiplas camadas (backend/frontend).
-- ❌ Animações suaves (Rive, Lottie).
-- ❌ Cobertura mínima de 80% de testes.
-- ❌ Containerização com Docker.
-- ❌ Implementação em React Native.
-- ❌ Testes de performance com k6.
+### Frontend
 
+
+npm run dev
+
+
+---
+
+## Testes
+
+- Unitários:
+
+
+npm test
+
+
+- Cypress (E2E):
+
+
+npx cypress open
+
+
+---
+
+## Documentação da API
+
+
+---
+
+## CI/CD e Containerização
+
+### Docker Compose
+
+
+docker-compose up -d
+
+
+### GitHub Actions
+
+Configuração disponível em `.github/workflows/ci.yml`.
+
+---
+
+## Considerações de Segurança e Performance
+
+- Proteção com Helmet, csurf, CORS;
+- Redis (cache), RabbitMQ (assíncrono);
+- Logging com Winston.
+
+---
+
+## Licença
+
+Licenciado sob a [MIT License](LICENSE).
+
+---
+
+## Conclusão
+
+Este projeto segue boas práticas modernas para desenvolvimento web, oferecendo segurança, desempenho, escalabilidade e uma experiência de usuário de alta qualidade.
 

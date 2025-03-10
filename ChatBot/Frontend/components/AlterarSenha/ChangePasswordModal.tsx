@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import { FiX, FiEye, FiEyeOff } from "react-icons/fi";
 import { useTranslation } from "react-i18next";
 import { csrfFetch } from "@/utils/csrfFetch";
+import { getCookie } from "@/utils/cookieUtils";
 
 const ChangePasswordModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
     const { t } = useTranslation();
@@ -28,8 +29,8 @@ const ChangePasswordModal: React.FC<{ onClose: () => void }> = ({ onClose }) => 
         }
 
 
-        // Recupera o email do usuário salvo no localStorage
-        const storedUser = localStorage.getItem("user");
+        const storedUser = getCookie("user");
+
         const userData = storedUser ? JSON.parse(storedUser) : null;
         if (!userData || !userData.email) {
             setModalError(t("userNotAuthenticated") || "Usuário não autenticado.");

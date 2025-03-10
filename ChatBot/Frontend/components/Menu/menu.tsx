@@ -18,6 +18,8 @@ import i18n, { languageNames } from "@/components/Tradutor/i18n";
 import Select, { StylesConfig } from "react-select";
 import { csrfFetch } from "@/utils/csrfFetch";
 import ChangePasswordModal from "../AlterarSenha/ChangePasswordModal";
+import { getCookie } from "@/utils/cookieUtils";
+
 
 export interface TopMenuProps {
     toggleConversationsAction: () => void;
@@ -42,10 +44,10 @@ export default function TopMenu({ toggleConversationsAction }: TopMenuProps) {
     const [passwordModalOpen, setPasswordModalOpen] = useState(false);
     const [settingsOpen, setSettingsOpen] = useState(false);
 
-    // 1) Ler user do localStorage
     useEffect(() => {
         if (!user) {
-            const storedUser = localStorage.getItem("user");
+            const storedUser = getCookie("user");
+
             if (storedUser) {
                 const parsed = JSON.parse(storedUser);
                 setUser(parsed);
@@ -71,7 +73,7 @@ export default function TopMenu({ toggleConversationsAction }: TopMenuProps) {
                     });
                     if (res.ok) {
                         const data = await res.json();
-                        localStorage.setItem("user", JSON.stringify(data.user));
+                        document.cookie = `user=${encodeURIComponent(JSON.stringify(data.user))}; path=/; secure; samesite=strict;`;
                         setUser(data.user);
                     }
                 } catch (err) {
@@ -87,7 +89,7 @@ export default function TopMenu({ toggleConversationsAction }: TopMenuProps) {
     // 4) Botão de logout
     const handleLogout = () => {
         setSettingsOpen(false);
-        localStorage.removeItem("user");
+        document.cookie = "user=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
         router.push("/login");
     };
 
@@ -106,7 +108,8 @@ export default function TopMenu({ toggleConversationsAction }: TopMenuProps) {
             });
             if (res.ok) {
                 const data = await res.json();
-                localStorage.setItem("user", JSON.stringify(data.user));
+                // Atualiza o cookie "user"
+                document.cookie = `user=${encodeURIComponent(JSON.stringify(data.user))}; path=/; secure; samesite=strict;`;
                 setUser(data.user);
                 alert(t("profileUpdated"));
                 setProfileModalOpen(false);
@@ -130,7 +133,8 @@ export default function TopMenu({ toggleConversationsAction }: TopMenuProps) {
                     method: "DELETE"
                 });
                 if (res.ok) {
-                    localStorage.removeItem("user");
+                    // Remove o cookie definindo uma data de expiração no passado
+                    document.cookie = "user=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
                     router.push("/register");
                 } else {
                     alert(t("accountDeleteError"));

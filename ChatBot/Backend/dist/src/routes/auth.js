@@ -21,24 +21,43 @@ const speakeasy_1 = __importDefault(require("speakeasy"));
 const qrcode_1 = __importDefault(require("qrcode"));
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const jwtMiddleware_1 = require("../middlewares/jwtMiddleware");
+const express_rate_limit_1 = __importDefault(require("express-rate-limit"));
 const router = (0, express_1.Router)();
 /**
  * Rotas públicas
  */
-// Registro de usuário
-router.post('/register', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+const registerLimiter = (0, express_rate_limit_1.default)({
+    windowMs: 7 * 24 * 60 * 60 * 1000, // 1 semana
+    max: 2, // Limita a 2 registros por IP nesse intervalo
+    message: 'Muitas contas criadas a partir deste IP, tente novamente mais tarde.'
+});
+// Rota de registro de usuário com rate limiter e verificação do limite total de contas
+router.post('/register', registerLimiter, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { name, email, password, preferredLanguage } = req.body;
+    // Validação de campos obrigatórios
     if (!name || !email || !password) {
         return res.status(400).json({ message: 'Campos obrigatórios ausentes' });
     }
     try {
+        // Captura o IP do usuário
+        const userIp = req.ip;
+        console.log(`Tentativa de registro a partir do IP: ${userIp}`);
+        // Impede que haja mais de 50 contas no banco
+        const totalUsers = yield User_1.default.countDocuments({});
+        if (totalUsers >= 50) {
+            return res.status(403).json({
+                message: 'Número máximo de contas atingido. Tente novamente mais tarde.'
+            });
+        }
+        // Verifica se já existe um usuário com o mesmo e-mail
         const existing = yield User_1.default.findOne({ email });
         if (existing) {
             return res.status(400).json({ message: 'Usuário já existe' });
         }
-        const user = new User_1.default({ name, email, password, preferredLanguage });
-        yield user.save();
-        res.status(201).json({ message: 'Usuário registrado com sucesso', user });
+        // Cria o novo usuário
+        const newUser = new User_1.default({ name, email, password, preferredLanguage, registrationIp: userIp });
+        yield newUser.save();
+        res.status(201).json({ message: 'Usuário registrado com sucesso', user: newUser });
     }
     catch (err) {
         res.status(500).json({ message: 'Erro ao registrar usuário', error: err });
@@ -69,7 +88,23 @@ router.post('/login', (req, res) => __awaiter(void 0, void 0, void 0, function* 
             isGitHub: user.isGitHub,
             preferredLanguage: user.preferredLanguage || 'Portuguese',
         };
-        res.json({ message: 'Login efetuado com sucesso', token, user: safeUser });
+        // Define o cookie seguro com o token (httpOnly)
+        res.cookie('token', token, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === 'production',
+            sameSite: 'lax',
+            domain: '.jeanhenrique.site',
+            maxAge: 1000 * 60 * 60, // 1 hora
+        });
+        // Define um cookie "user" (não httpOnly) para que o front possa ler os dados
+        res.cookie('user', JSON.stringify(safeUser), {
+            httpOnly: false,
+            secure: process.env.NODE_ENV === 'production',
+            sameSite: 'lax',
+            domain: '.jeanhenrique.site',
+            maxAge: 1000 * 60 * 60, // 1 hora
+        });
+        res.json({ message: 'Login efetuado com sucesso', user: safeUser });
     }
     catch (err) {
         res.status(500).json({ message: 'Erro no login', error: err });
@@ -97,6 +132,15 @@ router.get('/oauth2/callback', passport_1.default.authenticate('github', { failu
         domain: '.jeanhenrique.site',
         secure: process.env.NODE_ENV === 'production',
         sameSite: 'lax',
+        maxAge: 1000 * 60 * 60, // 1 hora
+    });
+    // Adiciona o cookie "user" para que o frontend consiga acessar os dados do usuário
+    res.cookie('user', JSON.stringify(safeUser), {
+        httpOnly: false,
+        domain: '.jeanhenrique.site',
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'lax',
+        maxAge: 1000 * 60 * 60, // 1 hora
     });
     res.redirect('https://chatbot.jeanhenrique.site/chat?forceReload=1');
 }));
@@ -137,12 +181,29 @@ router.post('/2fa/verify', (req, res) => __awaiter(void 0, void 0, void 0, funct
     if (verified) {
         user.twoFactorEnabled = true;
         yield user.save();
-        // Gera o token JWT
         const jwtToken = jsonwebtoken_1.default.sign({ userId: user._id, email: user.email }, process.env.JWT_SECRET, { expiresIn: '1h' });
+        // Define os cookies necessários
+        res.cookie('token', jwtToken, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === 'production',
+            sameSite: 'lax',
+            domain: '.jeanhenrique.site',
+            maxAge: 1000 * 60 * 60,
+        });
+        res.cookie('user', JSON.stringify({
+            _id: user._id,
+            name: user.name,
+            email: user.email,
+            isGitHub: user.isGitHub,
+            preferredLanguage: user.preferredLanguage || 'Portuguese',
+        }), {
+            httpOnly: false,
+            secure: process.env.NODE_ENV === 'production',
+            sameSite: 'lax',
+            domain: '.jeanhenrique.site',
+            maxAge: 1000 * 60 * 60,
+        });
         return res.json({ message: '2FA verificado com sucesso', token: jwtToken, user });
-    }
-    else {
-        return res.status(400).json({ message: 'Token 2FA inválido' });
     }
 }));
 /**

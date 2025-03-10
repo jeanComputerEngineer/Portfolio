@@ -1,60 +1,64 @@
-
-
 openapi: 3.0.0
 info:
   title: ChatBot API
   version: "1.0.0"
-  description: API para gerenciamento de usuários, autenticação e chat.
+  description: >
+    Documentação da API do ChatBot.
+    Contém endpoints para autenticação, configuração de 2FA, gerenciamento de conta e de conversas.
 servers:
-  - url: https://backchat.jeanhenrique.site/
+  - url: http://localhost:6000
+    description: Servidor local
+
 paths:
-  /csrf-token:
-    get:
-      summary: Retorna o token CSRF
+  /api/auth/register:
+    post:
+      summary: Registro de usuário
+      description: Registra um novo usuário. Limita o número de registros por IP e o total de contas.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - name
+                - email
+                - password
+              properties:
+                name:
+                  type: string
+                email:
+                  type: string
+                  format: email
+                password:
+                  type: string
+                preferredLanguage:
+                  type: string
+                  default: Portuguese
       responses:
-        '200':
-          description: Token gerado com sucesso
+        "201":
+          description: Usuário registrado com sucesso
           content:
             application/json:
               schema:
                 type: object
                 properties:
-                  csrfToken:
+                  message:
                     type: string
-  /api/auth/register:
-    post:
-      summary: Registra um novo usuário
-      requestBody:
-        description: Dados para registro de usuário
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              required:
-                - email
-                - password
-                - name
-              properties:
-                email:
-                  type: string
-                  format: email
-                password:
-                  type: string
-                name:
-                  type: string
-                preferredLanguage:
-                  type: string
-      responses:
-        '200':
-          description: Usuário registrado com sucesso
-        '400':
-          description: Erro no registro (e-mail já cadastrado)
+                  user:
+                    $ref: '#/components/schemas/User'
+        "400":
+          description: Campos obrigatórios ausentes ou usuário já existe
+        "403":
+          description: Número máximo de contas atingido
+        "500":
+          description: Erro no registro
+
   /api/auth/login:
     post:
-      summary: Realiza o login do usuário
+      summary: Login de usuário
+      description: Realiza autenticação com e‑mail e senha. Se 2FA estiver habilitado, retorna informação para configuração.
       requestBody:
-        description: Credenciais de login
         required: true
         content:
           application/json:
@@ -70,64 +74,286 @@ paths:
                 password:
                   type: string
       responses:
-        '200':
-          description: Login bem-sucedido
-        '401':
+        "200":
+          description: Login efetuado com sucesso
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  user:
+                    type: object
+                    properties:
+                      email:
+                        type: string
+                      twoFactorEnabled:
+                        type: boolean
+                      name:
+                        type: string
+                      isGitHub:
+                        type: boolean
+                      preferredLanguage:
+                        type: string
+        "401":
           description: Credenciais inválidas
-  /api/auth/account:
-    put:
-      summary: Atualiza a conta do usuário
+        "500":
+          description: Erro no login
+
+  /api/auth/oauth2:
+    get:
+      summary: Inicia fluxo OAuth2 via GitHub
+      description: Redireciona o usuário para o provedor GitHub para autenticação.
+      responses:
+        "302":
+          description: Redirecionamento para GitHub
+
+  /api/auth/oauth2/callback:
+    get:
+      summary: Callback OAuth2
+      description: Endpoint de retorno do GitHub. Em caso de sucesso, define cookies e redireciona para a aplicação.
+      responses:
+        "302":
+          description: Redireciona para a aplicação
+        "401":
+          description: Falha na autenticação
+
+  /api/auth/2fa/setup:
+    get:
+      summary: Configuração de 2FA
+      description: Inicia o processo de configuração de autenticação de dois fatores. Retorna um QR code e o segredo.
+      parameters:
+        - in: query
+          name: email
+          required: true
+          schema:
+            type: string
+          description: E‑mail do usuário para configuração de 2FA.
+      responses:
+        "200":
+          description: Setup iniciado com sucesso
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  qrCode:
+                    type: string
+                    format: uri
+                  secret:
+                    type: string
+        "400":
+          description: Email não informado
+        "404":
+          description: Usuário não encontrado
+        "500":
+          description: Erro ao gerar QRCode
+
+  /api/auth/2fa/verify:
+    post:
+      summary: Verificação de 2FA
+      description: Verifica o token 2FA informado pelo usuário. Em caso de sucesso, ativa o 2FA e retorna um token JWT.
       requestBody:
-        description: Dados para atualização da conta
         required: true
         content:
           application/json:
             schema:
               type: object
+              required:
+                - email
+                - token
+              properties:
+                email:
+                  type: string
+                  format: email
+                token:
+                  type: string
+      responses:
+        "200":
+          description: 2FA verificado com sucesso
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  token:
+                    type: string
+                  user:
+                    $ref: '#/components/schemas/User'
+        "400":
+          description: Email ou token ausentes
+        "404":
+          description: Configuração de 2FA não encontrada
+        "401":
+          description: Token inválido ou expirado
+
+  /api/auth/account:
+    put:
+      summary: Atualização de conta
+      description: Atualiza os dados da conta do usuário (nome e idioma preferido).
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - name
               properties:
                 name:
                   type: string
                 preferredLanguage:
                   type: string
       responses:
-        '200':
+        "200":
           description: Conta atualizada com sucesso
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  user:
+                    $ref: '#/components/schemas/User'
+        "400":
+          description: Usuário não autenticado
+        "404":
+          description: Usuário não encontrado
+        "500":
+          description: Erro ao atualizar conta
     delete:
-      summary: Exclui a conta do usuário
+      summary: Exclusão de conta
+      description: Exclui a conta do usuário autenticado.
+      security:
+        - BearerAuth: []
       responses:
-        '200':
+        "200":
           description: Conta excluída com sucesso
-  /api/chat/async:
-    post:
-      summary: Requisição sincrona para chat
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+        "400":
+          description: Usuário não autenticado
+        "500":
+          description: Erro ao excluir conta
+
+  /api/auth/changePassword:
+    put:
+      summary: Alteração de senha
+      description: Altera a senha do usuário. Requer a senha atual e a nova senha.
+      security:
+        - BearerAuth: []
       requestBody:
-        description: Dados para processamento do chat
         required: true
         content:
           application/json:
             schema:
               type: object
+              required:
+                - currentPassword
+                - newPassword
               properties:
-                model:
+                currentPassword:
                   type: string
-                messages:
-                  type: array
-                  items:
-                    type: object
-                    properties:
-                      role:
-                        type: string
-                        enum: [user, assistant]
-                      content:
-                        type: string
+                newPassword:
+                  type: string
       responses:
-        '200':
-          description: Resposta do chat
+        "200":
+          description: Senha alterada com sucesso
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+        "400":
+          description: Campos obrigatórios ausentes ou nova senha inválida
+        "401":
+          description: Credenciais inválidas
+        "500":
+          description: Erro ao alterar senha
+
+  /api/chat/search:
+    get:
+      summary: Busca de conversas
+      description: Realiza a busca de conversas com base em um termo de pesquisa.
+      parameters:
+        - in: query
+          name: q
+          required: true
+          schema:
+            type: string
+          description: Termo de pesquisa.
+      responses:
+        "200":
+          description: Lista de conversas encontradas
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  conversations:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Conversation'
+        "400":
+          description: Query não informada
+        "500":
+          description: Erro ao buscar conversas
+
   /api/chat/conversations:
+    get:
+      summary: Lista de conversas
+      description: Retorna as conversas de um usuário com base no email (e opcionalmente um limite).
+      parameters:
+        - in: query
+          name: email
+          required: true
+          schema:
+            type: string
+          description: E‑mail do usuário.
+        - in: query
+          name: limit
+          required: false
+          schema:
+            type: integer
+            default: 100
+          description: Limite de conversas a retornar.
+      responses:
+        "200":
+          description: Lista de conversas
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  conversations:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Conversation'
+        "400":
+          description: Email não informado
+        "500":
+          description: Erro ao buscar conversas
     post:
-      summary: Cria ou atualiza uma conversa
+      summary: Criação ou atualização de conversa
+      description: Se o parâmetro conversationId for informado, atualiza a conversa; caso contrário, cria uma nova conversa.
+      security:
+        - BearerAuth: []
       requestBody:
-        description: Dados da conversa
         required: true
         content:
           application/json:
@@ -136,77 +362,160 @@ paths:
               properties:
                 conversationId:
                   type: string
+                  description: (Opcional) ID da conversa para atualização.
                 title:
                   type: string
                 messages:
                   type: array
                   items:
-                    type: object
-                    properties:
-                      role:
-                        type: string
-                        enum: [user, assistant]
-                      content:
-                        type: string
-      responses:
-        '200':
-          description: Conversa criada/atualizada com sucesso
-    get:
-      summary: Lista as conversas do usuário
-      parameters:
-        - in: query
-          name: page
-          schema:
-            type: integer
-          description: Número da página
-        - in: query
-          name: limit
-          schema:
-            type: integer
-          description: Limite de conversas por página
-      responses:
-        '200':
-          description: Lista de conversas
-  /api/chat/conversations/{conversationId}:
-    put:
-      summary: Atualiza uma conversa específica
-      parameters:
-        - in: path
-          name: conversationId
-          required: true
-          schema:
-            type: string
-      requestBody:
-        description: Dados atualizados da conversa
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                title:
+                    $ref: '#/components/schemas/Message'
+                email:
                   type: string
-                messages:
-                  type: array
-                  items:
-                    type: object
-                    properties:
-                      role:
-                        type: string
-                        enum: [user, assistant]
-                      content:
-                        type: string
+                  format: email
+              required:
+                - title
+                - messages
+                - email
       responses:
-        '200':
+        "201":
+          description: Nova conversa criada com sucesso
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Conversation'
+        "200":
           description: Conversa atualizada com sucesso
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Conversation'
+        "400":
+          description: Dados inválidos
+        "500":
+          description: Erro ao processar a conversa
+
+  /api/chat/conversations/{id}:
     delete:
-      summary: Exclui uma conversa específica
+      summary: Exclusão de conversa
+      description: Exclui uma conversa pelo seu ID.
+      security:
+        - BearerAuth: []
       parameters:
         - in: path
-          name: conversationId
+          name: id
           required: true
           schema:
             type: string
+          description: ID da conversa.
       responses:
-        '200':
+        "200":
           description: Conversa excluída com sucesso
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+        "404":
+          description: Conversa não encontrada
+        "500":
+          description: Erro ao excluir conversa
+
+  /api/csrf-token:
+    get:
+      summary: Obter token CSRF
+      description: Retorna um token CSRF para proteção contra ataques.
+      responses:
+        "200":
+          description: Token CSRF retornado com sucesso
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  csrfToken:
+                    type: string
+        "500":
+          description: Erro ao obter token CSRF
+
+components:
+  schemas:
+    User:
+      type: object
+      properties:
+        _id:
+          type: string
+        name:
+          type: string
+        email:
+          type: string
+          format: email
+        preferredLanguage:
+          type: string
+          default: Portuguese
+        twoFactorEnabled:
+          type: boolean
+        isGitHub:
+          type: boolean
+      example:
+        _id: "61234abcdef56789abcdef0"
+        name: "Fulano"
+        email: "fulano@example.com"
+        preferredLanguage: "Portuguese"
+        twoFactorEnabled: false
+        isGitHub: false
+    Message:
+      type: object
+      properties:
+        sender:
+          type: string
+          enum: [user, assistant]
+        content:
+          type: string
+      example:
+        sender: "user"
+        content: "Olá, essa é uma mensagem de teste!"
+    Conversation:
+      type: object
+      properties:
+        _id:
+          type: string
+        owner:
+          type: string
+          description: E‑mail do usuário dono da conversa.
+        title:
+          type: string
+        messages:
+          type: array
+          items:
+            $ref: '#/components/schemas/Message'
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+      example:
+        _id: "61234abcdef56789abcdef1"
+        owner: "fulano@example.com"
+        title: "Nova conversa"
+        messages:
+          - sender: "user"
+            content: "Olá, tudo bem?"
+          - sender: "assistant"
+            content: "Tudo ótimo, como posso ajudar?"
+        createdAt: "2021-08-23T18:25:43.511Z"
+        updatedAt: "2021-08-23T18:25:43.511Z"
+
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+
+#Notas
+#As rotas que iniciam o fluxo OAuth2 (como /api/auth/oauth2 e /api/auth/oauth2/callback) são documentadas com resposta de redirecionamento.
+#Os endpoints protegidos (atualização, exclusão de conta, alteração de senha e operações em conversas) usam o esquema de segurança BearerAuth.
+#Os exemplos e schemas são simplificados; sinta-se à vontade para ajustar as descrições, exemplos e propriedades conforme sua implementação real.

@@ -1,6 +1,8 @@
+// components/ProteçãoDeRotas/ProtectedRoute.tsx
 "use client";
 import { useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
+import { getCookie } from "@/utils/cookieUtils";
 
 interface ProtectedRouteProps {
     children: React.ReactNode;
@@ -12,23 +14,8 @@ export default function ProtectedRoute({ children }: ProtectedRouteProps) {
     const [authChecked, setAuthChecked] = useState(false);
 
     useEffect(() => {
-        let storedUser = localStorage.getItem("user");
-        if (!storedUser) {
-            const userCookie = document.cookie
-                .split("; ")
-                .find((row) => row.startsWith("user="));
-            if (userCookie) {
-                try {
-                    const cookieValue = decodeURIComponent(userCookie.split("=")[1]);
-                    const userData = JSON.parse(cookieValue);
-                    localStorage.setItem("user", JSON.stringify(userData));
-                    storedUser = JSON.stringify(userData);
-                } catch (err) {
-                    console.error("Erro ao ler o cookie do usuário:", err);
-                }
-            }
-        }
-
+        // Tenta obter o cookie 'user'
+        const storedUser = getCookie("user");
         if (!storedUser) {
             router.push("/login");
         } else {
