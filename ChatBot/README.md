@@ -125,11 +125,9 @@ O **ChatBot** é uma aplicação completa de chat com autenticação segura, con
 
 ### Instalação
 
-Clone o projeto:
+Baixe o projeto
 
-
-git clone https://github.com/seu-usuario/chatbot.git
-cd chatbot
+Em seu terminal, nos diretorios de backend e frontend, execute: 
 npm install
 
 
