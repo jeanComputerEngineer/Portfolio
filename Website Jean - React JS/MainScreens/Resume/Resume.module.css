@@ -1,0 +1,59 @@
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.container {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  margin: 0 auto;
+  padding-top: 90px;
+  min-height: 100vh;
+}
+
+.container h2 {
+  text-align: center;
+  animation: fadeInUp 1s ease-in-out 0.05s forwards;
+  text-decoration: none;
+  color: rgb(0, 0, 0);
+  font-size: 22px;
+}
+
+.container p {
+  font-size: 23px;
+}
+
+:global(.dark) .container {
+  background: rgb(12, 12, 14);
+}
+
+:global(.dark) .container h2 {
+  color: rgb(202, 202, 202);
+}
+
+:global(.dark) .container h3 {
+  color: white;
+}
+
+:global(.dark) .container p {
+  color: rgb(168, 168, 168);
+}
+
+@media screen and (max-width: 1050px) {
+     .container {
+      padding-top: 50px;
+    }
+  
+  @media (max-width: 600px) {
+    .container {
+      padding-top: 50px;
+    }
+  }
+}

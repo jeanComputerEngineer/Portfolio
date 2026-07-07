@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Document</title>
+</head>
+
+<body>
+	<?php
+require_once 'Cliente.html';
+require_once 'ControleCliente.html';
+
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+	// Verifica se a ação é um cadastro ou um login
+	if (isset($_POST['cadastro'])) {
+		// Dados de cadastro
+		$nome = $_POST["nome"];
+		$numTelefone = $_POST["telefone"];
+		$email = $_POST["email"];
+		$cpf = $_POST["cpf"];
+		$senha = $_POST['senha'];
+
+		// Cria um novo cliente e realiza o cadastro
+		$cliente = new Cliente($nome, $senha, $numTelefone, $email, $cpf);
+		$daoCliente = new ControleCliente();
+		$daoCliente->salvarCliente($cliente);
+
+		// Redireciona após o cadastro
+
+	} elseif (isset($_POST['login'])) {
+		// Dados de login
+		$emailLogin = $_POST["emailLogin"];
+		$senhaLogin = $_POST["senhaLogin"];
+
+		// Verifica o login
+		$clienteLogin = new ControleCliente();
+		$clienteLogin->fazerLogin($emailLogin, $senhaLogin);
+	}
+}
+
+	
+</body>
+</html>

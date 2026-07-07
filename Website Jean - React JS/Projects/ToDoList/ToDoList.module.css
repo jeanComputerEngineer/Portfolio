@@ -1,0 +1,225 @@
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  max-width: 100%;
+  background-color: rgb(79, 79, 79);
+  background-image: url('../../Images/Projects/ToDoList/ToDoListLight.png');
+  background-blend-mode: overlay;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  padding-top: 100px;
+  padding-bottom: 50vh;
+  opacity: 0;
+  animation: fadeInUp 1s ease-in-out 0.05s forwards;
+}
+
+.dark .container {
+  background-image: url('../../Images/Wallpaper/BlogBackground.png');
+  background-color: rgb(26, 26, 26);
+}
+
+.header {
+  width: 100%;
+  max-width: 100%;
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.header h1 {
+  color: white;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 20px;
+  width: 95%;
+}
+
+.searchBox {
+  margin-bottom: 20px;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+.searchBox input {
+  width: 60%;
+  padding: 10px;
+  border-radius: 30px;
+  border: 1px solid #ccc;
+}
+
+.searchBox input::placeholder {
+  color: rgb(172, 172, 172);
+}
+
+.taskCard {
+  padding: 20px;
+  border-radius: 10px;
+  color: white;
+  background: #ececf0;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.taskCard h1 {
+  margin: 0;
+  font-size: 18px;
+  color: rgb(0, 0, 0);
+}
+
+.taskCard h2 {
+  margin: 10px 0 0;
+  font-size: 14px;
+  color: #000;
+  border-radius: 5px;
+  padding: 3px 5px;
+}
+
+.taskCard h3 {
+  margin: 10px 0 0;
+  font-size: 14px;
+  color: #000000;
+}
+
+.taskCard .buttons {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 10px;
+}
+
+.taskCard button {
+  background-color: #455f7f;
+  color: white;
+  border-radius: 5px;
+  padding: 5px 10px;
+  font-size: 12px;
+  border: none;
+  cursor: pointer;
+  transition: transform 0.3s ease-in-out;
+}
+
+.completeButton {
+  background-color: #4caf50;
+}
+
+.completeButton:hover {
+  background-color: #45a049;
+}
+
+.deleteButton {
+  background-color: #ff4c4c;
+}
+
+.deleteButton:hover {
+  background-color: #e53935;
+}
+
+.createTask {
+  margin-top: 40px;
+  width: 100%;
+}
+
+.createTask h2 {
+  text-align: center;
+  color: white;
+  margin-bottom: 20px;
+}
+
+.createTask form {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  gap: 10px;
+  max-width: 100%;
+}
+
+.createTask input[type='text'],
+.createTask input[type='date'],
+.createTask select {
+  height: 35px;
+  width: 120px;
+  padding: 0 10px;
+  border-radius: 10px;
+  border: 1px solid #ccc;
+  box-sizing: border-box;
+}
+
+.createTask input[type='text'] {
+  width: 400px;
+}
+
+.createTask button {
+  height: 35px;
+  width: 120px;
+  padding: 0 10px;
+  border-radius: 7px;
+  background-color: #4caf50;
+  color: white;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  font-weight: bold;
+  border: none;
+}
+
+.createTask button:hover {
+  background-color: #45a049;
+}
+
+.dark .taskCard,
+.dark .taskCard h1,
+.dark .taskCard h3,
+.dark .createTask input[type='text'],
+.dark .createTask input[type='date'],
+.dark .createTask select {
+  background-color: #36383d;
+  color: white;
+}
+
+.dark .taskCard h2 {
+  color: black;
+}
+
+.taskCard .buttons {
+  background-color: #393c42;
+  color: white;
+}
+
+.dark .createTask h2 {
+  color: white;
+}
+
+.dark .createTask input[type='text'],
+.dark .createTask input[type='date'],
+.dark .createTask select {
+  background-color: #2b2b2b;
+  border-color: #666;
+  color: #f0f0f0;
+}
+
+.dark .createTask button {
+  background-color: #4caf50;
+}
+
+.dark .createTask button:hover {
+  background-color: #45a049;
+}

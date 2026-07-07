@@ -1,0 +1,830 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Área do Cliente</title>
+
+	<style>
+		@media screen and (min-width: 768px) {
+
+
+			/* Estilos gerais... */
+			body {
+				font-family: Arial, sans-serif;
+				background-color: white;
+				margin: 0;
+				padding: 0;
+				height: 100%;
+				display: flex;
+				flex-direction: column;
+				align-items: center;
+			}
+
+			.tab {
+				color: black;
+				font-family: Arial, sans-serif;
+				font-size: 18px;
+				text-decoration: none;
+				font-weight: bold;
+				padding: 10px 15px;
+				border-radius: 10px;
+				transition: background-color 0.3s, color 0.3s;
+			}
+
+			.tab:not(:last-child) {
+				margin-right: 20px;
+			}
+
+			.tab:hover {
+				background-color: #f0f0f0;
+				/* Cor de fundo ao passar o mouse */
+				color: #007bff;
+				/* Cor de texto ao passar o mouse */
+			}
+
+
+			/* Estilos para as abas */
+			.tab-content {
+				display: flex;
+				margin-top: 150px;
+				font-size: 20px;
+				justify-content: center;
+				align-items: center;
+				flex-direction: column;
+				padding: 35px;
+				/* Espaçamento interno */
+				/* Cinza claro */
+				border-radius: 10px;
+				/* Bordas arredondadas */
+				box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+				/* Sombra suave */
+				font-family: "Georgia", serif;
+				/* Tipo de fonte */
+				color: #333;
+				/* Cor do texto */
+				background-color: #f0f4f8;
+			}
+
+
+
+			.tab-content h1 {
+				text-align: center;
+				font-size: 45px;
+				/* Tamanho grande para cabeçalhos */
+				margin-bottom: 20px;
+				color: #000000;
+				/* Azul */
+			}
+
+			.tab-content p {
+				text-align: center;
+				margin-bottom: 20px;
+				line-height: 1.6;
+				/* Espaçamento entre linhas */
+			}
+
+			.tab-content ol {
+				text-align: left;
+				margin-left: 0px;
+			}
+
+			.tab-content ul {
+				text-align: left;
+				margin-left: 50px;
+				font-size: 50px;
+				/* Recuo das listas */
+				margin-bottom: 50px;
+			}
+
+			.tab-content li {
+				font-size: 18px;
+				/* Tamanho para itens de lista */
+				margin-bottom: 10px;
+			}
+
+			.tabs-container {
+				display: flex;
+				justify-content: center;
+				background-color: #f5f5f5;
+				padding: 15px 0;
+				width: 100%;
+				box-sizing: border-box;
+				box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.1), 0px 4px 6px rgba(0, 0, 0, 0.1);
+				border-bottom: 1px solid #ccc;
+				/* Adiciona uma borda superior azul para diferenciar */
+				position: fixed;
+				top: 0;
+				left: 0;
+				z-index: 1000;
+			}
+
+
+			.header-container {
+				position: fixed;
+				top: 0;
+				left: 0;
+				width: 100%;
+				background-color: white;
+				z-index: 1000;
+				box-shadow: 0px 1px 5px rgba(0, 0, 0, 0.1);
+			}
+
+			.status-list {
+				list-style-type: none;
+				/* Remover marcadores das listas */
+				padding: 0;
+				margin: 0;
+			}
+
+			.status-list li:before {
+				content: "\2022";
+				/* Usar um bullet point */
+				color: #007bff;
+				/* Azul para os bullets */
+				font-size: 20px;
+				margin-right: 10px;
+			}
+
+			/* Estilos para o ícone de menu */
+			.menu-icon {
+				position: fixed;
+				top: 5px;
+				right: 20px;
+				font-size: 29px;
+				cursor: pointer;
+				z-index: 1000;
+				background-color: #dbdbdb;
+				color: black;
+				border-radius: 10px;
+				/* Defina a posição inicial */
+				transition: right 0.3s;
+				/* Adicione a transição */
+			}
+
+			.menu-title {
+				display: block;
+				font-size: 15px;
+				margin-top: 5px;
+				text-align: center;
+				color: black;
+				font-family: Arial, sans-serif;
+				text-decoration: none;
+				font-weight: bold;
+				padding: 1px 2.5px;
+				border-radius: 5px;
+				transition: background-color 0.3s, color 0.3s;
+			}
+
+			.hidden-menu {
+				position: fixed;
+				top: 30px;
+				right: -250px;
+				/* Inicialmente oculto */
+				width: 250px;
+				height: 100%;
+				background-color: #ffffff;
+				transition: right 0.3s ease-in-out;
+				z-index: 999;
+				box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
+			}
+
+			.hidden-menu.active {
+				right: 0;
+				/* Mostra o menu quando estiver ativo */
+			}
+
+			.hidden-menu ul {
+				list-style: none;
+				padding: 10px;
+				margin-top: 20px;
+			}
+
+			.hidden-menu li {
+				margin-bottom: -10px;
+
+				/* Divisória entre as opções */
+			}
+
+			.hidden-menu a {
+				color: #000000;
+				/* Cor das letras */
+				text-decoration: none;
+				font-size: 18px;
+				font-family: Arial, sans-serif;
+				/* Altera a fonte */
+				padding: 1px 0px;
+				display: block;
+				transition: background-color 0.3s;
+				margin-top: 50px;
+			}
+
+			.hidden-menu a:hover {
+				background-color: #dae8f6;
+				color: rgb(0, 0, 0);
+				/* Cor de fundo ao passar o mouse */
+			}
+
+
+
+			/* Imagem inicial */
+			.background-image {
+				background-image: url('Imagens/pexels-photo-3182822.jpeg');
+				background-size: cover;
+				background-position: center center;
+				background-repeat: no-repeat;
+				height: 600px;
+				width: 100%;
+			}
+
+
+
+			/* Estilos para o formulário de cadastro de projeto */
+			.consulta-container {
+				background-color: #f7f7f7;
+				border-radius: 10px;
+				padding: 40px;
+				box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+				width: 80%;
+				max-width: 600px;
+				margin: 20px auto;
+				/* Adicionado um espaçamento superior e inferior */
+			}
+
+			.consulta-container h2 {
+				text-align: center;
+				margin-bottom: 20px;
+				color: black;
+			}
+
+			.consulta-container label {
+				display: block;
+				font-weight: bold;
+				margin-bottom: 10px;
+				color: #333;
+			}
+
+			.consulta-container input[type='text'],
+			.consulta-container input[name='titulo'],
+			.consulta-container textarea[name='descricao'] {
+				width: 100%;
+				padding: 10px;
+				border: 1px solid #ccc;
+				border-radius: 3px;
+				margin-bottom: 15px;
+				font-size: 16px;
+				color: #333;
+			}
+
+			.consulta-container textarea[name='descricao'] {
+				width: 100%;
+				padding: 200px 10px;
+				padding-top: 10px;
+				border: 1px solid #ccc;
+				border-radius: 3px;
+				margin-bottom: 15px;
+				font-size: 16px;
+				color: #333;
+				resize: none;
+			}
+
+			.consulta-container button {
+				background-color: black;
+				color: #ffffff;
+				border-radius: 3px;
+				padding: 12px 24px;
+				cursor: pointer;
+				font-size: 18px;
+				transition: background-color 0.3s, color 0.3s;
+			}
+
+			.consulta-container button:hover {
+				background-color: #007bff;
+
+
+			}
+		}
+
+		@media screen and (max-width: 768px) {
+
+			/* Estilos gerais... */
+			body {
+				font-family: Arial, sans-serif;
+				background-color: white;
+				margin: 0;
+				padding: 0;
+				height: 100%;
+				display: flex;
+				flex-direction: column;
+				align-items: center;
+			}
+
+			/* Menu principal*/
+
+
+			.tabs-container {
+				display: flex;
+				justify-content: left;
+				background-color: #f5f5f5;
+				padding: 15px 0;
+				width: 100%;
+				box-sizing: border-box;
+				box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.1), 0px 4px 6px rgba(0, 0, 0, 0.1);
+				border-bottom: 1px solid #ccc;
+				/* Adiciona uma borda superior azul para diferenciar */
+				position: fixed;
+				z-index: 1000;
+			}
+
+			.tab {
+				color: black;
+				font-family: Arial, sans-serif;
+				font-size: 15px;
+				text-decoration: none;
+				font-weight: bold;
+				padding: 10px 15px;
+				border-radius: 10px;
+				transition: background-color 0.3s, color 0.3s;
+				padding: 10px 20px;
+				margin-right: -8px;
+				margin-left: -8px;
+
+			}
+
+
+
+
+			/* Estilos para o conteúdo */
+			.tab-content {
+				display: flex;
+				margin-top: 100px;
+				font-size: 18px;
+				justify-content: center;
+				align-items: left;
+				flex-direction: column;
+				padding: 30px;
+				/* Espaçamento interno */
+				/* Cinza claro */
+				border-radius: 10px;
+				/* Bordas arredondadas */
+				box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+				/* Sombra suave */
+				font-family: "Georgia", serif;
+				/* Tipo de fonte */
+				color: #333;
+				/* Cor do texto */
+				background-color: #f0f4f8;
+				margin: 40px;
+			}
+
+
+
+			.tab-content h1 {
+				text-align: center;
+				font-size: 45px;
+				/* Tamanho grande para cabeçalhos */
+				margin-bottom: 20px;
+				color: #000000;
+				/* Azul */
+			}
+
+			.tab-content h2 {
+				text-align: left;
+				font-size: 30px;
+			}
+
+			.tab-content p {
+				text-align: left;
+				margin-bottom: 20px;
+				line-height: 1.6;
+				/* Espaçamento entre linhas */
+			}
+
+			.tab-content ol {
+				text-align: left;
+				margin-left: -30px;
+				margin-bottom: -25px;
+			}
+
+			.tab-content ul {
+				text-align: left;
+				margin-left: 20px;
+				font-size: 50px;
+				/* Recuo das listas */
+				margin-bottom: 50px;
+			}
+
+			.tab-content li {
+				font-size: 18px;
+				/* Tamanho para itens de lista */
+				margin-bottom: 10px;
+				text-align: left;
+			}
+
+
+			.header-container {
+				position: fixed;
+				top: 0;
+				left: 0;
+				width: 100%;
+				background-color: white;
+				z-index: 1000;
+				box-shadow: 0px 1px 5px rgba(0, 0, 0, 0.1);
+			}
+
+			.status-list {
+				list-style-type: none;
+				/* Remover marcadores das listas */
+				padding: 0;
+				margin: 0;
+			}
+
+			.status-list li:before {
+				content: "\2022";
+				/* Usar um bullet point */
+				color: #007bff;
+				/* Azul para os bullets */
+				font-size: 20px;
+				margin-right: 10px;
+			}
+
+			/* Estilos para o ícone de menu */
+			.menu-icon {
+				position: fixed;
+				top: 10px;
+				right: 5px;
+				font-size: 20px;
+				cursor: pointer;
+				z-index: 1000;
+				background-color: #dbdbdb;
+				color: black;
+				border-radius: 10px;
+				/* Defina a posição inicial */
+				transition: right 0.3s;
+				/* Adicione a transição */
+			}
+
+			.menu-title {
+				display: block;
+				font-size: 12px;
+				margin-top: 5px;
+				text-align: center;
+				color: black;
+				font-family: Arial, sans-serif;
+				text-decoration: none;
+				font-weight: bold;
+				padding: 1px 2.5px;
+				border-radius: 5px;
+				transition: background-color 0.3s, color 0.3s;
+			}
+
+			.hidden-menu {
+				position: fixed;
+				top: 20px;
+				right: -250px;
+				/* Inicialmente oculto */
+				width: 250px;
+				height: 100%;
+				background-color: #ffffff;
+				transition: right 0.3s ease-in-out;
+				z-index: 999;
+				box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
+			}
+
+			.hidden-menu.active {
+				right: 0;
+				/* Mostra o menu quando estiver ativo */
+			}
+
+			.hidden-menu ul {
+				list-style: none;
+				padding: 10px;
+				margin-top: 20px;
+			}
+
+			.hidden-menu li {
+				margin-bottom: -10px;
+
+				/* Divisória entre as opções */
+			}
+
+			.hidden-menu a {
+				color: #000000;
+				/* Cor das letras */
+				text-decoration: none;
+				font-size: 18px;
+				font-family: Arial, sans-serif;
+				/* Altera a fonte */
+				padding: 1px 0px;
+				display: block;
+				transition: background-color 0.3s;
+				margin-top: 50px;
+			}
+
+			.hidden-menu a:hover {
+				background-color: #dae8f6;
+				color: rgb(0, 0, 0);
+				/* Cor de fundo ao passar o mouse */
+			}
+
+			/* Imagem inicial */
+			.background-image {
+				background-image: url('Imagens/pexels-photo-3182822.jpeg');
+				background-size: cover;
+				background-position: center center;
+				background-repeat: no-repeat;
+				height: 300px;
+				width: 100%;
+			}
+
+
+
+			/* Estilos para o formulário de cadastro de projeto */
+			.consulta-container {
+				background-color: #f7f7f7;
+				border-radius: 10px;
+				padding: 40px;
+				box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+				width: 80%;
+				max-width: 600px;
+				margin: 20px auto;
+				/* Adicionado um espaçamento superior e inferior */
+			}
+
+			.consulta-container h2 {
+				text-align: center;
+				margin-bottom: 20px;
+				color: black;
+			}
+
+			.consulta-container label {
+				display: block;
+				font-weight: bold;
+				margin-bottom: 10px;
+				color: #333;
+			}
+
+			.consulta-container input[type='text'],
+			.consulta-container input[name='titulo'],
+			.consulta-container textarea[name='descricao'] {
+				width: 100%;
+				padding: 10px;
+				border: 1px solid #ccc;
+				border-radius: 3px;
+				margin-bottom: 15px;
+				font-size: 16px;
+				color: #333;
+			}
+
+			.consulta-container textarea[name='descricao'] {
+				width: 100%;
+				padding: 200px 10px;
+				padding-top: 10px;
+				border: 1px solid #ccc;
+				border-radius: 3px;
+				margin-bottom: 15px;
+				font-size: 16px;
+				color: #333;
+				resize: none;
+			}
+
+			.consulta-container button {
+				background-color: black;
+				color: #ffffff;
+				border-radius: 3px;
+				padding: 12px 24px;
+				cursor: pointer;
+				font-size: 18px;
+				transition: background-color 0.3s, color 0.3s;
+			}
+
+			.consulta-container button:hover {
+				background-color: #007bff;
+			}
+
+
+		}
+
+
+
+
+
+
+		.bottom-tab {
+			justify-content: center;
+			background-color: #eaeaea;
+			padding: 15px 0;
+			width: 100%;
+			box-shadow: 15px 5px 5px rgba(0, 0, 0, 0.1);
+			/* Sombra na parte inferior */
+			border-top: 5px solid #ddd;
+			/* Linha inferior divisória */
+			text-align: center;
+			margin-top: 40px;
+			padding-top: 20px;
+		}
+	</style>
+</head>
+
+<body>
+	<?php
+	// Verifica a referência HTTP
+	$allowed_referers = array(
+		"http://localhost/SiteProfissional/DaoCliente.php", "http://localhost/SiteProfissional/Login.php",
+		"http://localhost/SiteProfissional/DaoProjeto.php", "http://localhost/SiteProfissional/TelaCliente#cadastro"
+	);
+	$referer = $_SERVER['HTTP_REFERER'];
+
+	if (!in_array($referer, $allowed_referers)) {
+		echo "Acesso não autorizado.";
+		exit(); // Encerrar o script
+
+
+
+	}
+	?>
+
+	<div class="header-container">
+		<div class="tabs-container">
+			<a href="#inicio" class="tab" onclick="showTab('inicio')">Início</a>
+			<a href="#cadastro" class="tab" onclick="showTab('cadastro')">Cadastrar Projeto</a>
+			<a href="#projetos" class="tab" onclick="showTab('projetos')">Meus Projetos</a>
+		</div>
+	</div>
+
+
+
+	<!-- Ícone de menu -->
+	<div class="menu-icon" onclick="toggleMenu()">
+		&#9776;
+		<span class="menu-title">Sair da Área do Cliente</span>
+	</div>
+
+	<!-- Menu oculto -->
+	<div class="hidden-menu" id="hiddenMenu">
+		<ul>
+			<li><a href="Blog.html">Blog</a></li>
+			<li><a href="Faq.html">Faq</a></li>
+			<li><a href="Sobre.html">Sobre</a></li>
+			<li><a href="OutrosSites.html">Outros Sites Desenvolvidos</a></li>
+		</ul>
+	</div>
+
+	<div class="background-section background-image"></div>
+
+	<div class="tab-content hidden-tab" id="inicio">
+		<!-- Conteúdo da tela inicial -->
+		<h1>Bem-vindo à sua Área de Cliente</h1>
+		<p>Aqui você encontrará todas as ferramentas necessárias para gerenciar e acompanhar seus projetos de forma
+			eficaz e conveniente.</p>
+		<br><br>
+		<h2>Como Começar:</h2>
+		<ol>
+			<li><strong>Cadastre o seu Projeto:</strong> Clique na aba "Cadastrar Projeto" e preencha os detalhes do seu
+				novo projeto. Isso nos ajudará a entender suas necessidades.</li>
+			<li><strong>Acompanhe o Progresso:</strong> Após cadastrar um projeto, você poderá acompanhar o status dele
+				na seção "Meus Projetos".</li>
+			<li><strong>Status do Projeto:</strong> Seu projeto passará pelas seguintes etapas:</li>
+		</ol>
+		<ul class="status-list">
+			<br>
+			<li><strong>Iniciado:</strong> Seu projeto foi enviado ao programador para análise.</li>
+			<li><strong>Em Revisão do Programador:</strong> O programador avaliará o escopo e criará protótipos das
+				telas do projeto.</li>
+			<li><strong>Em Revisão do Cliente:</strong> Você terá a oportunidade de sugerir mudanças aos protótipos do
+				programador. O projeto será aceito após sua revisão.</li>
+			<li><strong>Aguardando Pagamento:</strong> Agora, é só aguardar a confirmação de pagamento e assinar os
+				termos e condições.</li>
+			<li><strong>Em Desenvolvimento:</strong> Com o pagamento confirmado, o desenvolvimento da versão final do
+				projeto é iniciado.</li>
+			<li><strong>Revisão Final do Cliente:</strong> Uma reunião será agendada para analisar suas sugestões. O
+				projeto será ajustado conforme suas preferências.</li>
+			<li><strong>Teste de Erros:</strong> O projeto passará por rigorosos testes de qualidade para eliminar
+				qualquer bug.</li>
+			<li><strong>Projeto Finalizado:</strong> Seu projeto está pronto e entregue conforme o acordado.</li>
+		</ul>
+		<br>
+		<p>Ao final das etapas, sua satisfação é essencial. Compartilhe seu feedback para que possamos melhorar ainda
+			mais a experiência do cliente.</p>
+		<p>Obrigado por confiar em nossos serviços! Estamos comprometidos em entregar resultados excepcionais.</p>
+	</div>
+
+
+	<div class="tab-content hidden-tab" id="cadastro">
+		<!-- Conteúdo do cadastro de projeto -->
+		<div class="instructions-container">
+			<h2>Instruções para Cadastrar um Projeto</h2>
+			<p>Para cadastrar um novo projeto, siga os passos abaixo:</p>
+			<ol>
+				<li>Preencha o campo "Título do Projeto" com um nome descritivo.</li>
+				<br>
+				<li>No campo "Descrição Detalhada do Projeto", forneça informações detalhadas sobre o projeto, como:
+				</li>
+				<br>
+				<ol type="a">
+					<li>Público alvo da aplicação.</li>
+					<li>Qual problema precisa ser solucionado pela aplicação, tanto para a empresa quanto para os
+						clientes.</li>
+					<li>Descreva como você quer que a aplicação resolva o problema, pense no máximo de detalhes
+						possíveis de funcionamento para o projeto desejado. Caso possua algum exemplar ou protótipos
+						prontos, envie-os por gentileza.</li>
+					<li>Por fim, diga a diferença que você espera que a aplicação faça na sua vida, na dos clientes e na
+						empresa. Este será o foco principal do projeto.</li>
+				</ol>
+				<br>
+				<br>
+				<li>Clique no botão "Cadastrar" para enviar o projeto.</li>
+			</ol>
+		</div>
+		<br>
+		<div class="consulta-container">
+			<h2>Solicitação de Desenvolvimento de Projeto</h2>
+			<form method="POST" action="DaoProjeto.php">
+				<label for="titulo">Título do Projeto:</label>
+				<input type="text" id="titulo" name="titulo" required>
+
+				<label for="descricao">Descrição Detalhada do Projeto:</label>
+				<textarea id="descricao" name="descricao" required></textarea>
+
+
+				<button type="submit">Cadastrar</button>
+			</form>
+		</div>
+	</div>
+
+	<div class="tab-content hidden-tab" id="projetos">
+		<!-- Conteúdo para exibir projetos -->
+		<!-- Aqui você pode usar a função exibeProjeto() do ControleProjeto.php -->
+	</div>
+
+	<!-- Aba inferior -->
+	<div class="bottom-tab">
+		Jean Samuel Candido Henrique <br>
+		Acadêmico de Engenharia de Computação na UEPG
+	</div>
+
+	<script>
+		// Função para alternar entre as abas
+		// Função para alternar entre as abas
+		function showTab(tabId) {
+			var tabs = document.getElementsByClassName('tab-content');
+			for (var i = 0; i < tabs.length; i++) {
+				tabs[i].classList.remove('active-tab');
+			}
+			document.getElementById(tabId).classList.add('active-tab');
+
+			// Ocultar ou mostrar a imagem de fundo com base na tab selecionada
+			var backgroundSection = document.querySelector('.background-section');
+			if (tabId === 'inicio' || tabId === '') {
+				backgroundSection.style.display = 'block'; // Mostrar a imagem de fundo
+				document.getElementById('cadastro').style.display = 'none'; // Ocultar a aba "cadastro"
+				document.getElementById('inicio').style.display = 'block'; // Mostrar a aba "inicio"
+				document.getElementById('projetos').style.display = 'none'; // ocultar aba de projetos
+			}
+			else if (tabId === 'cadastro') {
+				backgroundSection.style.display = 'none'; // Ocultar a imagem de fundo
+				document.getElementById('inicio').style.display = 'none'; // Ocultar a aba inicio"
+				document.getElementById('cadastro').style.display = 'block'; // Mostrar a aba "cadastro"
+				document.getElementById('projetos').style.display = 'none'; // ocultar aba de projetos
+			}
+			else if (tabId === 'projetos') {
+				document.getElementById('inicio').style.display = 'none'; // Ocultar a aba de inicio"
+				document.getElementById('cadastro').style.display = 'none'; // Ocultar a aba "cadastro"
+			}
+
+		}
+
+		// Manipula o evento onload da página
+		window.onload = function () {
+			var hash = window.location.hash.substr(1); // Remove o '#' do hash
+
+			// Caso o hash seja "inicio", exibir apenas a aba de início
+			if (hash == 'inicio') {
+				showTab('inicio');
+			}
+
+			else if (hash == 'cadastro') {
+				showTab('cadastro');
+			}
+			else if (hash == 'projetos') {
+				showTab('projetos');
+			};
+		}
+		// Função para mostrar/ocultar o menu
+		function toggleMenu() {
+			var menu = document.getElementById('hiddenMenu');
+			menu.classList.toggle('active');
+		}
+		window.addEventListener("scroll", function () {
+			var headerContainer = document.querySelector(".header-container");
+			if (window.scrollY > 0) {
+				headerContainer.style.boxShadow = "0px 1px 5px rgba(0, 0, 0, 0.1)";
+			} else {
+				headerContainer.style.boxShadow = "none";
+			}
+		});
+	</script>
+</body>
+
+</html>

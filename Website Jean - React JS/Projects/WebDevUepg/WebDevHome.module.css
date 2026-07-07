@@ -1,0 +1,32 @@
+.container {
+  padding: 20px;
+  min-height: 100vh;
+}
+.header {
+  text-align: center;
+  margin-bottom: 20px;
+}
+.projectList {
+  list-style: none;
+  padding: 0;
+  display: grid;
+  gap: 20px;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+}
+.projectList li {
+  background-color: rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  overflow: hidden;
+}
+.image {
+  width: 100%;
+  display: block;
+}
+.light {
+  background-color: rgb(117, 117, 117);
+  color: #ffffff;
+}
+.dark {
+  background-color: #171717;
+  color: #f9f9f9;
+}

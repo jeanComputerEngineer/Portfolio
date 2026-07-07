@@ -1,0 +1,82 @@
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.blueContainer {
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  background-image: url('../../../Images/Wallpaper/SkillsBackground.png');
+  background-color: rgb(104, 113, 125);
+  background-blend-mode: overlay;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.blueContainer h2 {
+  margin: 0;
+  padding: 0;
+  margin-top: 2%;
+  color: rgb(255, 255, 255);
+}
+
+.skillsList {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 20px;
+  padding: 5%;
+  padding-top: 3%;
+  margin: 0;
+  opacity: 0;
+  animation: fadeInUp 0.9s ease-in-out 0.6s forwards;
+}
+
+.skillsList li {
+  padding: 1px;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 150px;
+  border-radius: 10px;
+  background-color: rgb(255, 255, 255);
+  list-style: none;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
+  padding-top: 15px;
+  padding-bottom: 15px;
+  color: rgb(34, 56, 73);
+}
+
+:global(.dark) .skillsList li {
+  background: rgb(30, 30, 30);
+  color: rgb(255, 255, 255);
+}
+
+.skillsList p {
+  text-align: center;
+  padding: 0;
+  margin: 0;
+  margin-top: 20px;
+  font-size: 20px;
+  font-family: sans-serif;
+  color: rgb(53, 53, 53);
+}
+
+:global(.dark) .skillsList p {
+  color: rgb(215, 215, 215);
+}
+
+@media (min-width: 1050px) and (max-width: 1200px) {
+  .skillsList p {
+    font-size: 15px;
+  }
+}

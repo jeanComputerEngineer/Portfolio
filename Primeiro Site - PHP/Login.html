@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tela de Login</title>
+    <style>
+        @media screen and (min-width: 768px) {
+
+            /* Estilos gerais... */
+            body {
+                font-family: Arial, sans-serif;
+                background-color: white;
+                margin: 0;
+                padding: 0;
+                height: 100%;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+            }
+
+            /* Estilos para a aba superior */
+            .tabs-container {
+                display: flex;
+                justify-content: center;
+                background-color: #f5f5f5;
+                padding: 15px 0;
+                width: 100%;
+                box-sizing: border-box;
+                box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.1), 0px 4px 6px rgba(0, 0, 0, 0.1);
+                border-bottom: 1px solid #ccc;
+                /* Adiciona uma borda superior azul para diferenciar */
+                position: fixed;
+                top: 0;
+                left: 0;
+                z-index: 1000;
+            }
+
+
+            .header-container {
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                background-color: white;
+                z-index: 1000;
+                box-shadow: 0px 1px 5px rgba(0, 0, 0, 0.1);
+            }
+
+
+            .tab {
+                color: black;
+                font-family: Arial, sans-serif;
+                font-size: 18px;
+                text-decoration: none;
+                font-weight: bold;
+                padding: 10px 15px;
+                border-radius: 10px;
+                transition: background-color 0.3s, color 0.3s;
+            }
+
+            .tab:not(:last-child) {
+                margin-right: 20px;
+            }
+
+            .tab:hover {
+                background-color: #f0f0f0;
+                /* Cor de fundo ao passar o mouse */
+                color: #007bff;
+                /* Cor de texto ao passar o mouse */
+            }
+
+
+            .bottom-tab {
+                justify-content: center;
+                background-color: #eaeaea;
+                padding: 15px 0;
+                width: 100%;
+                box-shadow: 15px 5px 5px rgba(0, 0, 0, 0.1);
+                /* Sombra na parte inferior */
+                border-top: 5px solid #ddd;
+                /* Linha inferior divisória */
+                text-align: center;
+                margin-top: 150px;
+            }
+
+
+            /* Estilos para o formulário de login */
+            .login-container {
+                background-color: #f0f4f8;
+                display: flex;
+                font-size: 20px;
+                justify-content: center;
+                align-items: center;
+                flex-direction: column;
+                padding: 100px;
+                margin-top: 150px;
+
+                border-radius: 10px;
+                box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+                font-family: "Georgia", serif;
+                color: #333;
+            }
+
+            .login-container h2 {
+                margin-bottom: 20px;
+                text-align: center;
+                color: black;
+            }
+
+            .login-container label {
+                display: block;
+                margin-bottom: 20px;
+                font-weight: bold;
+                color: #333;
+            }
+
+            .login-container input[type="email"],
+            .login-container input[type="password"] {
+                width: 100%;
+                padding: 15px;
+                margin-left: 0px;
+                border: 1px solid #ccc;
+                border-radius: 3px;
+                font-size: 18px;
+                margin-bottom: 20px;
+                color: #333;
+            }
+
+
+
+            .login-container button {
+                background-color: black;
+                color: #ffffff;
+                border: none;
+                border-radius: 3px;
+                padding: 15px 30px;
+                cursor: pointer;
+                font-size: 18px;
+                transition: background-color 0.3s, color 0.3s;
+            }
+
+            .login-container button:hover {
+                background-color: #007bff;
+            }
+
+
+
+            .hidden-menu {
+                display: none;
+            }
+        }
+
+
+        /* Ajuste para resoluções menores */
+        @media screen and (max-width: 768px) {
+
+            .tab {
+                display: none;
+            }
+
+            /* Estilos para o ícone de menu */
+            .menu-icon {
+                position: fixed;
+                top: 5px;
+                right: 20px;
+                font-size: 29px;
+                cursor: pointer;
+                z-index: 1000;
+                background-color: #dbdbdb;
+                color: black;
+                border-radius: 10px;
+                /* Defina a posição inicial */
+                transition: right 0.3s;
+                /* Adicione a transição */
+            }
+
+            .hidden-menu {
+                position: fixed;
+                top: 0px;
+                right: -250px;
+                /* Inicialmente oculto */
+                width: 250px;
+                height: 100%;
+                background-color: #ffffff;
+                transition: right 0.3s ease-in-out;
+                z-index: 999;
+                box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
+                /* Sombra no menu */
+            }
+
+            .hidden-menu.active {
+                right: 0;
+                /* Mostra o menu quando estiver ativo */
+            }
+
+            .hidden-menu ul {
+                list-style: none;
+                padding: 20px;
+                margin: 0;
+            }
+
+            .hidden-menu li {
+                margin-bottom: 1px;
+                border-bottom: 1px solid #555;
+                /* Divisória entre as opções */
+            }
+
+            .hidden-menu a {
+                color: #000000;
+                /* Cor das letras */
+                text-decoration: none;
+                font-size: 18px;
+                font-family: Arial, sans-serif;
+                /* Altera a fonte */
+                padding: 1px 0px;
+                display: block;
+                transition: background-color 0.3s;
+                margin-top: 50px;
+            }
+
+            .hidden-menu a:hover {
+                background-color: #dae8f6;
+                color: rgb(0, 0, 0);
+                /* Cor de fundo ao passar o mouse */
+            }
+
+
+            .tab-content {
+                display: none;
+            }
+
+            .active-tab {
+                display: block;
+            }
+
+            body {
+                font-family: Arial, sans-serif;
+                background-color: white;
+                margin: 0;
+                padding: 0;
+                height: 100%;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+            }
+
+
+
+            .bottom-tab {
+                justify-content: center;
+                background-color: #eaeaea;
+                padding: 15px 0;
+                width: 100%;
+                box-shadow: 15px 5px 5px rgba(0, 0, 0, 0.1);
+                /* Sombra na parte inferior */
+                border-top: 5px solid #ddd;
+                /* Linha inferior divisória */
+                text-align: center;
+                margin-top: 150px;
+            }
+
+
+            /* Estilos para o formulário de login */
+            .login-container {
+                background-color: #f0f4f8;
+                display: flex;
+                font-size: 20px;
+                justify-content: center;
+                align-items: center;
+                flex-direction: column;
+                padding: 100px;
+                margin: 25px;
+                margin-top: 100px;
+
+                border-radius: 10px;
+                box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+                font-family: "Georgia", serif;
+                color: #333;
+            }
+
+            .login-container h2 {
+                margin-bottom: 20px;
+                text-align: center;
+                color: black;
+            }
+
+            .login-container label {
+                display: block;
+                margin-bottom: 20px;
+                font-weight: bold;
+                color: #333;
+            }
+
+            .login-container input[type="email"],
+            .login-container input[type="password"] {
+                width: 100%;
+                padding: 15px;
+                margin-left: 0px;
+                border: 1px solid #ccc;
+                border-radius: 3px;
+                font-size: 18px;
+                margin-bottom: 20px;
+                color: #333;
+            }
+
+
+
+            .login-container button {
+                background-color: black;
+                color: #ffffff;
+                border: none;
+                border-radius: 3px;
+                padding: 15px 30px;
+                cursor: pointer;
+                font-size: 18px;
+                transition: background-color 0.3s, color 0.3s;
+            }
+
+            .login-container button:hover {
+                background-color: #007bff;
+            }
+
+
+        }
+    </style>
+</head>
+
+<body>
+    <!-- menu visivel -->
+    <div class="tabs-container">
+        <a href="index.html" class="tab">Faça seu Cadastro de Usuário</a>
+        <a href="Login.html" class="tab">Já Possuo Cadastro</a>
+        <a href="Blog.html" class="tab">Blog</a>
+        <a href="Faq.html" class="tab">FAQ</a>
+        <a href="Sobre.html" class="tab">Sobre</a>
+        <a href="OutrosSites.html" class="tab">Outros Sites Desenvolvidos</a>
+        <a href="TelaCliente.html" class="tab">Tela do Cliente</a>
+    </div>
+
+    <div class="menu-icon" onclick="toggleMenu()">
+        &#9776;
+    </div>
+
+    <!-- Menu invisivel -->
+    <div class="hidden-menu" id="hiddenMenu">
+        <ul>
+            <a href="index.html" class="tab">Faça seu Cadastro de Usuário</a>
+            <a href="Login.html" class="tab">Já Possuo Cadastro</a>
+            <a href="Blog.html" class="tab">Blog</a>
+            <a href="Faq.html" class="tab">FAQ</a>
+            <a href="Sobre.html" class="tab">Sobre</a>
+            <a href="OutrosSites.html" class="tab">Outros Sites Desenvolvidos</a>
+            <a href="TelaCliente.html" class="tab">Tela do Cliente</a>
+        </ul>
+    </div>
+
+    <!-- Container principal -->
+    <div class="container">
+        <!-- Formulário de login -->
+        <div class="login-container">
+            <h2>Faça Login</h2>
+            <form action="DaoCliente.php" method="POST">
+                <label for="email">E-mail:</label>
+                <input type="email" id="email" name="emailLogin" required>
+
+                <label for="senha">Senha:</label>
+                <input type="password" id="senha" name="senhaLogin" required>
+
+                <input type="hidden" name="login" value="true">
+                <button type="submit">Entrar</button>
+                <br><br>
+                <a href="#">Esqueci minha senha</a>
+            </form>
+        </div>
+    </div>
+
+    <!-- Aba inferior -->
+    <div class="bottom-tab">
+        Jean Samuel Candido Henrique <br>
+        Acadêmico de Engenharia de Computação na UEPG
+    </div>
+    <script>
+        // Função para mostrar/ocultar o menu
+        function toggleMenu() {
+            console.log("Toggle menu function called");
+            var menu = document.getElementById('hiddenMenu');
+            menu.classList.toggle('active');
+        }
+    </script>
+
+</body>
+
+</html>

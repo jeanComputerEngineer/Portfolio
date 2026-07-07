@@ -1,0 +1,276 @@
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.container {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  max-width: 100%;
+  background: rgb(71, 71, 71);
+  background-image: url('../../Images/Wallpaper/BlogBackground.png');
+  background-blend-mode: overlay;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  padding-top: 130px;
+}
+
+.header {
+  text-align: center;
+  box-sizing: border-box;
+  opacity: 0;
+  animation: fadeInUp 0.9s ease-in-out 0.2s forwards;
+}
+
+.header h1 {
+  font-size: 40px;
+  margin: 0;
+  color: #ffffff;
+  text-align: center;
+  font-weight: bold;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+.header p {
+  font-size: 25px;
+  color: #ffffff;
+  border-radius: 15px;
+  font-weight: bold;
+  text-align: left;
+  margin-left: 5%;
+  font-family: Georgia, 'Times New Roman', Times, serif;
+  padding: 1%;
+}
+
+.searchBar {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.searchBar input {
+  width: 70%;
+  padding: 8px;
+  border: 1px solid #ddd;
+  box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
+  border-radius: 5px;
+  margin-right: 5px;
+}
+
+.searchBar button {
+  padding: 8px 15px;
+  background-color: #0087a8;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: 0.3s;
+  border: 1px solid #0087a8;
+  box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.searchBar button:hover {
+  background-color: #1ac1ea;
+}
+
+.topicsList {
+  width: 100%;
+  height: 100%;
+  max-width: 90%;
+  max-height: 90%;
+  margin: 0;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 5%;
+  list-style-type: none;
+  padding: 5%;
+  opacity: 0;
+  animation: fadeInUp 0.9s ease-in-out 0.4s forwards;
+  padding-top: 40px;
+}
+
+.topicsList li {
+  width: auto;
+  height: auto;
+  background-color: white;
+  margin-bottom: 5%;
+  transition: transform 0.3s ease-in-out;
+  box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.image {
+  max-width: 100%;
+  max-height: 100%;
+}
+
+.topicsList a {
+  text-decoration: none;
+}
+
+.topicsList h1 {
+  font-size: 25px;
+  width: 90%;
+  margin: 0;
+  text-align: left;
+  justify-content: justify;
+  margin-left: 5%;
+}
+
+.topicsList h2 {
+  width: auto;
+  max-width: 100%;
+  border: 1px solid;
+  border-color: rgb(77, 93, 240);
+  color: blue;
+  text-align: left;
+  margin-left: 5%;
+  display: inline-block;
+  padding: 1%;
+  font-size: 15px;
+}
+
+.topicsList h3 {
+  font-size: 12px;
+  color: rgb(0, 137, 139);
+  margin: 0;
+  margin: 5%;
+  max-width: 100%;
+  text-align: left;
+}
+
+.topicsList h4 {
+  width: auto;
+  max-width: 100%;
+  border: 1px solid;
+  border-color: red;
+  text-align: left;
+  margin-left: 5%;
+  display: inline-block;
+  padding: 1%;
+  font-size: 15px;
+  color: red;
+}
+
+.topicsList li:hover {
+  transform: scale(1.05);
+}
+
+.dark {
+  .container {
+    background: rgb(18, 18, 18);
+    background-image: url('../../Images/Wallpaper/BlogBackground.png');
+    background-blend-mode: overlay;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+  }
+
+  .header h1 {
+    color: #67bbbb;
+  }
+
+  .header p {
+    color: #b1b1b1;
+  }
+
+  .searchBar input {
+    border: 1px solid #b4b4b4;
+  }
+
+  .searchBar button {
+    background-color: #0087a8;
+    color: white;
+
+    border: 1px solid #0087a8;
+  }
+
+  .searchBar button:hover {
+    background-color: #1ac1ea;
+  }
+
+  .topicsList li {
+    background-color: rgb(33, 33, 33);
+
+    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
+  }
+
+  .topicsList h1 {
+    color: White;
+  }
+
+  .topicsList h2 {
+    border-color: rgb(77, 93, 240);
+    color: rgb(120, 120, 255);
+  }
+
+  .topicsList h3 {
+    color: rgb(3, 251, 255);
+  }
+
+  .topicsList h4 {
+    border-color: rgb(255, 86, 86);
+    color: red;
+  }
+}
+
+@media (max-width: 950px) {
+  .light,
+  .dark {
+    .container {
+      padding-top: 80px;
+    }
+
+    .header h1 {
+      font-size: 6.2vw;
+      margin: 0;
+      padding: 0;
+    }
+
+    .header p {
+      font-size: 3.5vw;
+      margin-left: 5%;
+      margin-bottom: 15px;
+    }
+
+    .topicsList {
+      grid-template-columns: repeat(1, 1fr);
+      margin: 0;
+      gap: 1%;
+      max-height: 100%;
+      padding-bottom: 70%;
+    }
+
+    .topicsList p {
+      font-size: 3.5vw;
+    }
+
+    .topicsList h1 {
+      margin-top: 0;
+      margin-left: 5%;
+      font-size: 5vw;
+      justify-content: justify;
+    }
+
+    .topicsList h2 {
+      font-size: 5vw;
+    }
+
+    .topicsList h3 {
+      font-size: 10px;
+    }
+
+    .topicsList h4 {
+      font-size: 15px;
+    }
+  }
+}

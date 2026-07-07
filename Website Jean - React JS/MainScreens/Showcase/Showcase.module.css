@@ -1,0 +1,210 @@
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.light {
+  .showcaseContainer {
+    background-image: url('../../Images/Wallpaper/SkillsBackground.png');
+    background-color: rgb(104, 113, 125);
+    background-blend-mode: overlay;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    width: 100%;
+    height: 100%;
+    max-width: 100%;
+    max-height: 100%;
+    margin: 0;
+    padding: 0;
+    margin-top: 80px;
+    animation: fadeInUp 1s ease-in-out;
+    color: white;
+
+    @media screen and (max-width: 1050px) {
+      margin-top: 0;
+      padding-bottom: 40%;
+    }
+  }
+
+  .showcaseContainer h1 {
+    padding-top: 3%;
+    padding-left: 2%;
+    text-align: center;
+
+    @media screen and (max-width: 1050px) {
+      margin: 0;
+      margin-top: 50px;
+      font-size: 25px;
+    }
+  }
+
+  .list {
+    max-width: 100%;
+    max-height: 100%;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 5%;
+    padding: 5%;
+    padding-top: 2%;
+    margin: 0;
+
+    @media screen and (max-width: 1050px) {
+      padding: 0;
+      padding-top: 5%;
+      padding-bottom: 20%;
+      grid-template-columns: repeat(2, 1fr);
+      row-gap: 1%;
+      max-width: 100%;
+      width: 95%;
+      padding-left: 2.5%;
+    }
+  }
+
+  .list li {
+    color: rgb(255, 255, 255);
+    padding: 0;
+    text-align: center;
+    width: auto;
+    height: auto;
+    list-style: none;
+    margin-bottom: 5%;
+    border-radius: 30px;
+    transition: transform 0.3s ease-in-out;
+    border: 0 !important;
+    outline: none !important;
+    box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent;
+
+    @media screen and (max-width: 1050px) {
+      border-radius: 10px;
+    }
+  }
+
+  .listImage1 {
+    width: 100%;
+    height: 100%;
+    display: block;
+    margin: 0;
+    max-width: 100%;
+    border-radius: 30px;
+    border: none;
+    outline: none;
+    box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent;
+
+    @media screen and (max-width: 1050px) {
+      border-radius: 10px;
+    }
+  }
+
+  .list li:hover {
+    transform: scale(1.05);
+  }
+}
+
+.dark {
+  .showcaseContainer {
+    background: rgb(12, 12, 14);
+    margin: 0;
+    padding: 0;
+    padding-bottom: 5%;
+    margin-top: 90px;
+    animation: fadeInUp 1s ease-in-out;
+
+    @media screen and (max-width: 1050px) {
+      margin-top: 0;
+      padding-bottom: 40%;
+    }
+  }
+
+  .showcaseContainer h1 {
+    padding-top: 2%;
+    padding-left: 2%;
+    text-align: center;
+    color: rgb(158, 158, 158);
+
+    @media screen and (max-width: 1050px) {
+      margin: 0;
+      margin-top: 50px;
+      font-size: 25px;
+    }
+  }
+
+  .list {
+    max-width: 100%;
+    max-height: 100%;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 5%;
+    padding: 5%;
+    padding-top: 2%;
+    margin: 0;
+
+    @media screen and (max-width: 1050px) {
+      padding: 0;
+      padding-top: 5%;
+      padding-bottom: 20%;
+      grid-template-columns: repeat(2, 1fr);
+      row-gap: 1%;
+      max-width: 100%;
+      width: 95%;
+      padding-left: 2.5%;
+    }
+  }
+
+  .list li {
+    color: rgb(0, 0, 0);
+    padding: 0;
+    text-align: center;
+    width: auto;
+    height: auto;
+    list-style: none;
+    margin-bottom: 5%;
+    border-radius: 30px;
+    transition: transform 0.3s ease-in-out;
+    border: 0;
+
+    @media screen and (max-width: 1050px) {
+      border-radius: 10px;
+    }
+  }
+
+  .listImage1 {
+    width: 100%;
+    height: 100%;
+    display: block;
+    margin: 0;
+    max-width: 100%;
+    border-radius: 30px;
+    border: none;
+
+    @media screen and (max-width: 1050px) {
+      border-radius: 10px;
+    }
+  }
+
+  .listImage1 {
+    width: 100%;
+    height: 100%;
+    display: block;
+    margin: 0;
+    max-width: 100%;
+    border-radius: 30px;
+
+    @media screen and (max-width: 1050px) {
+      border-radius: 10px;
+    }
+  }
+
+  .list li:hover {
+    transform: scale(1.05);
+  }
+}

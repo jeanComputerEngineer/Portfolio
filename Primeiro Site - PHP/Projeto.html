@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Projeto</title>
+</head>
+
+<body>
+	<?php
+
+class Projeto
+{
+
+	private $titulo;
+	private $descricao;
+	private $status;
+
+	public function __construct($titulo, $descricao, $status)
+	{
+		$this->titulo = $titulo;
+		$this->descricao = $descricao;
+		$this->status = $status;
+	}
+
+	public function getTitulo()
+	{
+		return $this->titulo;
+	}
+
+	public function setTitulo($titulo)
+	{
+		$this->titulo = $titulo;
+		return $this;
+	}
+
+	public function getDescricao()
+	{
+		return $this->descricao;
+	}
+
+	public function setDescricao($descricao)
+	{
+		$this->descricao = $descricao;
+		return $this;
+	}
+
+	/**
+	 * Get the value of status
+	 */
+	public function getStatus()
+	{
+		return $this->status;
+	}
+
+	/**
+	 * Set the value of status
+	 *
+	 * @return  self
+	 */
+	public function setStatus($status)
+	{
+		$this->status = $status;
+
+		return $this;
+	}
+}
+
+	
+</body>
+</html>
